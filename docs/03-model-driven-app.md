@@ -81,6 +81,28 @@ On `mag_financialreviewrequest`:
 
 Default views of the four app tables are enriched with key columns.
 
+### Supplier lookup by DUNS
+
+`SRM-INT-002` requires buyers to identify suppliers by DUNS, so the Supplier lookup on the request
+searches both the supplier name and DUNS. [05-configure-supplier-lookup.py](../scripts/05-configure-supplier-lookup.py)
+applies and checks this configuration. It is idempotent.
+
+| Artifact | Configuration |
+|---|---|
+| `mag_supplier` columns `mag_name`, `mag_duns`, `mag_legalname`, `mag_country` | Searchable (`IsValidForAdvancedFind`). The SDK had created custom columns as non-searchable. |
+| Quick Find Active Suppliers (Quick Find view) | Find columns: Name and DUNS. Result columns: Name, DUNS, Legal Name, Country. |
+| Supplier Lookup View (Lookup view) | Columns: Name, DUNS, Country. The lookup dropdown shows DUNS under each supplier name. |
+
+DemoPRE rejects Web API updates to a Quick Find view's `fetchxml` with `0x80040216`, even when the
+fetch is unchanged. The find columns are therefore applied through the solution:
+
+1. Export the solution fresh.
+2. Edit `Entities/mag_Supplier/SavedQueries/{ffdfa154-…}.xml`.
+3. Pack and import the solution.
+
+The script only updates the Lookup view through the Web API. It verifies that the Quick Find
+columns are present and fails with this guidance if they are missing.
+
 ## Build and verification
 
 1. Provision schema columns and labels with `python scripts/02-create-tables.py`, or with
@@ -110,3 +132,5 @@ apply a structural change, tear down the affected artifact and rebuild.
 - Branch automation that moves the BPF active stage for Shortcut A and Shortcut B.
 - Seeded review requests carry step-flag values consistent with their path. They do not yet have
   BPF instances or an aligned active stage.
+- Most custom columns on the other tables are still non-searchable, as the SDK created them. Make
+  them searchable table by table, as Quick Find or lookup needs arise.

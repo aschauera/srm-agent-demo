@@ -11,7 +11,8 @@
       <grid name="mag_suppliers" jump="mag_name" select="1" icon="1" preview="0">
         <row name="mag_supplier" id="mag_supplierid">
           <cell name="mag_name" width="300" />
-          <cell name="createdon" width="125" />
+          <cell name="mag_duns" width="125" />
+          <cell name="mag_country" width="150" />
         </row>
       </grid>
     </layoutxml>
@@ -21,7 +22,9 @@
         <entity name="mag_supplier">
           <attribute name="mag_supplierid" />
           <attribute name="mag_name" />
-          <attribute name="createdon" />
+          <attribute name="mag_duns" />
+          <attribute name="mag_country" />
+          <order attribute="mag_name" descending="false" />
           <filter type="and">
             <condition attribute="statecode" operator="eq" value="0" />
           </filter>

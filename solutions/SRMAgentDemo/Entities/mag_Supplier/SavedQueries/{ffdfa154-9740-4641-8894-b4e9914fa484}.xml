@@ -11,7 +11,9 @@
       <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
         <row name="result" id="mag_supplierid">
           <cell name="mag_name" width="300" />
-          <cell name="createdon" width="125" />
+          <cell name="mag_duns" width="125" />
+          <cell name="mag_legalname" width="200" />
+          <cell name="mag_country" width="150" />
         </row>
       </grid>
     </layoutxml>
@@ -21,13 +23,16 @@
         <entity name="mag_supplier">
           <attribute name="mag_supplierid" />
           <attribute name="mag_name" />
-          <attribute name="createdon" />
+          <attribute name="mag_duns" />
+          <attribute name="mag_legalname" />
+          <attribute name="mag_country" />
           <order attribute="mag_name" descending="false" />
           <filter type="and">
             <condition attribute="statecode" operator="eq" value="0" />
           </filter>
           <filter type="or" isquickfindfields="1">
             <condition attribute="mag_name" operator="like" value="{0}" />
+            <condition attribute="mag_duns" operator="like" value="{0}" />
           </filter>
         </entity>
       </fetch>
@@ -36,5 +41,8 @@
     <LocalizedNames>
       <LocalizedName description="Quick Find Active Suppliers" languagecode="1033" />
     </LocalizedNames>
+    <Descriptions>
+      <Description description="Quick find for active suppliers; searches name and DUNS." languagecode="1033" />
+    </Descriptions>
   </savedquery>
 </savedqueries>
