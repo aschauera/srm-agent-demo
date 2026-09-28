@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{236255a8-d3ad-4ce7-ad36-daf52f9f488b}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
+        <row name="result" id="mag_riskscoringruleid">
+          <cell name="mag_name" width="300" />
+          <cell name="createdon" width="125" />
+          <cell name="mag_demokey" width="150" />
+          <cell name="mag_metric" width="150" />
+          <cell name="mag_operator" width="150" />
+          <cell name="mag_threshold" width="150" />
+          <cell name="mag_points" width="150" />
+          <cell name="mag_dimension" width="150" />
+          <cell name="mag_signal" width="150" />
+          <cell name="mag_approvalstatus" width="150" />
+          <cell name="mag_demoonly" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="mag_riskscoringrule">
+          <attribute name="mag_riskscoringruleid" />
+          <attribute name="mag_name" />
+          <attribute name="createdon" />
+          <order attribute="mag_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="mag_demokey" />
+          <attribute name="mag_metric" />
+          <attribute name="mag_operator" />
+          <attribute name="mag_threshold" />
+          <attribute name="mag_points" />
+          <attribute name="mag_dimension" />
+          <attribute name="mag_signal" />
+          <attribute name="mag_approvalstatus" />
+          <attribute name="mag_demoonly" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Risk Scoring Rules" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

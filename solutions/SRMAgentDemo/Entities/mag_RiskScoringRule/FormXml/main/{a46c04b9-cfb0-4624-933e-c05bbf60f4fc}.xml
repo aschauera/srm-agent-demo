@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{a46c04b9-cfb0-4624-933e-c05bbf60f4fc}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{973b4f07-f89d-40b7-a704-f71a1319b115}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{6f4feb4a-c68b-4b3e-ab58-9a5a6ec92094}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{c98ba888-55f6-4195-8654-1274ff6a3c85}">
+                        <labels>
+                          <label description="Name" languagecode="1033" />
+                        </labels>
+                        <control id="mag_name" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="mag_name" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c87be7cf-1674-46de-83d2-31e017ccf93d}">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{b17cf5c1-3afb-468b-85e2-fe22c3811209}">
+                        <labels>
+                          <label description="DemoKey" languagecode="1033" />
+                        </labels>
+                        <control id="mag_demokey" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_demokey" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7a0acda4-78c9-4bb7-98a7-63f4db732648}">
+                        <labels>
+                          <label description="Metric" languagecode="1033" />
+                        </labels>
+                        <control id="mag_metric" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_metric" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{4f48e423-ab87-4981-a40a-ec09ffa81484}">
+                        <labels>
+                          <label description="Operator" languagecode="1033" />
+                        </labels>
+                        <control id="mag_operator" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="mag_operator" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{ac64d827-c909-40c3-a7a1-996c729ea46f}">
+                        <labels>
+                          <label description="Threshold" languagecode="1033" />
+                        </labels>
+                        <control id="mag_threshold" classid="{c3efe0c3-0ec6-42be-8349-cbd9079dfd8e}" datafieldname="mag_threshold" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5b99ce92-67f1-46be-8c68-0b45d64c08bd}">
+                        <labels>
+                          <label description="Points" languagecode="1033" />
+                        </labels>
+                        <control id="mag_points" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="mag_points" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{63765f2e-2289-4e60-907f-71ed883eeabb}">
+                        <labels>
+                          <label description="Dimension" languagecode="1033" />
+                        </labels>
+                        <control id="mag_dimension" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="mag_dimension" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{389e03c7-7205-48e4-9cf2-acc29114110f}">
+                        <labels>
+                          <label description="Signal" languagecode="1033" />
+                        </labels>
+                        <control id="mag_signal" classid="{e0dece4b-6fc8-4a8f-a065-082708572369}" datafieldname="mag_signal" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{2e032166-fa6b-4c84-9f11-630a9fd3a52f}">
+                        <labels>
+                          <label description="ApprovalStatus" languagecode="1033" />
+                        </labels>
+                        <control id="mag_approvalstatus" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="mag_approvalstatus" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{84d99fca-c8d2-4989-8a26-e4d80e11be8b}">
+                        <labels>
+                          <label description="DemoOnly" languagecode="1033" />
+                        </labels>
+                        <control id="mag_demoonly" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="mag_demoonly" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

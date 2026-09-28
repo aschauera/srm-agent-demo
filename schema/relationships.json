@@ -1,0 +1,163 @@
+[
+  {
+    "schemaName": "mag_financialreviewrequest_Supplier",
+    "referencingTable": "mag_financialreviewrequest",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_financialreviewrequest_SourceEarlyWarning",
+    "referencingTable": "mag_financialreviewrequest",
+    "lookupName": "SourceEarlyWarning",
+    "referencedTable": "mag_earlywarning",
+    "required": false
+  },
+  {
+    "schemaName": "mag_documentrequest_ReviewRequest",
+    "referencingTable": "mag_documentrequest",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": true
+  },
+  {
+    "schemaName": "mag_supplierdocument_ReviewRequest",
+    "referencingTable": "mag_supplierdocument",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": true
+  },
+  {
+    "schemaName": "mag_supplierdocument_Supplier",
+    "referencingTable": "mag_supplierdocument",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_financialworkingpaper_ReviewRequest",
+    "referencingTable": "mag_financialworkingpaper",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": true
+  },
+  {
+    "schemaName": "mag_financialworkingpaper_Supplier",
+    "referencingTable": "mag_financialworkingpaper",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_financialworkingpaper_SourceDocument",
+    "referencingTable": "mag_financialworkingpaper",
+    "lookupName": "SourceDocument",
+    "referencedTable": "mag_supplierdocument",
+    "required": false
+  },
+  {
+    "schemaName": "mag_nonfinancialriskitem_ReviewRequest",
+    "referencingTable": "mag_nonfinancialriskitem",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": false
+  },
+  {
+    "schemaName": "mag_nonfinancialriskitem_Supplier",
+    "referencingTable": "mag_nonfinancialriskitem",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_communicationlog_ReviewRequest",
+    "referencingTable": "mag_communicationlog",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": true
+  },
+  {
+    "schemaName": "mag_communicationlog_Supplier",
+    "referencingTable": "mag_communicationlog",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": false
+  },
+  {
+    "schemaName": "mag_earlywarning_Supplier",
+    "referencingTable": "mag_earlywarning",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_earlywarning_ReviewRequest",
+    "referencingTable": "mag_earlywarning",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": false
+  },
+  {
+    "schemaName": "mag_reviewaudittrail_ReviewRequest",
+    "referencingTable": "mag_reviewaudittrail",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": false
+  },
+  {
+    "schemaName": "mag_reviewaudittrail_Supplier",
+    "referencingTable": "mag_reviewaudittrail",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": false
+  },
+  {
+    "schemaName": "mag_gsaratingrecord_Supplier",
+    "referencingTable": "mag_gsaratingrecord",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": false
+  },
+  {
+    "schemaName": "mag_cofacecreditrecord_Supplier",
+    "referencingTable": "mag_cofacecreditrecord",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": false
+  },
+  {
+    "schemaName": "mag_dnbprofile_Supplier",
+    "referencingTable": "mag_dnbprofile",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_archiverecord_Supplier",
+    "referencingTable": "mag_archiverecord",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_archiverecord_ReviewRequest",
+    "referencingTable": "mag_archiverecord",
+    "lookupName": "ReviewRequest",
+    "referencedTable": "mag_financialreviewrequest",
+    "required": false
+  },
+  {
+    "schemaName": "mag_adversenewsevent_Supplier",
+    "referencingTable": "mag_adversenewsevent",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  },
+  {
+    "schemaName": "mag_supplieronepagesummary_Supplier",
+    "referencingTable": "mag_supplieronepagesummary",
+    "lookupName": "Supplier",
+    "referencedTable": "mag_supplier",
+    "required": true
+  }
+]

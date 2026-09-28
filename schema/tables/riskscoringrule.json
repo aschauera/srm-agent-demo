@@ -1,0 +1,60 @@
+{
+  "logicalName": "mag_riskscoringrule",
+  "schemaName": "mag_RiskScoringRule",
+  "displayName": "Risk Scoring Rule",
+  "description": "Configurable, draft-only illustrative thresholds for the demo scoring matrix.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "Metric",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Operator",
+      "type": "choice",
+      "choice": "operator",
+      "alternateKey": false
+    },
+    {
+      "name": "Threshold",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "Points",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "Dimension",
+      "type": "choice",
+      "choice": "dimension",
+      "alternateKey": false
+    },
+    {
+      "name": "Signal",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ApprovalStatus",
+      "type": "choice",
+      "choice": "approval_status",
+      "alternateKey": false
+    },
+    {
+      "name": "DemoOnly",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-FIN-001"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "logicalName": "mag_supplierdocument",
+  "schemaName": "mag_SupplierDocument",
+  "displayName": "Supplier Document",
+  "description": "Supplier-submitted evidence and extraction/archive metadata.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "DocumentType",
+      "type": "choice",
+      "choice": "document_type",
+      "alternateKey": false
+    },
+    {
+      "name": "FiscalYear",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "Period",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "OCRStatus",
+      "type": "choice",
+      "choice": "ocr_status",
+      "alternateKey": false
+    },
+    {
+      "name": "File",
+      "type": "file",
+      "alternateKey": false
+    },
+    {
+      "name": "FileName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ArchiveSubfolder",
+      "type": "choice",
+      "choice": "archive_subfolder",
+      "alternateKey": false
+    },
+    {
+      "name": "Duplicate",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "MetadataTags",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": true
+    },
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-COL-001",
+    "SRM-ARC-001"
+  ]
+}

@@ -1,0 +1,5 @@
+.env
+.dataverse/
+__pycache__/
+*.py[cod]
+solutions/*.zip

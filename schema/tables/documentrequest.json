@@ -1,0 +1,66 @@
+{
+  "logicalName": "mag_documentrequest",
+  "schemaName": "mag_DocumentRequest",
+  "displayName": "Document Request",
+  "description": "Supplier document outreach, reminder, and response tracking.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "RequestType",
+      "type": "choice",
+      "choice": "request_type",
+      "alternateKey": false
+    },
+    {
+      "name": "SentOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "Day3ReminderSentOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "Day7EscalationSentOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "ResponseReceived",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "RequestStatus",
+      "type": "choice",
+      "choice": "request_status",
+      "alternateKey": false
+    },
+    {
+      "name": "RecipientEmail",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ChecklistSummary",
+      "type": "text",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-COL-001"
+  ]
+}

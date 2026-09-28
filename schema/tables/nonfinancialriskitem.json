@@ -1,0 +1,77 @@
+{
+  "logicalName": "mag_nonfinancialriskitem",
+  "schemaName": "mag_NonFinancialRiskItem",
+  "displayName": "Non-Financial Risk Item",
+  "description": "Structured qualitative supplier risk observations and source evidence.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "RiskType",
+      "type": "choice",
+      "choice": "risk_type",
+      "alternateKey": false
+    },
+    {
+      "name": "Severity",
+      "type": "choice",
+      "choice": "severity",
+      "alternateKey": false
+    },
+    {
+      "name": "Details",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceUrl",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "EventDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "CustomerConcentration",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "OwnershipStatus",
+      "type": "choice",
+      "choice": "ownership_status",
+      "alternateKey": false
+    },
+    {
+      "name": "EstimatedExposure",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "Verified",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": false
+    },
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-NFR-001"
+  ]
+}

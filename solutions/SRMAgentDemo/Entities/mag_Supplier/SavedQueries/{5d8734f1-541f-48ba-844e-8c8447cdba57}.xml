@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{5d8734f1-541f-48ba-844e-8c8447cdba57}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
+        <row name="result" id="mag_supplierid">
+          <cell name="mag_name" width="300" />
+          <cell name="createdon" width="125" />
+          <cell name="mag_demokey" width="150" />
+          <cell name="mag_suppliercode" width="150" />
+          <cell name="mag_legalname" width="150" />
+          <cell name="mag_duns" width="150" />
+          <cell name="mag_hasduns" width="150" />
+          <cell name="mag_street" width="150" />
+          <cell name="mag_city" width="150" />
+          <cell name="mag_country" width="150" />
+          <cell name="mag_region" width="150" />
+          <cell name="mag_website" width="150" />
+          <cell name="mag_businesscategory" width="150" />
+          <cell name="mag_manufacturingzone" width="150" />
+          <cell name="mag_magnadivision" width="150" />
+          <cell name="mag_annualspend" width="150" />
+          <cell name="mag_hasactivespend" width="150" />
+          <cell name="mag_currentmagnarating" width="150" />
+          <cell name="mag_currentcofacescore" width="150" />
+          <cell name="mag_contactname" width="150" />
+          <cell name="mag_contactemail" width="150" />
+          <cell name="mag_factorylocation" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="mag_supplier">
+          <attribute name="mag_supplierid" />
+          <attribute name="mag_name" />
+          <attribute name="createdon" />
+          <order attribute="mag_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="mag_demokey" />
+          <attribute name="mag_suppliercode" />
+          <attribute name="mag_legalname" />
+          <attribute name="mag_duns" />
+          <attribute name="mag_hasduns" />
+          <attribute name="mag_street" />
+          <attribute name="mag_city" />
+          <attribute name="mag_country" />
+          <attribute name="mag_region" />
+          <attribute name="mag_website" />
+          <attribute name="mag_businesscategory" />
+          <attribute name="mag_manufacturingzone" />
+          <attribute name="mag_magnadivision" />
+          <attribute name="mag_annualspend" />
+          <attribute name="mag_hasactivespend" />
+          <attribute name="mag_currentmagnarating" />
+          <attribute name="mag_currentcofacescore" />
+          <attribute name="mag_contactname" />
+          <attribute name="mag_contactemail" />
+          <attribute name="mag_factorylocation" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Suppliers" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

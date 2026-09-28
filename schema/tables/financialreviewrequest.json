@@ -1,0 +1,172 @@
+{
+  "logicalName": "mag_financialreviewrequest",
+  "schemaName": "mag_FinancialReviewRequest",
+  "displayName": "Financial Review Request",
+  "description": "Review request and BPF host record for the five-stage SRM process.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "RequestRef",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "BuyerName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "BuyerEmail",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewerName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Division",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewStatus",
+      "type": "choice",
+      "choice": "review_status",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewPath",
+      "type": "choice",
+      "choice": "review_path",
+      "alternateKey": false
+    },
+    {
+      "name": "GSAPrecheckResult",
+      "type": "choice",
+      "choice": "gsa_precheck",
+      "alternateKey": false
+    },
+    {
+      "name": "GSARating",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "GSARemarks",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "GSARatingDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "GSARatingExpiry",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceScore",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceRiskTier",
+      "type": "choice",
+      "choice": "coface_tier",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceAssessmentDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceDataAgeMonths",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceWithin18Months",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "PreliminaryRating",
+      "type": "choice",
+      "choice": "rating",
+      "alternateKey": false
+    },
+    {
+      "name": "NarrativeDraft",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "FinalRating",
+      "type": "choice",
+      "choice": "rating",
+      "alternateKey": false
+    },
+    {
+      "name": "RatingDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "RatingExpiry",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "Remarks",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewerOverride",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "ArchiveFolderLink",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "CurrentStage",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "ClarificationsClosed",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    },
+    {
+      "name": "SourceEarlyWarning",
+      "target": "mag_earlywarning",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-INT-001",
+    "SRM-COF-001",
+    "SRM-GOV-001"
+  ]
+}
