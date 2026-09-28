@@ -176,6 +176,9 @@ Each agent gets: instructions, trigger/topic specs, Dataverse knowledge scope, a
              early_warnings.csv, adverse_news.csv, rating_conversion_rules.csv,
              risk_scoring_rules.csv
 /agents      <agent>/instructions.md, <agent>/topics.md, <agent>/knowledge.md
+/flows       <flow-name>/flow.json, <flow-name>/definition.json, connection-references.json,
+             environment-variables.json (deployed code-first via the Dataverse API)
+/solutions   SRMAgentDemo/ (exported and unpacked from DemoPRE; generated, not hand-edited)
 README.md
 ```
 
@@ -225,3 +228,9 @@ README.md
   `SRMAgentDemo` solution is exported and unpacked into `solutions/SRMAgentDemo/` whenever the local
   source does not already represent the deployed state (see `AGENTS.md`, Solution Source
   Synchronization). *Changed 2026-09-28 at user request.*
+- **Cloud flow generation.** All flows are Copilot Studio agent flows generated code-first:
+  definitions in `flows/` are deployed as solution-aware `workflow` records (category 5,
+  modernflowtype 1) through the Dataverse API
+  into `SRMAgentDemo`, with connection references and environment variables, then pulled back via
+  solution sync. Rules are in `AGENTS.md`, Cloud Flow Generation. *Decided 2026-09-28 at user
+  request (research option 3).*

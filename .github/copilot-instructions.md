@@ -17,3 +17,6 @@ After each successful DemoPRE deployment, export and unpack the `SRMAgentDemo` s
 `solutions/SRMAgentDemo/` if the local source does not already represent the deployed state. Follow
 the Solution Source Synchronization section of `/AGENTS.md`.
 
+Generate flows as Copilot Studio agent flows, code-first through the Dataverse API from source in
+`/flows`, as defined in the Cloud Flow Generation section of `/AGENTS.md`.
+

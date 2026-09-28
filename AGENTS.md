@@ -88,6 +88,8 @@ Follow the target structure in the implementation plan. Use these ownership boun
 - `scripts/` - repeatable provisioning, import, validation, and teardown automation.
 - `data/` - fictional seed data aligned exactly with the schema.
 - `agents/` - deployable agent instructions, topics, knowledge definitions, and handoff contracts.
+- `flows/` - code-first Power Automate cloud flow definitions and metadata, deployed through the
+  Dataverse API. See [Cloud Flow Generation](#cloud-flow-generation).
 - `solutions/SRMAgentDemo/` - unmanaged solution source exported from DemoPRE and unpacked with PAC.
   Treat it as generated; change it only through the synchronization workflow.
 
@@ -195,6 +197,77 @@ security roles, and Copilot Studio components.
 Unpacked source is the exported record of deployed metadata; `schema/`, `data/`, and `scripts/`
 remain the design and provisioning sources. Keep both consistent. If they disagree, fix the source
 artifact and redeploy rather than editing the unpacked XML by hand.
+
+## Cloud Flow Generation
+
+Generate every flow for this project as a Copilot Studio **agent flow**, code-first through the
+Dataverse API (research option 3: "Dataverse API/code-first provisioning"). Do not build flows in
+the maker portal, hand-author solution source for them, or derive them from a template solution tree
+unless the user approves a different approach.
+
+### Source layout
+
+Each flow lives in `flows/<flow-name>/` (kebab-case, role-based name) with:
+
+- `flow.json` - metadata: display name, description, stable `workflowid` GUID (generated once and
+  never changed), requirement IDs, owning agent or process step, trigger summary, and the connection
+  references and environment variables the flow uses.
+- `definition.json` - the flow definition (`definition`) and its `connectionReferences` map, as
+  stored in the `clientdata` payload.
+
+Connection references and environment variables are declared once in `flows/connection-references.json`
+and `flows/environment-variables.json`, using `mag_` schema names.
+
+### Deployment rules
+
+1. Deploy with a repeatable script in `scripts/`, never ad hoc calls. The script must:
+   - create or update the flow as a `workflow` record with `category = 5` (modern flow),
+     `modernflowtype = 1` (CopilotStudioFlow, i.e. an agent flow; use `0` only for a plain Power
+     Automate cloud flow the user explicitly approves), `type = 1`, `primaryentity = none`, the
+     stable `workflowid`, and `clientdata` set to the string-encoded JSON
+     `{"properties": {"connectionReferences": ..., "definition": ...}, "schemaVersion": "1.0.0.0"}`;
+   - create or update it inside `SRMAgentDemo` (for example with the `MSCRM.SolutionUniqueName`
+     header), and verify the resulting `solutioncomponent` membership;
+   - create connection references (`connectionreference`) and environment variable definitions
+     before the flows that use them, and add them to `SRMAgentDemo`;
+   - be idempotent: rerunning updates existing records by `workflowid` rather than duplicating them.
+2. Keep flows solution-aware and use connection references only. Never embed connections,
+   credentials, tokens, tenant-specific IDs, or personal connection bindings in flow source.
+3. Put environment-specific values (URLs, record IDs, email addresses, thresholds) in environment
+   variables, not in flow definitions.
+4. Prefer the Dataverse connector (`shared_commondataserviceforapps`) so the demo stays
+   self-contained. External systems remain Dataverse-seeded mocks. Any other connector requires an
+   explicit user decision.
+5. Validate before deploying: parse all JSON, check every `connectionReferences` entry maps to a
+   declared connection reference, every referenced table and column exists in `schema/`, and every
+   environment variable is declared.
+6. Create flows in draft (`statecode = 0`). Binding connections in DemoPRE is a manual, user-owned
+   step; activate a flow (`statecode = 1`) only after its connection references are bound, and
+   report which flows remain inactive and why.
+7. Flows that make consequential changes, such as rating conversions, synchronization, or archival,
+   must write to `mag_ReviewAuditTrail` and must not set the final financial rating.
+8. After a successful deployment, run [Solution Source Synchronization](#solution-source-synchronization).
+   The exported flow source is a generated record; `flows/` remains the authoring source.
+
+### Flow type and source format (verified in DemoPRE, 2026-09-28)
+
+- **Agent flows are the flow type for this project.** In Dataverse they are ordinary `workflow`
+  records with `category = 5` and `modernflowtype = 1` (`CopilotStudioFlow`); `0` is
+  `PowerAutomateFlow` and `2` is `M365CopilotAgentFlow`. `clientdata` holds the same JSON
+  definition and `connectionReferences` map as a Power Automate cloud flow, so code-first
+  provisioning through the `workflow` table applies unchanged. Agent flows run on Copilot Studio
+  capacity, and only flows with the **When an agent calls the flow** trigger can be added to an
+  agent as a tool.
+- **Agent flows are not YAML.** With PAC CLI 2.10.1, `pac solution export`/`unpack` and
+  `pac solution clone` both produce the classic XML layout. Each agent flow is exported losslessly
+  as `Workflows/<Name>-<WORKFLOWID>.json` (the flow definition) plus a `.json.data.xml` metadata file
+  containing `<Category>5</Category>` and `<ModernFlowType>1</ModernFlowType>`. The YAML
+  source-control layout (`modernflows/`) is only produced by native Dataverse Git integration; do
+  not switch the sync format without a user decision.
+- **Copilot Studio Workflows (GitHub Copilot harness) are out of scope.** Microsoft documentation
+  does not describe how these newer Workflows are stored or packaged, and none exist in DemoPRE to
+  inspect. Do not generate them or assume they share the agent-flow storage; ask the user before
+  using them.
 
 ## Change Management
 
