@@ -11,7 +11,12 @@
       <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
         <row name="result" id="mag_supplierid">
           <cell name="mag_name" width="300" />
-          <cell name="createdon" width="125" />
+          <cell name="mag_demokey" width="150" />
+          <cell name="mag_suppliercode" width="150" />
+          <cell name="mag_legalname" width="150" />
+          <cell name="mag_duns" width="150" />
+          <cell name="mag_hasduns" width="150" />
+          <cell name="mag_street" width="150" />
         </row>
       </grid>
     </layoutxml>
@@ -21,7 +26,12 @@
         <entity name="mag_supplier">
           <attribute name="mag_supplierid" />
           <attribute name="mag_name" />
-          <attribute name="createdon" />
+          <attribute name="mag_demokey" />
+          <attribute name="mag_suppliercode" />
+          <attribute name="mag_legalname" />
+          <attribute name="mag_duns" />
+          <attribute name="mag_hasduns" />
+          <attribute name="mag_street" />
           <order attribute="mag_name" descending="false" />
           <filter type="and">
             <condition attribute="statecode" operator="eq" value="1" />

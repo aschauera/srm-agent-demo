@@ -3,3 +3,5 @@
 __pycache__/
 *.py[cod]
 solutions/*.zip
+.maker-workspace/
+apps/**/workflow-log.md

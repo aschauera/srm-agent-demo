@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Workflow WorkflowId="{33953086-244a-47da-943c-35a7b2bf1613}" Name="Supplier Financial Review" Description="Five-stage supplier financial review. Linear by design; shortcut paths (GSA reuse 1-&gt;5, Coface fast-track 2-&gt;4) are applied by automation that moves the active stage." xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <XamlFileName>/Workflows/SupplierFinancialReview-33953086-244A-47DA-943C-35A7B2BF1613.xaml</XamlFileName>
+  <Type>1</Type>
+  <Subprocess>0</Subprocess>
+  <Category>4</Category>
+  <Mode>0</Mode>
+  <Scope>4</Scope>
+  <OnDemand>0</OnDemand>
+  <TriggerOnCreate>0</TriggerOnCreate>
+  <TriggerOnDelete>0</TriggerOnDelete>
+  <AsyncAutodelete>0</AsyncAutodelete>
+  <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+  <StateCode>1</StateCode>
+  <StatusCode>2</StatusCode>
+  <processorder>100</processorder>
+  <RunAs>1</RunAs>
+  <UniqueName>new_supplierfinancialreview</UniqueName>
+  <IsTransacted>1</IsTransacted>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <IsCustomizable>1</IsCustomizable>
+  <BusinessProcessType>0</BusinessProcessType>
+  <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+  <ModernFlowType>0</ModernFlowType>
+  <PrimaryEntity>mag_FinancialReviewRequest</PrimaryEntity>
+  <LocalizedNames>
+    <LocalizedName languagecode="1033" description="Supplier Financial Review" />
+  </LocalizedNames>
+  <Descriptions>
+    <Description languagecode="1033" description="Five-stage supplier financial review. Linear by design; shortcut paths (GSA reuse 1-&gt;5, Coface fast-track 2-&gt;4) are applied by automation that moves the active stage." />
+  </Descriptions>
+  <labels>
+    <steplabels id="{681e0a46-2157-41ab-ad0c-b1933ebcafad}">
+      <label languagecode="1033" description="Request &amp; Pre-Check" />
+    </steplabels>
+    <steplabels id="{4c7fc49e-39bb-4e12-9392-3044d7acf812}">
+      <label languagecode="1033" description="DUNS entered" />
+    </steplabels>
+    <steplabels id="{7b684baf-cbab-4fa5-a576-1a4f26bef9e6}">
+      <label languagecode="1033" description="No DUNS / DUNS applying" />
+    </steplabels>
+    <steplabels id="{d7324fee-813d-4bb7-b941-5b8d26ea0aa9}">
+      <label languagecode="1033" description="D&amp;B auto-fill confirmed" />
+    </steplabels>
+    <steplabels id="{ef0f590a-f665-40af-ab77-52b1238fef9a}">
+      <label languagecode="1033" description="GSA pre-check result" />
+    </steplabels>
+    <steplabels id="{c2c6ac08-95eb-4500-a315-10b85cf76bf6}">
+      <label languagecode="1033" description="Mandatory re-review triggered" />
+    </steplabels>
+    <steplabels id="{921b4a73-8923-4c59-9d69-b4439435f9d9}">
+      <label languagecode="1033" description="Reviewer notified" />
+    </steplabels>
+    <steplabels id="{fcb513a2-615b-4d3d-902a-d7dae7486657}">
+      <label languagecode="1033" description="Information Collection" />
+    </steplabels>
+    <steplabels id="{85cf0848-ab0d-4aab-8321-c851632716b5}">
+      <label languagecode="1033" description="Coface retrieved" />
+    </steplabels>
+    <steplabels id="{43c0effe-4a5c-43f6-84b3-5395ac473432}">
+      <label languagecode="1033" description="Document request sent" />
+    </steplabels>
+    <steplabels id="{5c59116f-7bf0-4132-9161-1be330e00b14}">
+      <label languagecode="1033" description="Reminders sent" />
+    </steplabels>
+    <steplabels id="{c392635d-0ac1-4e93-ba9c-208563dab370}">
+      <label languagecode="1033" description="Documents received" />
+    </steplabels>
+    <steplabels id="{1edccc63-4152-4c93-a033-116c12b54da2}">
+      <label languagecode="1033" description="Analysis &amp; Rating" />
+    </steplabels>
+    <steplabels id="{40ca66cf-363b-4c2e-83f5-9d85b8942f4b}">
+      <label languagecode="1033" description="Working paper complete" />
+    </steplabels>
+    <steplabels id="{afa42727-1dd5-43ff-8bbc-73c2f442e5a5}">
+      <label languagecode="1033" description="Metrics computed" />
+    </steplabels>
+    <steplabels id="{16019e27-d166-4c7c-a29c-3545dc9a9138}">
+      <label languagecode="1033" description="Non-financial risks logged" />
+    </steplabels>
+    <steplabels id="{37953eca-22cb-43e6-9784-93278d008961}">
+      <label languagecode="1033" description="AI preliminary rating" />
+    </steplabels>
+    <steplabels id="{53bf5e4b-05e6-49ad-b3ba-1ae75d25ff74}">
+      <label languagecode="1033" description="Communication &amp; Decision" />
+    </steplabels>
+    <steplabels id="{ead7e486-e9c3-4791-beb8-d5cdd308df37}">
+      <label languagecode="1033" description="Clarifications closed" />
+    </steplabels>
+    <steplabels id="{3cebc9b7-62b0-4db7-8871-7cf122eab6f9}">
+      <label languagecode="1033" description="Final rating (reviewer)" />
+    </steplabels>
+    <steplabels id="{e8ad9137-2b88-4253-9280-9bea0d87b529}">
+      <label languagecode="1033" description="Final rating confirmed by reviewer" />
+    </steplabels>
+    <steplabels id="{519a4fcc-2121-4510-a415-3bcffd9c073d}">
+      <label languagecode="1033" description="Buyer notified" />
+    </steplabels>
+    <steplabels id="{3d07461b-6aae-4c36-ae5e-69ff97e73004}">
+      <label languagecode="1033" description="Archiving &amp; Publication" />
+    </steplabels>
+    <steplabels id="{f18d55e9-41ce-47bc-bb58-0605c794f0c9}">
+      <label languagecode="1033" description="Archive complete" />
+    </steplabels>
+    <steplabels id="{1e3dc217-b8a1-44c2-840e-5baf1a99c8a3}">
+      <label languagecode="1033" description="Record locked" />
+    </steplabels>
+    <steplabels id="{f61a0687-5eb6-4647-9d60-f43668655955}">
+      <label languagecode="1033" description="GSA push-back complete" />
+    </steplabels>
+    <steplabels id="{33a68ca8-1805-4904-a33d-962df1cdc4fa}">
+      <label languagecode="1033" description="One-page summary refreshed" />
+    </steplabels>
+  </labels>
+</Workflow>

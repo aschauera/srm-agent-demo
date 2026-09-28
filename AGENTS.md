@@ -92,6 +92,10 @@ Follow the target structure in the implementation plan. Use these ownership boun
   Dataverse API. See [Cloud Flow Generation](#cloud-flow-generation).
 - `solutions/SRMAgentDemo/` - unmanaged solution source exported from DemoPRE and unpacked with PAC.
   Treat it as generated; change it only through the synchronization workflow.
+- `apps/<app-slug>/` - model-driven app specs (`app-spec.json`) and rendered design documents
+  (`model-app-plan.md`) built with the app-builder engine. Data-model columns are owned by `schema/`
+  and `scripts/02-create-tables.py`; app specs reference those tables as `"existing": true` and never
+  introduce columns of their own. The engine's `.maker-workspace/` cache is local-only.
 
 Place generated or temporary local output outside tracked source paths. Never commit credentials,
 environment-specific tokens, exports containing real data, or tool caches.

@@ -7,147 +7,284 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "RequestRef",
       "type": "string",
+      "displayName": "Request Ref",
       "alternateKey": false
     },
     {
       "name": "BuyerName",
       "type": "string",
+      "displayName": "Buyer Name",
       "alternateKey": false
     },
     {
       "name": "BuyerEmail",
       "type": "string",
+      "displayName": "Buyer Email",
       "alternateKey": false
     },
     {
       "name": "ReviewerName",
       "type": "string",
+      "displayName": "Reviewer Name",
       "alternateKey": false
     },
     {
       "name": "Division",
       "type": "string",
+      "displayName": "Division",
       "alternateKey": false
     },
     {
       "name": "ReviewStatus",
       "type": "choice",
       "choice": "review_status",
+      "displayName": "Review Status",
       "alternateKey": false
     },
     {
       "name": "ReviewPath",
       "type": "choice",
       "choice": "review_path",
+      "displayName": "Review Path",
       "alternateKey": false
     },
     {
       "name": "GSAPrecheckResult",
       "type": "choice",
       "choice": "gsa_precheck",
+      "displayName": "GSA Pre-Check Result",
       "alternateKey": false
     },
     {
       "name": "GSARating",
       "type": "string",
+      "displayName": "GSA Rating",
       "alternateKey": false
     },
     {
       "name": "GSARemarks",
       "type": "text",
+      "displayName": "GSA Remarks",
       "alternateKey": false
     },
     {
       "name": "GSARatingDate",
       "type": "datetime",
+      "displayName": "GSA Rating Date",
       "alternateKey": false
     },
     {
       "name": "GSARatingExpiry",
       "type": "datetime",
+      "displayName": "GSA Rating Expiry",
       "alternateKey": false
     },
     {
       "name": "CofaceScore",
       "type": "integer",
+      "displayName": "Coface Score",
       "alternateKey": false
     },
     {
       "name": "CofaceRiskTier",
       "type": "choice",
       "choice": "coface_tier",
+      "displayName": "Coface Risk Tier",
       "alternateKey": false
     },
     {
       "name": "CofaceAssessmentDate",
       "type": "datetime",
+      "displayName": "Coface Assessment Date",
       "alternateKey": false
     },
     {
       "name": "CofaceDataAgeMonths",
       "type": "integer",
+      "displayName": "Coface Data Age Months",
       "alternateKey": false
     },
     {
       "name": "CofaceWithin18Months",
       "type": "boolean",
+      "displayName": "Coface Within 18 Months",
       "alternateKey": false
     },
     {
       "name": "PreliminaryRating",
       "type": "choice",
       "choice": "rating",
+      "displayName": "Preliminary Rating",
       "alternateKey": false
     },
     {
       "name": "NarrativeDraft",
       "type": "text",
+      "displayName": "Narrative Draft",
       "alternateKey": false
     },
     {
       "name": "FinalRating",
       "type": "choice",
       "choice": "rating",
+      "displayName": "Final Rating",
       "alternateKey": false
     },
     {
       "name": "RatingDate",
       "type": "datetime",
+      "displayName": "Rating Date",
       "alternateKey": false
     },
     {
       "name": "RatingExpiry",
       "type": "datetime",
+      "displayName": "Rating Expiry",
       "alternateKey": false
     },
     {
       "name": "Remarks",
       "type": "text",
+      "displayName": "Remarks",
       "alternateKey": false
     },
     {
       "name": "ReviewerOverride",
       "type": "boolean",
+      "displayName": "Reviewer Override",
       "alternateKey": false
     },
     {
       "name": "ArchiveFolderLink",
       "type": "string",
+      "displayName": "Archive Folder Link",
       "alternateKey": false
     },
     {
       "name": "CurrentStage",
       "type": "integer",
+      "displayName": "Current Stage",
       "alternateKey": false
     },
     {
       "name": "ClarificationsClosed",
       "type": "boolean",
+      "displayName": "Clarifications Closed",
+      "alternateKey": false
+    },
+    {
+      "name": "DUNSNumber",
+      "type": "string",
+      "maxLength": 9,
+      "displayName": "DUNS Number",
+      "alternateKey": false
+    },
+    {
+      "name": "NoDUNS",
+      "type": "boolean",
+      "displayName": "No DUNS / DUNS Applying",
+      "alternateKey": false
+    },
+    {
+      "name": "DnBAutofillConfirmed",
+      "type": "boolean",
+      "displayName": "D&B Auto-Fill Confirmed",
+      "alternateKey": false
+    },
+    {
+      "name": "MandatoryReReview",
+      "type": "boolean",
+      "displayName": "Mandatory Re-Review Triggered",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewerNotified",
+      "type": "boolean",
+      "displayName": "Reviewer Notified",
+      "alternateKey": false
+    },
+    {
+      "name": "CofaceRetrieved",
+      "type": "boolean",
+      "displayName": "Coface Retrieved",
+      "alternateKey": false
+    },
+    {
+      "name": "DocRequestSent",
+      "type": "boolean",
+      "displayName": "Document Request Sent",
+      "alternateKey": false
+    },
+    {
+      "name": "ReminderCount",
+      "type": "integer",
+      "displayName": "Reminder Count",
+      "alternateKey": false
+    },
+    {
+      "name": "DocsReceived",
+      "type": "boolean",
+      "displayName": "Documents Received",
+      "alternateKey": false
+    },
+    {
+      "name": "WorkingPaperComplete",
+      "type": "boolean",
+      "displayName": "Working Paper Complete",
+      "alternateKey": false
+    },
+    {
+      "name": "MetricsComputed",
+      "type": "boolean",
+      "displayName": "Metrics Computed",
+      "alternateKey": false
+    },
+    {
+      "name": "NonFinancialRisksLogged",
+      "type": "boolean",
+      "displayName": "Non-Financial Risks Logged",
+      "alternateKey": false
+    },
+    {
+      "name": "FinalRatingConfirmed",
+      "type": "boolean",
+      "displayName": "Final Rating Confirmed by Reviewer",
+      "alternateKey": false
+    },
+    {
+      "name": "BuyerNotified",
+      "type": "boolean",
+      "displayName": "Buyer Notified",
+      "alternateKey": false
+    },
+    {
+      "name": "ArchiveComplete",
+      "type": "boolean",
+      "displayName": "Archive Complete",
+      "alternateKey": false
+    },
+    {
+      "name": "RecordLocked",
+      "type": "boolean",
+      "displayName": "Record Locked",
+      "alternateKey": false
+    },
+    {
+      "name": "GSAPushBackComplete",
+      "type": "boolean",
+      "displayName": "GSA Push-Back Complete",
+      "alternateKey": false
+    },
+    {
+      "name": "SummaryRefreshed",
+      "type": "boolean",
+      "displayName": "One-Page Summary Refreshed",
       "alternateKey": false
     }
   ],
@@ -155,12 +292,14 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     },
     {
       "name": "SourceEarlyWarning",
       "target": "mag_earlywarning",
-      "required": false
+      "required": false,
+      "displayName": "Source Early Warning"
     }
   ],
   "primaryNameAttribute": "mag_Name",

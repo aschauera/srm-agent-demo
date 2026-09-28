@@ -7,56 +7,67 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "SummaryVersion",
       "type": "string",
+      "displayName": "Summary Version",
       "alternateKey": false
     },
     {
       "name": "CompanyProfile",
       "type": "text",
+      "displayName": "Company Profile",
       "alternateKey": false
     },
     {
       "name": "SourceAttribution",
       "type": "text",
+      "displayName": "Source Attribution",
       "alternateKey": false
     },
     {
       "name": "RiskMetricsPanel",
       "type": "text",
+      "displayName": "Risk Metrics Panel",
       "alternateKey": false
     },
     {
       "name": "TrendInterpretation",
       "type": "text",
+      "displayName": "Trend Interpretation",
       "alternateKey": false
     },
     {
       "name": "AdverseEventDigest",
       "type": "text",
+      "displayName": "Adverse Event Digest",
       "alternateKey": false
     },
     {
       "name": "AlertBanner",
       "type": "text",
+      "displayName": "Alert Banner",
       "alternateKey": false
     },
     {
       "name": "GeneratedOn",
       "type": "datetime",
+      "displayName": "Generated On",
       "alternateKey": false
     },
     {
       "name": "PDFExportUrl",
       "type": "string",
+      "displayName": "PDF Export URL",
       "alternateKey": false
     },
     {
       "name": "HasActiveSpend",
       "type": "boolean",
+      "displayName": "Has Active Spend",
       "alternateKey": false
     }
   ],
@@ -64,7 +75,8 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

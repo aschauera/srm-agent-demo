@@ -7,48 +7,57 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "RequestType",
       "type": "choice",
       "choice": "request_type",
+      "displayName": "Request Type",
       "alternateKey": false
     },
     {
       "name": "SentOn",
       "type": "datetime",
+      "displayName": "Sent On",
       "alternateKey": false
     },
     {
       "name": "Day3ReminderSentOn",
       "type": "datetime",
+      "displayName": "Day 3 Reminder Sent On",
       "alternateKey": false
     },
     {
       "name": "Day7EscalationSentOn",
       "type": "datetime",
+      "displayName": "Day 7 Escalation Sent On",
       "alternateKey": false
     },
     {
       "name": "ResponseReceived",
       "type": "boolean",
+      "displayName": "Response Received",
       "alternateKey": false
     },
     {
       "name": "RequestStatus",
       "type": "choice",
       "choice": "request_status",
+      "displayName": "Request Status",
       "alternateKey": false
     },
     {
       "name": "RecipientEmail",
       "type": "string",
+      "displayName": "Recipient Email",
       "alternateKey": false
     },
     {
       "name": "ChecklistSummary",
       "type": "text",
+      "displayName": "Checklist Summary",
       "alternateKey": false
     }
   ],
@@ -56,7 +65,8 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": true
+      "required": true,
+      "displayName": "Review Request"
     }
   ],
   "primaryNameAttribute": "mag_Name",

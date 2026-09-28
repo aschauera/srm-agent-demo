@@ -99,6 +99,11 @@
       <RootComponent type="1" schemaName="mag_supplier" behavior="0" />
       <RootComponent type="1" schemaName="mag_supplierdocument" behavior="1" />
       <RootComponent type="1" schemaName="mag_supplieronepagesummary" behavior="1" />
+      <RootComponent type="1" schemaName="new_supplierfinancialreview" behavior="0" />
+      <RootComponent type="29" id="{33953086-244a-47da-943c-35a7b2bf1613}" behavior="0" />
+      <RootComponent type="61" schemaName="mag_supplierfinancialriskreview_icon" behavior="0" />
+      <RootComponent type="62" schemaName="mag_supplierfinancialriskreview" behavior="0" />
+      <RootComponent type="80" schemaName="mag_supplierfinancialriskreview" behavior="0" />
     </RootComponents>
     <MissingDependencies>
       <MissingDependency>
@@ -154,6 +159,42 @@
         <Dependent type="1" schemaName="mag_supplieronepagesummary" displayName="Supplier One-Page Summary" />
       </MissingDependency>
       <MissingDependency>
+        <Required type="10" schemaName="FileAttachment_mag_SupplierDocument_mag_File" displayName="FileAttachment_mag_SupplierDocument_mag_File" parentSchemaName="fileattachment" parentDisplayName="FileAttachment" solution="Active" />
+        <Dependent type="2" schemaName="mag_file" displayName="File" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Supplier Review History" displayName="Supplier Review History" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{4f06e1f7-a22a-405b-b7cc-417c75a23df9}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="My Open Reviews" displayName="My Open Reviews" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{c9caa029-b6fb-4d25-86da-011781b9640b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="New Requests - Not Started" displayName="New Requests - Not Started" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_financialreviewrequestid" displayName="Financial Review Request" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Inactive Supplier Financial Review on my Financial Review Requests" displayName="Inactive Supplier Financial Review on my Financial Review Requests" parentSchemaName="new_supplierfinancialreview" parentDisplayName="Supplier Financial Review" id="{318d6ba5-33df-467d-8865-d8125755f863}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_financialreviewrequestid" displayName="Financial Review Request" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Active Supplier Financial Review on my Financial Review Requests" displayName="Active Supplier Financial Review on my Financial Review Requests" parentSchemaName="new_supplierfinancialreview" parentDisplayName="Supplier Financial Review" id="{f3b32278-0c19-4f9f-9f15-93203df1d71b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_financialreviewrequestid" displayName="Financial Review Request" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="29" displayName="Supplier Financial Review" id="{33953086-244a-47da-943c-35a7b2bf1613}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_dnbprofile" parentDisplayName="D&amp;B Profile" solution="Active" />
+        <Dependent type="60" displayName="D&amp;B Profile" parentDisplayName="D&amp;B Profile" id="{d5c0ea34-0dfd-4f3c-997b-1256578f5392}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="bpf_mag_financialreviewrequest_new_supplierfinancialreview" displayName="bpf_mag_financialreviewrequest_new_supplierfinancialreview" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
         <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
         <Dependent type="10" schemaName="mag_financialreviewrequest_mag_archiverecord_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_archiverecord_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
       </MissingDependency>
@@ -186,8 +227,126 @@
         <Dependent type="10" schemaName="mag_financialreviewrequest_mag_supplierdocument_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_supplierdocument_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
       </MissingDependency>
       <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Supplier Review History" displayName="Supplier Review History" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{4f06e1f7-a22a-405b-b7cc-417c75a23df9}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Auto-Closed (GSA Reuse)" displayName="Auto-Closed (GSA Reuse)" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{6067282b-3d0b-4446-bb1b-db3d8d2ad797}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Full Review Required" displayName="Full Review Required" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{91ac1e62-6e4a-4741-8172-2c8ef83dc9f2}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="My Open Reviews" displayName="My Open Reviews" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{c9caa029-b6fb-4d25-86da-011781b9640b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="New Requests - Not Started" displayName="New Requests - Not Started" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="29" displayName="Supplier Financial Review" id="{33953086-244a-47da-943c-35a7b2bf1613}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="60" displayName="Financial Review Request Quick Create" parentDisplayName="Financial Review Request" id="{61ec32ed-56a9-478b-84f1-a01d4d235214}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="60" displayName="Financial Review Request" parentDisplayName="Financial Review Request" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_gsaratingrecord" parentDisplayName="GSA Rating Record" solution="Active" />
+        <Dependent type="60" displayName="GSA Rating Record" parentDisplayName="GSA Rating Record" id="{578a2aac-f673-4bed-85bb-eb058d094c2f}" />
+      </MissingDependency>
+      <MissingDependency>
         <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" solution="Active" />
         <Dependent type="10" schemaName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" displayName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Inactive Supplier Financial Review on my Financial Review Requests" displayName="Inactive Supplier Financial Review on my Financial Review Requests" parentSchemaName="new_supplierfinancialreview" parentDisplayName="Supplier Financial Review" id="{318d6ba5-33df-467d-8865-d8125755f863}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="My Open Reviews" displayName="My Open Reviews" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{c9caa029-b6fb-4d25-86da-011781b9640b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Active Supplier Financial Review on my Financial Review Requests" displayName="Active Supplier Financial Review on my Financial Review Requests" parentSchemaName="new_supplierfinancialreview" parentDisplayName="Supplier Financial Review" id="{f3b32278-0c19-4f9f-9f15-93203df1d71b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Auto-Closed (GSA Reuse)" displayName="Auto-Closed (GSA Reuse)" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{6067282b-3d0b-4446-bb1b-db3d8d2ad797}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="Full Review Required" displayName="Full Review Required" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{91ac1e62-6e4a-4741-8172-2c8ef83dc9f2}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="My Open Reviews" displayName="My Open Reviews" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{c9caa029-b6fb-4d25-86da-011781b9640b}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="26" schemaName="New Requests - Not Started" displayName="New Requests - Not Started" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Active D&amp;B Profiles" displayName="Active D&amp;B Profiles" parentSchemaName="mag_dnbprofile" parentDisplayName="D&amp;B Profile" solution="Active" id="{cccfc2c1-3427-4ac8-9ec8-8ab7f69ccbba}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Active Financial Review Requests" displayName="Active Financial Review Requests" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" id="{c28c8b64-821b-48b3-90dc-fca17ba29908}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Active GSA Rating Records" displayName="Active GSA Rating Records" parentSchemaName="mag_gsaratingrecord" parentDisplayName="GSA Rating Record" solution="Active" id="{038bf0d1-a5d2-4bc9-9c77-f02d6719058e}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Inactive D&amp;B Profiles" displayName="Inactive D&amp;B Profiles" parentSchemaName="mag_dnbprofile" parentDisplayName="D&amp;B Profile" solution="Active" id="{7c947833-2a90-49df-b024-518a6897d351}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Inactive Financial Review Requests" displayName="Inactive Financial Review Requests" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" id="{c88190bc-3f49-4e24-811d-09fda1a5dd0b}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="26" schemaName="Inactive GSA Rating Records" displayName="Inactive GSA Rating Records" parentSchemaName="mag_gsaratingrecord" parentDisplayName="GSA Rating Record" solution="Active" id="{624c8375-8839-46b0-b5eb-3f55a5c01020}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="60" displayName="Information" parentDisplayName="D&amp;B Profile" solution="Active" id="{1d0128d8-b90f-43db-8f66-4110c8567a71}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="60" displayName="Information" parentDisplayName="Financial Review Request" solution="Active" id="{3c66ac00-bd9b-4993-8727-368824e8bfec}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="60" displayName="Information" parentDisplayName="GSA Rating Record" solution="Active" id="{a2c92bca-45bf-46d2-ae8c-1b26a2585b0f}" />
+        <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="AppChannel">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.26">PowerAppsAppFramework_Anchor (1.0.0.26)</package>
+        </Required>
+        <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=AppChannel" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="AppChannel" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="SettingDefinition" displayName="HeaderAndNavigationRefresh" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="HeaderAndNavigationRefresh">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.26">PowerAppsAppFramework_Anchor (1.0.0.26)</package>
+        </Required>
+        <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=HeaderAndNavigationRefresh" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="HeaderAndNavigationRefresh" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="SettingDefinition" displayName="NewLookAlwaysOn" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="NewLookAlwaysOn">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.26">PowerAppsAppFramework_Anchor (1.0.0.26)</package>
+        </Required>
+        <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=NewLookAlwaysOn" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="NewLookAlwaysOn" />
       </MissingDependency>
     </MissingDependencies>
   </SolutionManifest>

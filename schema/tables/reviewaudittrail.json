@@ -7,37 +7,44 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "Action",
       "type": "string",
+      "displayName": "Action",
       "alternateKey": false
     },
     {
       "name": "Actor",
       "type": "string",
+      "displayName": "Actor",
       "alternateKey": false
     },
     {
       "name": "ActorType",
       "type": "choice",
       "choice": "actor_type",
+      "displayName": "Actor Type",
       "alternateKey": false
     },
     {
       "name": "OccurredOn",
       "type": "datetime",
+      "displayName": "Occurred On",
       "alternateKey": false
     },
     {
       "name": "SystemTouched",
       "type": "string",
+      "displayName": "System Touched",
       "alternateKey": false
     },
     {
       "name": "Details",
       "type": "text",
+      "displayName": "Details",
       "alternateKey": false
     }
   ],
@@ -45,12 +52,14 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": false
+      "required": false,
+      "displayName": "Review Request"
     },
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": false
+      "required": false,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

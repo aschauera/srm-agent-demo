@@ -32,7 +32,7 @@ def retry_metadata(operation: Callable[[], T], label: str, max_attempts: int = 5
             message = str(error).lower()
             transient = (
                 "another" in message and "running" in message
-            ) or "entitycustomization" in message
+            ) or "entitycustomization" in message or "still being processed" in message
             if not transient or attempt == max_attempts - 1:
                 raise
             delay = 10 * (attempt + 1)
@@ -105,8 +105,40 @@ CHOICES: dict[str, list[str]] = {
 }
 
 
-def c(name: str, kind: str = "string", *, choice: str | None = None, max_length: int | None = None) -> dict:
+LABEL_OVERRIDES = {
+    "DnBAutofillConfirmed": "D&B Auto-Fill Confirmed",
+    "NoDUNS": "No DUNS / DUNS Applying",
+    "MandatoryReReview": "Mandatory Re-Review Triggered",
+    "FinalRatingConfirmed": "Final Rating Confirmed by Reviewer",
+    "SummaryRefreshed": "One-Page Summary Refreshed",
+    "GSAPushBackComplete": "GSA Push-Back Complete",
+    "GSAPrecheckResult": "GSA Pre-Check Result",
+    "CofaceWithin18Months": "Coface Within 18 Months",
+    "NonFinancialRisksLogged": "Non-Financial Risks Logged",
+    "MandatoryRereview": "Mandatory Re-Review",
+}
+
+
+def label_for(name: str) -> str:
+    """Derive a readable display label from a PascalCase column name, keeping acronyms intact."""
+    if name in LABEL_OVERRIDES:
+        return LABEL_OVERRIDES[name]
+    spaced = re.sub(r"(?<=[a-z])(?=[A-Z0-9])|(?<=[0-9])(?=[A-Za-z])|(?<=[A-Z])(?=[A-Z][a-z])", " ", name)
+    spaced = re.sub(r"\bUrl\b", "URL", spaced)
+    return spaced.replace(" Of ", " of ").replace(" To ", " to ")
+
+
+def c(
+    name: str,
+    kind: str = "string",
+    *,
+    choice: str | None = None,
+    max_length: int | None = None,
+    label: str | None = None,
+) -> dict:
     column = {"name": name, "type": kind}
+    if label:
+        column["displayName"] = label
     if choice:
         column["choice"] = choice
     if max_length:
@@ -153,6 +185,17 @@ TABLES = [
             c("RatingExpiry", "datetime"), c("Remarks", "text"),
             c("ReviewerOverride", "boolean"), c("ArchiveFolderLink"),
             c("CurrentStage", "integer"), c("ClarificationsClosed", "boolean"),
+            # BPF step flags; every business process flow step must bind a column.
+            c("DUNSNumber", max_length=9), c("NoDUNS", "boolean"),
+            c("DnBAutofillConfirmed", "boolean"), c("MandatoryReReview", "boolean"),
+            c("ReviewerNotified", "boolean"),
+            c("CofaceRetrieved", "boolean"), c("DocRequestSent", "boolean", label="Document Request Sent"),
+            c("ReminderCount", "integer"), c("DocsReceived", "boolean", label="Documents Received"),
+            c("WorkingPaperComplete", "boolean"), c("MetricsComputed", "boolean"),
+            c("NonFinancialRisksLogged", "boolean"),
+            c("FinalRatingConfirmed", "boolean"), c("BuyerNotified", "boolean"),
+            c("ArchiveComplete", "boolean"), c("RecordLocked", "boolean"),
+            c("GSAPushBackComplete", "boolean"), c("SummaryRefreshed", "boolean"),
         ],
         "lookups": [l("Supplier", "mag_supplier", True), l("SourceEarlyWarning", "mag_earlywarning")],
     },
@@ -404,9 +447,17 @@ def schema_files() -> None:
             **table,
             "primaryNameAttribute": f"{PREFIX}_Name",
             "columns": [
-                {**column, "alternateKey": column["name"] == "DemoKey"}
+                {
+                    **column,
+                    "displayName": column.get("displayName") or label_for(column["name"]),
+                    "alternateKey": column["name"] == "DemoKey",
+                }
                 for column in table["columns"]
             ],
+            **({"lookups": [
+                {**lookup, "displayName": label_for(lookup["name"])}
+                for lookup in table["lookups"]
+            ]} if table.get("lookups") else {}),
             "requirements": TABLE_TRACEABILITY[table["logicalName"]],
         }
         path.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -457,7 +508,7 @@ def add_solution_component(component_id: str, component_type: int, add_required:
     dataverse_cli = shutil.which("dataverse")
     if not dataverse_cli:
         raise RuntimeError("The Dataverse CLI ('dataverse') is required to add solution components")
-    subprocess.run(
+    result = subprocess.run(
         [
             dataverse_cli, "api", "request",
             "--target", "dataverse",
@@ -467,10 +518,11 @@ def add_solution_component(component_id: str, component_type: int, add_required:
             "--environment", environment_url,
             "--context", "app=dataverse-skills/1a0d2929b96;skill=dv-metadata;agent=copilot",
         ],
-        check=True,
         capture_output=True,
         text=True,
     )
+    if result.returncode != 0:
+        raise RuntimeError(f"AddSolutionComponent {component_id} failed: {result.stdout}{result.stderr}")
 
 
 def solution_component_ids(client, component_type: int, full_roots_only: bool = False) -> set[str]:
@@ -524,6 +576,151 @@ def ensure_solution_keys(client) -> None:
     if missing:
         raise RuntimeError(f"Alternate keys missing from {SOLUTION}: {', '.join(missing)}")
     print(f"Verified {len(TABLES)} alternate keys in {SOLUTION}.", flush=True)
+
+
+URL_SAFE = "/()?$=&,'.-_:"
+
+
+def web_api(method: str, path: str, body: dict | None = None, headers: dict | None = None) -> dict | None:
+    from auth import get_token
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
+    request = urllib.request.Request(
+        f"{os.environ['DATAVERSE_URL'].rstrip('/')}/api/data/v9.2/"
+        f"{urllib.parse.quote(path, safe=URL_SAFE)}",
+        data=json.dumps(body).encode("utf-8") if body is not None else None,
+        method=method,
+        headers={
+            "Authorization": f"Bearer {get_token()}",
+            "Accept": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+            "OData-MaxVersion": "4.0",
+            "OData-Version": "4.0",
+            **(headers or {}),
+        },
+    )
+    for attempt in range(1, 7):
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                payload = response.read()
+            break
+        except urllib.error.HTTPError as error:
+            raise RuntimeError(f"{method} {path} failed with {error.code}: {error.read().decode('utf-8', 'replace')[:800]}") from error
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as error:
+            # Transient network failures: PUT/GET/POST calls here are idempotent label/metadata operations.
+            if attempt == 6:
+                raise
+            print(f"{method} {path}: network error ({error}); retrying in {attempt * 15}s.", flush=True)
+            time.sleep(attempt * 15)
+    return json.loads(payload) if payload else None
+
+
+def expected_labels(table: dict) -> dict[str, str]:
+    labels = {
+        f"{PREFIX}_{column['name']}".lower(): column.get("displayName") or label_for(column["name"])
+        for column in table["columns"]
+    }
+    labels.update({
+        f"{PREFIX}_{lookup['name']}Id".lower(): label_for(lookup["name"])
+        for lookup in table.get("lookups", [])
+    })
+    return labels
+
+
+def ensure_column_labels_and_membership() -> None:
+    """Converge readable column labels and make every schema column a member of the solution."""
+    solution_attributes = None
+    changed = 0
+    deferred: list[str] = []
+    for table in TABLES:
+        logical = table["logicalName"]
+        wanted = expected_labels(table)
+        attributes = web_api(
+            "GET",
+            f"EntityDefinitions(LogicalName='{logical}')/Attributes"
+            "?$select=LogicalName,MetadataId,DisplayName&$filter=IsCustomAttribute eq true",
+        )["value"]
+        if solution_attributes is None:
+            solution = web_api("GET", f"solutions?$select=solutionid&$filter=uniquename eq '{SOLUTION}'")["value"][0]
+            solution_attributes = {
+                row["objectid"].lower()
+                for row in web_api(
+                    "GET",
+                    "solutioncomponents?$select=objectid"
+                    f"&$filter=_solutionid_value eq {solution['solutionid']} and componenttype eq 2",
+                )["value"]
+            }
+        full_root = client_table_is_full_root(logical)
+        for attribute in attributes:
+            name = attribute["LogicalName"]
+            if name not in wanted:
+                continue
+            current = (attribute["DisplayName"].get("UserLocalizedLabel") or {}).get("Label")
+            if current != wanted[name]:
+                path = f"EntityDefinitions(LogicalName='{logical}')/Attributes(LogicalName='{name}')"
+                try:
+                    definition = web_api("GET", path)
+                    definition["DisplayName"] = {
+                        "@odata.type": "Microsoft.Dynamics.CRM.Label",
+                        "LocalizedLabels": [{
+                            "@odata.type": "Microsoft.Dynamics.CRM.LocalizedLabel",
+                            "Label": wanted[name],
+                            "LanguageCode": 1033,
+                        }],
+                    }
+                    retry_metadata(
+                        lambda: web_api("PUT", path, definition, {
+                            "MSCRM.MergeLabels": "true",
+                            "MSCRM.SolutionUniqueName": SOLUTION,
+                        }),
+                        f"Relabel {logical}.{name}",
+                    )
+                except RuntimeError as error:
+                    if "still being processed" not in str(error):
+                        raise
+                    deferred.append(f"{logical}.{name}")
+                    print(f"Deferred {logical}.{name}: platform metadata still being processed.", flush=True)
+                    continue
+                changed += 1
+                # The MSCRM.SolutionUniqueName header on the PUT also adds the column to the solution.
+                solution_attributes.add(attribute["MetadataId"].lower())
+                print(f"Relabelled {logical}.{name}: {current!r} -> {wanted[name]!r}", flush=True)
+            if not full_root and attribute["MetadataId"].lower() not in solution_attributes:
+                try:
+                    add_solution_component(attribute["MetadataId"], 2, add_required=False)
+                except RuntimeError as error:
+                    if "still being processed" not in str(error):
+                        raise
+                    deferred.append(f"{logical}.{name} (solution membership)")
+                    print(f"Deferred adding {logical}.{name} to {SOLUTION}: metadata still being processed.", flush=True)
+                    continue
+                solution_attributes.add(attribute["MetadataId"].lower())
+                print(f"Added column {logical}.{name} to {SOLUTION}.", flush=True)
+    if deferred:
+        raise RuntimeError(
+            "Column labels not converged (platform still processing; rerun --labels-only later): "
+            + ", ".join(deferred)
+        )
+    print(f"Verified column labels and solution membership ({changed} relabelled).", flush=True)
+
+
+_FULL_ROOTS: set[str] | None = None
+
+
+def client_table_is_full_root(logical_name: str) -> bool:
+    global _FULL_ROOTS
+    if _FULL_ROOTS is None:
+        solution = web_api("GET", f"solutions?$select=solutionid&$filter=uniquename eq '{SOLUTION}'")["value"][0]
+        roots = web_api(
+            "GET",
+            "solutioncomponents?$select=objectid,rootcomponentbehavior"
+            f"&$filter=_solutionid_value eq {solution['solutionid']} and componenttype eq 1",
+        )["value"]
+        _FULL_ROOTS = {row["objectid"].lower() for row in roots if row.get("rootcomponentbehavior") == 0}
+    metadata = web_api("GET", f"EntityDefinitions(LogicalName='{logical_name}')?$select=MetadataId")
+    return metadata["MetadataId"].lower() in _FULL_ROOTS
 
 
 def ensure_solution_table_roots(client) -> None:
@@ -591,9 +788,17 @@ def main() -> None:
         action="store_true",
         help="Ensure tables and columns exist without touching relationships or keys.",
     )
+    parser.add_argument(
+        "--labels-only",
+        action="store_true",
+        help="Only converge column display labels and solution membership.",
+    )
     args = parser.parse_args()
     if args.spec_only:
         print(f"Wrote schema definitions for {len(TABLES)} tables.")
+        return
+    if args.labels_only:
+        ensure_column_labels_and_membership()
         return
     client = get_client("dv-metadata")
     for index, table in enumerate(TABLES):
@@ -637,6 +842,7 @@ def main() -> None:
             time.sleep(8)
 
     if args.tables_only:
+        ensure_column_labels_and_membership()
         print("Table and column verification complete; skipped relationships and keys.")
         return
 
@@ -652,7 +858,7 @@ def main() -> None:
                         referencing_table=table["logicalName"],
                         lookup_field_name=field_name,
                         referenced_table=lookup["target"],
-                        display_name=lookup["name"],
+                        display_name=label_for(lookup["name"]),
                         required=lookup["required"],
                         solution=SOLUTION,
                     ),
@@ -661,7 +867,7 @@ def main() -> None:
                 print(f"Created lookup {table['logicalName']}.{field_name}", flush=True)
             except Exception as error:
                 message = str(error).lower()
-                if "already exists" not in message and "duplicate" not in message:
+                if not any(marker in message for marker in ("already exists", "duplicate", "not unique")):
                     raise
                 print(f"Reusing lookup {table['logicalName']}.{field_name}", flush=True)
             time.sleep(4)
@@ -686,6 +892,7 @@ def main() -> None:
         print(f"Created alternate key {key.schema_name}: {key.status}", flush=True)
         time.sleep(3)
     ensure_solution_keys(client)
+    ensure_column_labels_and_membership()
     print("Datamodel metadata provisioning complete.", flush=True)
 
 

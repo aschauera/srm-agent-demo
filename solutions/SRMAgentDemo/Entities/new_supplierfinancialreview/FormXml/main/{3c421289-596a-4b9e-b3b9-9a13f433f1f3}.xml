@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{3c421289-596a-4b9e-b3b9-9a13f433f1f3}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{681e0a46-2157-41ab-ad0c-b1933ebcafad}" name="StageStep2" locklevel="0" expanded="true" visible="false" labelid="{3a9019df-7efa-4328-aa78-d2ea5c23a146}">
+          <labels>
+            <label description="Request &amp; Pre-Check" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showbar="false" columns="1" id="{0bcd408d-fb5b-9705-bf5e-f0ee1b5ceced}" name="StageStep2_section1" labelid="{d4d1d4bc-c259-4191-8f7a-be3d50b7f232}">
+                  <labels>
+                    <label description="Request &amp; Pre-Check" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{4c7fc49e-39bb-4e12-9392-3044d7acf812}" showlabel="true" visible="true" labelid="{474610a5-2583-48f7-874a-c5714b9650c1}">
+                        <labels>
+                          <label description="DUNS entered" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:07bdb1e2-1bf4-4b31-8e56-117137c7363e" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_dunsnumber" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7b684baf-cbab-4fa5-a576-1a4f26bef9e6}" showlabel="true" visible="true" labelid="{63e67172-aa25-4055-90d9-06a5820b3bf1}">
+                        <labels>
+                          <label description="No DUNS / DUNS applying" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:b676a33f-d160-48d2-954b-9fc1b200331a" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_noduns" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{d7324fee-813d-4bb7-b941-5b8d26ea0aa9}" showlabel="true" visible="true" labelid="{5534d040-c0e4-42f7-b864-334fd7a00dda}">
+                        <labels>
+                          <label description="D&amp;B auto-fill confirmed" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:227b4600-94d9-414d-acb7-a94051aa05cb" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_dnbautofillconfirmed" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{ef0f590a-f665-40af-ab77-52b1238fef9a}" showlabel="true" visible="true" labelid="{01c5d794-cb47-4c55-8a7c-bf9de12daaed}">
+                        <labels>
+                          <label description="GSA pre-check result" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:762bef59-4e82-465d-a65c-2f4b841e07ea" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_gsaprecheckresult" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="true" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c2c6ac08-95eb-4500-a315-10b85cf76bf6}" showlabel="true" visible="true" labelid="{6870a4d9-c891-478c-b33c-48a5536f7f75}">
+                        <labels>
+                          <label description="Mandatory re-review triggered" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:0beb59eb-e60a-41da-b716-8067e31d1daf" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_mandatoryrereview" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{921b4a73-8923-4c59-9d69-b4439435f9d9}" showlabel="true" visible="true" labelid="{e9d78e9b-356e-452a-833d-c5811eede068}">
+                        <labels>
+                          <label description="Reviewer notified" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:e0b7b7b4-4232-431b-a409-a5e61d64d419" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_reviewernotified" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab verticallayout="true" id="{fcb513a2-615b-4d3d-902a-d7dae7486657}" name="StageStep2" locklevel="0" expanded="true" visible="false" labelid="{f5afd294-40dd-4c65-a8f2-1758379cfc4b}">
+          <labels>
+            <label description="Information Collection" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showbar="false" columns="1" id="{9ac4d359-2a09-a7e8-f3b7-c653b0446f11}" name="StageStep2_section1" labelid="{a91941f1-8d93-44c9-ae3e-8677dbd97d76}">
+                  <labels>
+                    <label description="Information Collection" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{85cf0848-ab0d-4aab-8321-c851632716b5}" showlabel="true" visible="true" labelid="{d79e996f-71c6-4aa4-b935-66dbe5f96222}">
+                        <labels>
+                          <label description="Coface retrieved" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:83ae984b-cfc7-44eb-9498-d6782993080a" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_cofaceretrieved" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{43c0effe-4a5c-43f6-84b3-5395ac473432}" showlabel="true" visible="true" labelid="{5590ae90-73e8-459a-ace9-491f6cfce886}">
+                        <labels>
+                          <label description="Document request sent" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:85479e62-68d3-4b59-99f5-8a7e76e4c328" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_docrequestsent" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{5c59116f-7bf0-4132-9161-1be330e00b14}" showlabel="true" visible="true" labelid="{e847837c-daed-42cc-856f-91d1e20fd81e}">
+                        <labels>
+                          <label description="Reminders sent" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:a876305c-fe7e-4235-a3a2-6b4e36096c60" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_remindercount" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c392635d-0ac1-4e93-ba9c-208563dab370}" showlabel="true" visible="true" labelid="{c6e47f23-ddf0-4bf2-9442-033ccb53c0d1}">
+                        <labels>
+                          <label description="Documents received" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:fde70785-e19c-4cec-a4fd-f362292af18e" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_docsreceived" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab verticallayout="true" id="{1edccc63-4152-4c93-a033-116c12b54da2}" name="StageStep2" locklevel="0" expanded="true" visible="false" labelid="{c99233c3-40ae-44ac-a816-421dbdc04902}">
+          <labels>
+            <label description="Analysis &amp; Rating" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showbar="false" columns="1" id="{a98e1212-88f0-5432-3c35-026acc29a8e1}" name="StageStep2_section1" labelid="{ff6fe682-2b06-4b1b-a4cf-fdbc95b3a442}">
+                  <labels>
+                    <label description="Analysis &amp; Rating" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{40ca66cf-363b-4c2e-83f5-9d85b8942f4b}" showlabel="true" visible="true" labelid="{9ca628ce-70f3-47ab-9827-43364b58bbdd}">
+                        <labels>
+                          <label description="Working paper complete" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:ace95a1b-442c-46f7-b605-9aada406e4db" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_workingpapercomplete" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{afa42727-1dd5-43ff-8bbc-73c2f442e5a5}" showlabel="true" visible="true" labelid="{a71d7357-93ed-4310-894a-de8766509948}">
+                        <labels>
+                          <label description="Metrics computed" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:30543fc6-6633-4ebc-98fb-2ade4c30a6bb" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_metricscomputed" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{16019e27-d166-4c7c-a29c-3545dc9a9138}" showlabel="true" visible="true" labelid="{780d484c-cb1b-49cc-83f5-a85353815cac}">
+                        <labels>
+                          <label description="Non-financial risks logged" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:380b38f8-e305-464d-9946-c5f47580bf78" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_nonfinancialriskslogged" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{37953eca-22cb-43e6-9784-93278d008961}" showlabel="true" visible="true" labelid="{1428528f-da7a-40b1-886b-91d2b88ee70d}">
+                        <labels>
+                          <label description="AI preliminary rating" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:ae405eb0-2c3c-4fae-be73-08d9d4069183" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_preliminaryrating" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab verticallayout="true" id="{53bf5e4b-05e6-49ad-b3ba-1ae75d25ff74}" name="StageStep2" locklevel="0" expanded="true" visible="false" labelid="{482347d4-329b-48ec-ba0f-f6a27a10477d}">
+          <labels>
+            <label description="Communication &amp; Decision" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showbar="false" columns="1" id="{e6faf2ed-0ad7-bfac-86dd-b19f481f039f}" name="StageStep2_section1" labelid="{2ccc8a4f-4619-4701-937d-b7ed996c711b}">
+                  <labels>
+                    <label description="Communication &amp; Decision" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{ead7e486-e9c3-4791-beb8-d5cdd308df37}" showlabel="true" visible="true" labelid="{8821661f-ddd2-4e00-a840-965cc6da88db}">
+                        <labels>
+                          <label description="Clarifications closed" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:75ecc58f-f5bb-4eab-9bfd-e3e582499246" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_clarificationsclosed" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{3cebc9b7-62b0-4db7-8871-7cf122eab6f9}" showlabel="true" visible="true" labelid="{f829f012-e073-468c-9436-c75bc0a083aa}">
+                        <labels>
+                          <label description="Final rating (reviewer)" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:160ce64a-e8ae-4218-a56d-e7db3d930647" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_finalrating" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="true" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e8ad9137-2b88-4253-9280-9bea0d87b529}" showlabel="true" visible="true" labelid="{1adfe814-5269-46ba-a9eb-43c0c1f8ef77}">
+                        <labels>
+                          <label description="Final rating confirmed by reviewer" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:ee552d4a-6842-40f6-b011-41fdaaf25cad" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_finalratingconfirmed" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="true" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{519a4fcc-2121-4510-a415-3bcffd9c073d}" showlabel="true" visible="true" labelid="{53465fd6-a8c7-4c00-a408-4f070f2d7478}">
+                        <labels>
+                          <label description="Buyer notified" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:53377161-ba68-46a6-ae67-29fddd284ad9" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_buyernotified" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab verticallayout="true" id="{3d07461b-6aae-4c36-ae5e-69ff97e73004}" name="StageStep2" locklevel="0" expanded="true" visible="false" labelid="{68cf1da4-efbf-41c7-afc0-f7dfab07c28b}">
+          <labels>
+            <label description="Archiving &amp; Publication" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showbar="false" columns="1" id="{23bef100-3d1e-3eba-542b-b00473cf28ff}" name="StageStep2_section1" labelid="{93bdf1fa-9217-4ce4-98c4-b57fe897a7a9}">
+                  <labels>
+                    <label description="Archiving &amp; Publication" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{f18d55e9-41ce-47bc-bb58-0605c794f0c9}" showlabel="true" visible="true" labelid="{45ecec8d-1e1e-45d3-9231-2f3c60042df6}">
+                        <labels>
+                          <label description="Archive complete" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:b7017cd7-628b-4da2-b405-cc79efdfc0ec" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_archivecomplete" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1e3dc217-b8a1-44c2-840e-5baf1a99c8a3}" showlabel="true" visible="true" labelid="{f07fc057-48f1-4a62-9bac-00fd5ccf233c}">
+                        <labels>
+                          <label description="Record locked" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:8cb19ab8-3f03-4ff6-8cbe-0290051288c4" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_recordlocked" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f61a0687-5eb6-4647-9d60-f43668655955}" showlabel="true" visible="true" labelid="{9f5c091a-4e5e-4b82-94e5-67d391bb50b0}">
+                        <labels>
+                          <label description="GSA push-back complete" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:ea049c23-9711-4d04-a930-c40a749d446b" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_gsapushbackcomplete" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{33a68ca8-1805-4904-a33d-962df1cdc4fa}" showlabel="true" visible="true" labelid="{057b8621-137e-4ac8-8d8f-c49ac9ae4c3b}">
+                        <labels>
+                          <label description="One-page summary refreshed" languagecode="1033" />
+                        </labels>
+                        <control id="bpf_mag_financialreviewrequest_new_supplierfinancialreview:4115108a-bf85-4d3d-a3d3-561cc8d866c5" classid="{00000000-0000-0000-0000-000000000000}" datafieldname="mag_summaryrefreshed" relationship="bpf_mag_financialreviewrequest_new_supplierfinancialreview" isrequired="false" disabled="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

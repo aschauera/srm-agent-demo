@@ -7,59 +7,70 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "Direction",
       "type": "choice",
       "choice": "direction",
+      "displayName": "Direction",
       "alternateKey": false
     },
     {
       "name": "Channel",
       "type": "choice",
       "choice": "channel",
+      "displayName": "Channel",
       "alternateKey": false
     },
     {
       "name": "Subject",
       "type": "string",
+      "displayName": "Subject",
       "alternateKey": false
     },
     {
       "name": "Body",
       "type": "text",
+      "displayName": "Body",
       "alternateKey": false
     },
     {
       "name": "CallTranscript",
       "type": "text",
+      "displayName": "Call Transcript",
       "alternateKey": false
     },
     {
       "name": "AISummary",
       "type": "text",
+      "displayName": "AI Summary",
       "alternateKey": false
     },
     {
       "name": "Language",
       "type": "choice",
       "choice": "language",
+      "displayName": "Language",
       "alternateKey": false
     },
     {
       "name": "TranslatedText",
       "type": "text",
+      "displayName": "Translated Text",
       "alternateKey": false
     },
     {
       "name": "OccurredOn",
       "type": "datetime",
+      "displayName": "Occurred On",
       "alternateKey": false
     },
     {
       "name": "ActorName",
       "type": "string",
+      "displayName": "Actor Name",
       "alternateKey": false
     }
   ],
@@ -67,12 +78,14 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": true
+      "required": true,
+      "displayName": "Review Request"
     },
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": false
+      "required": false,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

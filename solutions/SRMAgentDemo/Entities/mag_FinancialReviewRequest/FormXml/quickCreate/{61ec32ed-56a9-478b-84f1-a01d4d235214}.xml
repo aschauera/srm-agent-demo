@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{61ec32ed-56a9-478b-84f1-a01d4d235214}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>0</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab id="bb4b8d02-0c4a-495f-abe7-7ca83dfcaef6" name="tab_0" expanded="true" visible="true">
+          <labels>
+            <label description="Request" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section id="2f4fbda1-337a-4d50-95ab-d53d2f01ef49" name="section_0_0" showlabel="true" visible="true" columns="1">
+                  <labels>
+                    <label description="New Request" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="35cbaeaf-c337-4e20-9e5b-f77d335ed87d" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Name" languagecode="1033" />
+                        </labels>
+                        <control id="65f6acb7-833c-4c32-ac57-e57e216fcde0" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_name" disabled="false" isrequired="true" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="7647adfb-7000-4180-a96f-f7913f6ba61e" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Supplier" languagecode="1033" />
+                        </labels>
+                        <control id="f2a4210e-3dd9-4536-90ef-c53a2f49f026" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="mag_supplierid" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="d4c7fb73-5d7d-427e-9cde-0cf1a131700e" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="DUNS Number" languagecode="1033" />
+                        </labels>
+                        <control id="7a9330b2-399e-436f-9079-bf32b364b3e0" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_dunsnumber" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="41b716bd-0029-4480-b021-3d9d10e914c7" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="No DUNS / DUNS Applying" languagecode="1033" />
+                        </labels>
+                        <control id="560d24e0-05e4-49ec-922f-20c2e9430214" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="mag_noduns" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="bc861c5c-b514-44fd-b326-9108253d13dd" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Buyer Name" languagecode="1033" />
+                        </labels>
+                        <control id="fd9d6e39-3475-40f1-8c14-4b5a35d62974" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_buyername" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="605826e2-9b0a-479d-b78a-0ef2dad62978" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Buyer Email" languagecode="1033" />
+                        </labels>
+                        <control id="c621001a-a195-4ce5-a97e-fa03e7fdbf93" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_buyeremail" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="a2e8c5c1-1aab-4d40-bfac-7d092499edb4" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Division" languagecode="1033" />
+                        </labels>
+                        <control id="2e026186-1902-4291-a0b6-482042bdfae1" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_division" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+      <DisplayConditions Order="0" FallbackForm="true">
+        <Everyone />
+      </DisplayConditions>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Financial Review Request Quick Create" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Buyer submission form (replaces the SharePoint New Item form): supplier, DUNS and buyer details." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

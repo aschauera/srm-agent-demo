@@ -7,49 +7,58 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "Metric",
       "type": "string",
+      "displayName": "Metric",
       "alternateKey": false
     },
     {
       "name": "Operator",
       "type": "choice",
       "choice": "operator",
+      "displayName": "Operator",
       "alternateKey": false
     },
     {
       "name": "Threshold",
       "type": "decimal",
+      "displayName": "Threshold",
       "alternateKey": false
     },
     {
       "name": "Points",
       "type": "integer",
+      "displayName": "Points",
       "alternateKey": false
     },
     {
       "name": "Dimension",
       "type": "choice",
       "choice": "dimension",
+      "displayName": "Dimension",
       "alternateKey": false
     },
     {
       "name": "Signal",
       "type": "text",
+      "displayName": "Signal",
       "alternateKey": false
     },
     {
       "name": "ApprovalStatus",
       "type": "choice",
       "choice": "approval_status",
+      "displayName": "Approval Status",
       "alternateKey": false
     },
     {
       "name": "DemoOnly",
       "type": "boolean",
+      "displayName": "Demo Only",
       "alternateKey": false
     }
   ],

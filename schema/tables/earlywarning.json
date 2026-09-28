@@ -7,69 +7,82 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "WarningRef",
       "type": "string",
+      "displayName": "Warning Ref",
       "alternateKey": false
     },
     {
       "name": "Description",
       "type": "text",
+      "displayName": "Description",
       "alternateKey": false
     },
     {
       "name": "RumourSource",
       "type": "string",
+      "displayName": "Rumour Source",
       "alternateKey": false
     },
     {
       "name": "PotentialImpact",
       "type": "text",
+      "displayName": "Potential Impact",
       "alternateKey": false
     },
     {
       "name": "AffectedVolume",
       "type": "money",
+      "displayName": "Affected Volume",
       "alternateKey": false
     },
     {
       "name": "RiskTags",
       "type": "text",
+      "displayName": "Risk Tags",
       "alternateKey": false
     },
     {
       "name": "Materiality",
       "type": "choice",
       "choice": "materiality",
+      "displayName": "Materiality",
       "alternateKey": false
     },
     {
       "name": "PromptBehavior",
       "type": "choice",
       "choice": "prompt_behavior",
+      "displayName": "Prompt Behavior",
       "alternateKey": false
     },
     {
       "name": "ResolutionStatus",
       "type": "choice",
       "choice": "warning_status",
+      "displayName": "Resolution Status",
       "alternateKey": false
     },
     {
       "name": "Reminder24HourSent",
       "type": "boolean",
+      "displayName": "Reminder 24 Hour Sent",
       "alternateKey": false
     },
     {
       "name": "SubmittedOn",
       "type": "datetime",
+      "displayName": "Submitted On",
       "alternateKey": false
     },
     {
       "name": "ReviewRequestLink",
       "type": "string",
+      "displayName": "Review Request Link",
       "alternateKey": false
     }
   ],
@@ -77,12 +90,14 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     },
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": false
+      "required": false,
+      "displayName": "Review Request"
     }
   ],
   "primaryNameAttribute": "mag_Name",

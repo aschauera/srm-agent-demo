@@ -7,103 +7,123 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "SupplierCode",
       "type": "string",
+      "displayName": "Supplier Code",
       "alternateKey": false
     },
     {
       "name": "LegalName",
       "type": "string",
+      "displayName": "Legal Name",
       "alternateKey": false
     },
     {
       "name": "DUNS",
       "type": "string",
       "maxLength": 9,
+      "displayName": "DUNS",
       "alternateKey": false
     },
     {
       "name": "HasDUNS",
       "type": "boolean",
+      "displayName": "Has DUNS",
       "alternateKey": false
     },
     {
       "name": "Street",
       "type": "string",
+      "displayName": "Street",
       "alternateKey": false
     },
     {
       "name": "City",
       "type": "string",
+      "displayName": "City",
       "alternateKey": false
     },
     {
       "name": "Country",
       "type": "string",
+      "displayName": "Country",
       "alternateKey": false
     },
     {
       "name": "Region",
       "type": "string",
+      "displayName": "Region",
       "alternateKey": false
     },
     {
       "name": "Website",
       "type": "string",
+      "displayName": "Website",
       "alternateKey": false
     },
     {
       "name": "BusinessCategory",
       "type": "string",
+      "displayName": "Business Category",
       "alternateKey": false
     },
     {
       "name": "ManufacturingZone",
       "type": "string",
+      "displayName": "Manufacturing Zone",
       "alternateKey": false
     },
     {
       "name": "MagnaDivision",
       "type": "string",
+      "displayName": "Magna Division",
       "alternateKey": false
     },
     {
       "name": "AnnualSpend",
       "type": "money",
+      "displayName": "Annual Spend",
       "alternateKey": false
     },
     {
       "name": "HasActiveSpend",
       "type": "boolean",
+      "displayName": "Has Active Spend",
       "alternateKey": false
     },
     {
       "name": "CurrentMagnaRating",
       "type": "choice",
       "choice": "rating",
+      "displayName": "Current Magna Rating",
       "alternateKey": false
     },
     {
       "name": "CurrentCofaceScore",
       "type": "integer",
+      "displayName": "Current Coface Score",
       "alternateKey": false
     },
     {
       "name": "ContactName",
       "type": "string",
+      "displayName": "Contact Name",
       "alternateKey": false
     },
     {
       "name": "ContactEmail",
       "type": "string",
+      "displayName": "Contact Email",
       "alternateKey": false
     },
     {
       "name": "FactoryLocation",
       "type": "string",
+      "displayName": "Factory Location",
       "alternateKey": false
     }
   ],

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{6067282b-3d0b-4446-bb1b-db3d8d2ad797}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
+        <row name="result" id="mag_financialreviewrequestid">
+          <cell name="mag_name" width="100" />
+          <cell name="mag_supplierid" width="100" />
+          <cell name="mag_gsarating" width="100" />
+          <cell name="mag_gsaratingdate" width="100" />
+          <cell name="mag_gsaratingexpiry" width="100" />
+          <cell name="mag_reviewername" width="100" />
+          <cell name="mag_buyernotified" width="100" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="mag_financialreviewrequest">
+          <attribute name="mag_name" />
+          <attribute name="mag_supplierid" />
+          <attribute name="mag_gsarating" />
+          <attribute name="mag_gsaratingdate" />
+          <attribute name="mag_gsaratingexpiry" />
+          <attribute name="mag_reviewername" />
+          <attribute name="mag_buyernotified" />
+          <order attribute="mag_gsaratingdate" descending="true" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+            <condition attribute="mag_reviewpath" operator="eq" value="100000000" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Auto-Closed (GSA Reuse)" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Requests closed automatically by reusing a valid active GSA rating (Shortcut A, source slide 2)." languagecode="1033" />
+    </Descriptions>
+  </savedquery>
+</savedqueries>

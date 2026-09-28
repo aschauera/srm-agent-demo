@@ -7,73 +7,87 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "DUNS",
       "type": "string",
       "maxLength": 9,
+      "displayName": "DUNS",
       "alternateKey": false
     },
     {
       "name": "SupplierName",
       "type": "string",
+      "displayName": "Supplier Name",
       "alternateKey": false
     },
     {
       "name": "Country",
       "type": "string",
+      "displayName": "Country",
       "alternateKey": false
     },
     {
       "name": "Score",
       "type": "integer",
+      "displayName": "Score",
       "alternateKey": false
     },
     {
       "name": "RiskTier",
       "type": "choice",
       "choice": "coface_tier",
+      "displayName": "Risk Tier",
       "alternateKey": false
     },
     {
       "name": "PaymentTrackRecord",
       "type": "text",
+      "displayName": "Payment Track Record",
       "alternateKey": false
     },
     {
       "name": "NegativeAlerts",
       "type": "text",
+      "displayName": "Negative Alerts",
       "alternateKey": false
     },
     {
       "name": "RecommendedCreditLimit",
       "type": "money",
+      "displayName": "Recommended Credit Limit",
       "alternateKey": false
     },
     {
       "name": "AssessmentDate",
       "type": "datetime",
+      "displayName": "Assessment Date",
       "alternateKey": false
     },
     {
       "name": "FinancialDataThrough",
       "type": "datetime",
+      "displayName": "Financial Data Through",
       "alternateKey": false
     },
     {
       "name": "ReportLink",
       "type": "string",
+      "displayName": "Report Link",
       "alternateKey": false
     },
     {
       "name": "MatchConfidence",
       "type": "decimal",
+      "displayName": "Match Confidence",
       "alternateKey": false
     },
     {
       "name": "SyntheticData",
       "type": "boolean",
+      "displayName": "Synthetic Data",
       "alternateKey": false
     }
   ],
@@ -81,7 +95,8 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": false
+      "required": false,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

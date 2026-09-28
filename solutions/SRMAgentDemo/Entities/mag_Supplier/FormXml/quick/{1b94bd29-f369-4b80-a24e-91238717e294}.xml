@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{1b94bd29-f369-4b80-a24e-91238717e294}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>0</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab id="6c569b50-4339-48c9-a044-36aa4f36d23c" name="tab_0" expanded="true" visible="true">
+          <labels>
+            <label description="Profile" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section id="78236fdb-e71e-46ea-ba02-43b8ee083a4a" name="section_0_0" showlabel="true" visible="true" columns="1">
+                  <labels>
+                    <label description="Identity" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="e3b7751c-67ef-413b-b232-0e2c6e05ef96" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Legal Name" languagecode="1033" />
+                        </labels>
+                        <control id="51a0147a-1ab1-4e03-bc5e-9075a9a2298b" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_legalname" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="d9b581da-ff4d-40e6-9dd4-6ff8d537ab70" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="DUNS" languagecode="1033" />
+                        </labels>
+                        <control id="1b812178-03d6-4a4b-8789-3c3c023280c9" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_duns" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="6d2848b6-7b51-4286-9daa-03f5dc64c493" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Website" languagecode="1033" />
+                        </labels>
+                        <control id="e67b91bd-7cea-486a-a5f9-bd1f9940151e" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_website" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="1a53d3e3-a9ea-43d2-b0d9-d2947e08d11d" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Business Category" languagecode="1033" />
+                        </labels>
+                        <control id="ec6df4a5-ffed-43db-b8db-3127079416b6" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_businesscategory" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+                <section id="962807bd-d300-44bf-b7e8-1597c77663d4" name="section_0_1" showlabel="true" visible="true" columns="1">
+                  <labels>
+                    <label description="Location" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="ecbcad67-52c4-4039-b553-3d23fc3508dc" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Street" languagecode="1033" />
+                        </labels>
+                        <control id="28d0b44c-c057-421c-9310-1ca12832e05e" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_street" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="76a3be66-266e-4ead-b3c4-ff7a10d6c794" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="City" languagecode="1033" />
+                        </labels>
+                        <control id="123bfd26-fab6-496d-822b-d2b0eecdc2ad" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_city" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="4d1b49a5-7ea2-4266-a3f9-80311cad51c6" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Country" languagecode="1033" />
+                        </labels>
+                        <control id="7e7a8ae0-e371-4366-82bd-1b3d25446af8" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_country" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="5509d4d2-9d6c-4824-8bb5-fbaf607c2d74" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Manufacturing Zone" languagecode="1033" />
+                        </labels>
+                        <control id="ba19004c-6c91-4e20-a211-59bb7d47698f" classid="{4273EDBD-AC1D-40D3-9FB2-095C621B552D}" datafieldname="mag_manufacturingzone" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+      <DisplayConditions Order="0" FallbackForm="true">
+        <Everyone />
+      </DisplayConditions>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Supplier D&amp;B Profile" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Read-only D&amp;B-sourced identity fields shown on the review request for the buyer to confirm." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

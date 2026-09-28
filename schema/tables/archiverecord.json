@@ -7,58 +7,69 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "FolderIdentifier",
       "type": "string",
+      "displayName": "Folder Identifier",
       "alternateKey": false
     },
     {
       "name": "Subfolder",
       "type": "choice",
       "choice": "archive_subfolder",
+      "displayName": "Subfolder",
       "alternateKey": false
     },
     {
       "name": "ItemType",
       "type": "choice",
       "choice": "archive_item_type",
+      "displayName": "Item Type",
       "alternateKey": false
     },
     {
       "name": "ItemName",
       "type": "string",
+      "displayName": "Item Name",
       "alternateKey": false
     },
     {
       "name": "ArchiveUrl",
       "type": "string",
+      "displayName": "Archive URL",
       "alternateKey": false
     },
     {
       "name": "Locked",
       "type": "boolean",
+      "displayName": "Locked",
       "alternateKey": false
     },
     {
       "name": "Version",
       "type": "integer",
+      "displayName": "Version",
       "alternateKey": false
     },
     {
       "name": "SearchableMetadata",
       "type": "text",
+      "displayName": "Searchable Metadata",
       "alternateKey": false
     },
     {
       "name": "SourceSystem",
       "type": "string",
+      "displayName": "Source System",
       "alternateKey": false
     },
     {
       "name": "UploadedOn",
       "type": "datetime",
+      "displayName": "Uploaded On",
       "alternateKey": false
     }
   ],
@@ -66,12 +77,14 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     },
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": false
+      "required": false,
+      "displayName": "Review Request"
     }
   ],
   "primaryNameAttribute": "mag_Name",

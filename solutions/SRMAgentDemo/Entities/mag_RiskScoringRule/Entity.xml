@@ -201,6 +201,7 @@
           <IsFilterable>0</IsFilterable>
           <IsRetrievable>0</IsRetrievable>
           <IsLocalizable>0</IsLocalizable>
+          <AppDefaultValue>-1</AppDefaultValue>
           <optionset Name="new_mag_riskscoringrule_mag_approvalstatus">
             <OptionSetType>picklist</OptionSetType>
             <IntroducedVersion>1.0</IntroducedVersion>
@@ -222,7 +223,7 @@
             </options>
           </optionset>
           <displaynames>
-            <displayname description="ApprovalStatus" languagecode="1033" />
+            <displayname description="Approval Status" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_DemoKey">
@@ -259,7 +260,7 @@
           <MaxLength>200</MaxLength>
           <Length>400</Length>
           <displaynames>
-            <displayname description="DemoKey" languagecode="1033" />
+            <displayname description="Demo Key" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_DemoOnly">
@@ -292,6 +293,7 @@
           <IsFilterable>0</IsFilterable>
           <IsRetrievable>0</IsRetrievable>
           <IsLocalizable>0</IsLocalizable>
+          <AppDefaultValue>0</AppDefaultValue>
           <optionset Name="new_mag_riskscoringrule_mag_demoonly">
             <OptionSetType>bit</OptionSetType>
             <IntroducedVersion>1.0</IntroducedVersion>
@@ -313,7 +315,7 @@
             </options>
           </optionset>
           <displaynames>
-            <displayname description="DemoOnly" languagecode="1033" />
+            <displayname description="Demo Only" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_Dimension">

@@ -7,48 +7,57 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "DUNS",
       "type": "string",
       "maxLength": 9,
+      "displayName": "DUNS",
       "alternateKey": false
     },
     {
       "name": "Rating",
       "type": "choice",
       "choice": "rating",
+      "displayName": "Rating",
       "alternateKey": false
     },
     {
       "name": "Remarks",
       "type": "text",
+      "displayName": "Remarks",
       "alternateKey": false
     },
     {
       "name": "RatingDate",
       "type": "datetime",
+      "displayName": "Rating Date",
       "alternateKey": false
     },
     {
       "name": "ExpiryDate",
       "type": "datetime",
+      "displayName": "Expiry Date",
       "alternateKey": false
     },
     {
       "name": "MandatoryRereview",
       "type": "boolean",
+      "displayName": "Mandatory Re-Review",
       "alternateKey": false
     },
     {
       "name": "ReviewerName",
       "type": "string",
+      "displayName": "Reviewer Name",
       "alternateKey": false
     },
     {
       "name": "SyntheticData",
       "type": "boolean",
+      "displayName": "Synthetic Data",
       "alternateKey": false
     }
   ],
@@ -56,7 +65,8 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": false
+      "required": false,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

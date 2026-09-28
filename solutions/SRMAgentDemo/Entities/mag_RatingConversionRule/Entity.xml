@@ -201,6 +201,7 @@
           <IsFilterable>0</IsFilterable>
           <IsRetrievable>0</IsRetrievable>
           <IsLocalizable>0</IsLocalizable>
+          <AppDefaultValue>-1</AppDefaultValue>
           <optionset Name="new_mag_ratingconversionrule_mag_approvalstatus">
             <OptionSetType>picklist</OptionSetType>
             <IntroducedVersion>1.0</IntroducedVersion>
@@ -222,7 +223,7 @@
             </options>
           </optionset>
           <displaynames>
-            <displayname description="ApprovalStatus" languagecode="1033" />
+            <displayname description="Approval Status" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_CreditLimitGuidance">
@@ -258,7 +259,7 @@
           <Format>text</Format>
           <MaxLength>4000</MaxLength>
           <displaynames>
-            <displayname description="CreditLimitGuidance" languagecode="1033" />
+            <displayname description="Credit Limit Guidance" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_DemoKey">
@@ -295,7 +296,7 @@
           <MaxLength>200</MaxLength>
           <Length>400</Length>
           <displaynames>
-            <displayname description="DemoKey" languagecode="1033" />
+            <displayname description="Demo Key" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_DemoOnly">
@@ -328,6 +329,7 @@
           <IsFilterable>0</IsFilterable>
           <IsRetrievable>0</IsRetrievable>
           <IsLocalizable>0</IsLocalizable>
+          <AppDefaultValue>0</AppDefaultValue>
           <optionset Name="new_mag_ratingconversionrule_mag_demoonly">
             <OptionSetType>bit</OptionSetType>
             <IntroducedVersion>1.0</IntroducedVersion>
@@ -349,7 +351,7 @@
             </options>
           </optionset>
           <displaynames>
-            <displayname description="DemoOnly" languagecode="1033" />
+            <displayname description="Demo Only" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_EffectiveFrom">
@@ -386,7 +388,7 @@
           <CanChangeDateTimeBehavior>1</CanChangeDateTimeBehavior>
           <Behavior>1</Behavior>
           <displaynames>
-            <displayname description="EffectiveFrom" languagecode="1033" />
+            <displayname description="Effective From" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_EffectiveTo">
@@ -423,7 +425,7 @@
           <CanChangeDateTimeBehavior>1</CanChangeDateTimeBehavior>
           <Behavior>1</Behavior>
           <displaynames>
-            <displayname description="EffectiveTo" languagecode="1033" />
+            <displayname description="Effective To" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_MagnaRating">
@@ -456,6 +458,7 @@
           <IsFilterable>0</IsFilterable>
           <IsRetrievable>0</IsRetrievable>
           <IsLocalizable>0</IsLocalizable>
+          <AppDefaultValue>-1</AppDefaultValue>
           <optionset Name="new_mag_ratingconversionrule_mag_magnarating">
             <OptionSetType>picklist</OptionSetType>
             <IntroducedVersion>1.0</IntroducedVersion>
@@ -487,7 +490,7 @@
             </options>
           </optionset>
           <displaynames>
-            <displayname description="MagnaRating" languagecode="1033" />
+            <displayname description="Magna Rating" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_MaximumScore">
@@ -524,7 +527,7 @@
           <MinValue>-2147483648</MinValue>
           <MaxValue>2147483647</MaxValue>
           <displaynames>
-            <displayname description="MaximumScore" languagecode="1033" />
+            <displayname description="Maximum Score" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_MinimumScore">
@@ -561,7 +564,7 @@
           <MinValue>-2147483648</MinValue>
           <MaxValue>2147483647</MaxValue>
           <displaynames>
-            <displayname description="MinimumScore" languagecode="1033" />
+            <displayname description="Minimum Score" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="mag_Name">
@@ -675,7 +678,7 @@
           <MaxLength>200</MaxLength>
           <Length>400</Length>
           <displaynames>
-            <displayname description="RuleName" languagecode="1033" />
+            <displayname description="Rule Name" languagecode="1033" />
           </displaynames>
         </attribute>
         <attribute PhysicalName="ModifiedBy">

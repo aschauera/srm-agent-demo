@@ -38,7 +38,7 @@
                     <row>
                       <cell id="{b17cf5c1-3afb-468b-85e2-fe22c3811209}">
                         <labels>
-                          <label description="DemoKey" languagecode="1033" />
+                          <label description="Demo Key" languagecode="1033" />
                         </labels>
                         <control id="mag_demokey" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_demokey" />
                       </cell>
@@ -94,7 +94,7 @@
                     <row>
                       <cell id="{2e032166-fa6b-4c84-9f11-630a9fd3a52f}">
                         <labels>
-                          <label description="ApprovalStatus" languagecode="1033" />
+                          <label description="Approval Status" languagecode="1033" />
                         </labels>
                         <control id="mag_approvalstatus" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="mag_approvalstatus" />
                       </cell>
@@ -102,7 +102,7 @@
                     <row>
                       <cell id="{84d99fca-c8d2-4989-8a26-e4d80e11be8b}">
                         <labels>
-                          <label description="DemoOnly" languagecode="1033" />
+                          <label description="Demo Only" languagecode="1033" />
                         </labels>
                         <control id="mag_demoonly" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="mag_demoonly" />
                       </cell>

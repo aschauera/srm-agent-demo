@@ -7,59 +7,70 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "DocumentType",
       "type": "choice",
       "choice": "document_type",
+      "displayName": "Document Type",
       "alternateKey": false
     },
     {
       "name": "FiscalYear",
       "type": "integer",
+      "displayName": "Fiscal Year",
       "alternateKey": false
     },
     {
       "name": "Period",
       "type": "string",
+      "displayName": "Period",
       "alternateKey": false
     },
     {
       "name": "OCRStatus",
       "type": "choice",
       "choice": "ocr_status",
+      "displayName": "OCR Status",
       "alternateKey": false
     },
     {
       "name": "File",
       "type": "file",
+      "displayName": "File",
       "alternateKey": false
     },
     {
       "name": "FileName",
       "type": "string",
+      "displayName": "File Name",
       "alternateKey": false
     },
     {
       "name": "ArchiveSubfolder",
       "type": "choice",
       "choice": "archive_subfolder",
+      "displayName": "Archive Subfolder",
       "alternateKey": false
     },
     {
       "name": "Duplicate",
       "type": "boolean",
+      "displayName": "Duplicate",
       "alternateKey": false
     },
     {
       "name": "MetadataTags",
       "type": "text",
+      "displayName": "Metadata Tags",
       "alternateKey": false
     },
     {
       "name": "SourceSystem",
       "type": "string",
+      "displayName": "Source System",
       "alternateKey": false
     }
   ],
@@ -67,12 +78,14 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": true
+      "required": true,
+      "displayName": "Review Request"
     },
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

@@ -7,111 +7,133 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "FiscalYear",
       "type": "integer",
+      "displayName": "Fiscal Year",
       "alternateKey": false
     },
     {
       "name": "Period",
       "type": "string",
+      "displayName": "Period",
       "alternateKey": false
     },
     {
       "name": "Currency",
       "type": "string",
+      "displayName": "Currency",
       "alternateKey": false
     },
     {
       "name": "Revenue",
       "type": "money",
+      "displayName": "Revenue",
       "alternateKey": false
     },
     {
       "name": "CostOfGoodsSold",
       "type": "money",
+      "displayName": "Cost of Goods Sold",
       "alternateKey": false
     },
     {
       "name": "GrossProfit",
       "type": "money",
+      "displayName": "Gross Profit",
       "alternateKey": false
     },
     {
       "name": "NetIncome",
       "type": "money",
+      "displayName": "Net Income",
       "alternateKey": false
     },
     {
       "name": "OperatingCashFlow",
       "type": "money",
+      "displayName": "Operating Cash Flow",
       "alternateKey": false
     },
     {
       "name": "CurrentAssets",
       "type": "money",
+      "displayName": "Current Assets",
       "alternateKey": false
     },
     {
       "name": "CurrentLiabilities",
       "type": "money",
+      "displayName": "Current Liabilities",
       "alternateKey": false
     },
     {
       "name": "TotalAssets",
       "type": "money",
+      "displayName": "Total Assets",
       "alternateKey": false
     },
     {
       "name": "TotalDebt",
       "type": "money",
+      "displayName": "Total Debt",
       "alternateKey": false
     },
     {
       "name": "AccountsReceivable",
       "type": "money",
+      "displayName": "Accounts Receivable",
       "alternateKey": false
     },
     {
       "name": "Inventory",
       "type": "money",
+      "displayName": "Inventory",
       "alternateKey": false
     },
     {
       "name": "LeverageRatio",
       "type": "decimal",
+      "displayName": "Leverage Ratio",
       "alternateKey": false
     },
     {
       "name": "LiquidityRatio",
       "type": "decimal",
+      "displayName": "Liquidity Ratio",
       "alternateKey": false
     },
     {
       "name": "GrossMargin",
       "type": "decimal",
+      "displayName": "Gross Margin",
       "alternateKey": false
     },
     {
       "name": "AssetTurnover",
       "type": "decimal",
+      "displayName": "Asset Turnover",
       "alternateKey": false
     },
     {
       "name": "YearOverYearDelta",
       "type": "decimal",
+      "displayName": "Year Over Year Delta",
       "alternateKey": false
     },
     {
       "name": "AnomalyFlags",
       "type": "text",
+      "displayName": "Anomaly Flags",
       "alternateKey": false
     },
     {
       "name": "ExtractionConfidence",
       "type": "decimal",
+      "displayName": "Extraction Confidence",
       "alternateKey": false
     }
   ],
@@ -119,17 +141,20 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": true
+      "required": true,
+      "displayName": "Review Request"
     },
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     },
     {
       "name": "SourceDocument",
       "target": "mag_supplierdocument",
-      "required": false
+      "required": false,
+      "displayName": "Source Document"
     }
   ],
   "primaryNameAttribute": "mag_Name",

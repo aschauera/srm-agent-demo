@@ -7,48 +7,57 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "Category",
       "type": "choice",
       "choice": "adverse_category",
+      "displayName": "Category",
       "alternateKey": false
     },
     {
       "name": "Severity",
       "type": "choice",
       "choice": "severity",
+      "displayName": "Severity",
       "alternateKey": false
     },
     {
       "name": "Title",
       "type": "string",
+      "displayName": "Title",
       "alternateKey": false
     },
     {
       "name": "Description",
       "type": "text",
+      "displayName": "Description",
       "alternateKey": false
     },
     {
       "name": "ReleaseDate",
       "type": "datetime",
+      "displayName": "Release Date",
       "alternateKey": false
     },
     {
       "name": "SourceUrl",
       "type": "string",
+      "displayName": "Source URL",
       "alternateKey": false
     },
     {
       "name": "Resolved",
       "type": "boolean",
+      "displayName": "Resolved",
       "alternateKey": false
     },
     {
       "name": "SyntheticData",
       "type": "boolean",
+      "displayName": "Synthetic Data",
       "alternateKey": false
     }
   ],
@@ -56,7 +65,8 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

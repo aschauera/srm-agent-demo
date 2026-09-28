@@ -7,82 +7,98 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "DUNS",
       "type": "string",
       "maxLength": 9,
+      "displayName": "DUNS",
       "alternateKey": false
     },
     {
       "name": "LegalName",
       "type": "string",
+      "displayName": "Legal Name",
       "alternateKey": false
     },
     {
       "name": "Street",
       "type": "string",
+      "displayName": "Street",
       "alternateKey": false
     },
     {
       "name": "City",
       "type": "string",
+      "displayName": "City",
       "alternateKey": false
     },
     {
       "name": "Country",
       "type": "string",
+      "displayName": "Country",
       "alternateKey": false
     },
     {
       "name": "Region",
       "type": "string",
+      "displayName": "Region",
       "alternateKey": false
     },
     {
       "name": "Website",
       "type": "string",
+      "displayName": "Website",
       "alternateKey": false
     },
     {
       "name": "BusinessCategory",
       "type": "string",
+      "displayName": "Business Category",
       "alternateKey": false
     },
     {
       "name": "ManufacturingZone",
       "type": "string",
+      "displayName": "Manufacturing Zone",
       "alternateKey": false
     },
     {
       "name": "EstablishedYear",
       "type": "integer",
+      "displayName": "Established Year",
       "alternateKey": false
     },
     {
       "name": "ShareholderSummary",
       "type": "text",
+      "displayName": "Shareholder Summary",
       "alternateKey": false
     },
     {
       "name": "ProductLines",
       "type": "text",
+      "displayName": "Product Lines",
       "alternateKey": false
     },
     {
       "name": "SourceUrl",
       "type": "string",
+      "displayName": "Source URL",
       "alternateKey": false
     },
     {
       "name": "ProfileCheckedOn",
       "type": "datetime",
+      "displayName": "Profile Checked On",
       "alternateKey": false
     },
     {
       "name": "SyntheticData",
       "type": "boolean",
+      "displayName": "Synthetic Data",
       "alternateKey": false
     }
   ],
@@ -90,7 +106,8 @@
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

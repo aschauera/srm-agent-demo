@@ -7,54 +7,64 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "RiskType",
       "type": "choice",
       "choice": "risk_type",
+      "displayName": "Risk Type",
       "alternateKey": false
     },
     {
       "name": "Severity",
       "type": "choice",
       "choice": "severity",
+      "displayName": "Severity",
       "alternateKey": false
     },
     {
       "name": "Details",
       "type": "text",
+      "displayName": "Details",
       "alternateKey": false
     },
     {
       "name": "SourceUrl",
       "type": "string",
+      "displayName": "Source URL",
       "alternateKey": false
     },
     {
       "name": "EventDate",
       "type": "datetime",
+      "displayName": "Event Date",
       "alternateKey": false
     },
     {
       "name": "CustomerConcentration",
       "type": "decimal",
+      "displayName": "Customer Concentration",
       "alternateKey": false
     },
     {
       "name": "OwnershipStatus",
       "type": "choice",
       "choice": "ownership_status",
+      "displayName": "Ownership Status",
       "alternateKey": false
     },
     {
       "name": "EstimatedExposure",
       "type": "money",
+      "displayName": "Estimated Exposure",
       "alternateKey": false
     },
     {
       "name": "Verified",
       "type": "boolean",
+      "displayName": "Verified",
       "alternateKey": false
     }
   ],
@@ -62,12 +72,14 @@
     {
       "name": "ReviewRequest",
       "target": "mag_financialreviewrequest",
-      "required": false
+      "required": false,
+      "displayName": "Review Request"
     },
     {
       "name": "Supplier",
       "target": "mag_supplier",
-      "required": true
+      "required": true,
+      "displayName": "Supplier"
     }
   ],
   "primaryNameAttribute": "mag_Name",

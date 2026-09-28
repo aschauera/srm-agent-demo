@@ -7,8 +7,9 @@ unmanaged `SRMAgentDemo` solution in DemoPRE. The live tables use the dedicated 
 Each table has a `mag_DemoKey` alternate key so the sample import can be safely rerun.
 
 The model realizes the core review workflow, its mock external systems, configurable rule tables,
-and the Supplier One-Page Summary. It does not create the BPF, model-driven app, agent actions,
-security roles, or external connections.
+and the Supplier One-Page Summary. The BPF and model-driven app are specified in
+[03-model-driven-app.md](03-model-driven-app.md). Agent actions, security roles, and external
+connections are not created here.
 
 | Requirement ID | Requirement | Source |
 |---|---|---|
@@ -84,6 +85,15 @@ in [relationships.json](../schema/relationships.json).
 - AI/preliminary ratings are stored separately from final ratings. Only the GSA reuse branch has a
   final rating seeded as completed; all other outcomes remain reviewer-confirmable.
 - The One-Page Summary is seeded only for suppliers with active spend.
+- `mag_financialreviewrequest` carries 18 BPF step columns, one for each checklist step in the
+  `Supplier Financial Review` stages. DUNS Number and Reminder Count are the only non-boolean ones.
+  Seed values are consistent with each record's stage and review path.
+- Column display names are derived from schema names (for example `GSARatingDate` becomes
+  "GSA Rating Date"), with overrides in `LABEL_OVERRIDES`.
+  - `python scripts/02-create-tables.py --labels-only` converges the labels and solution
+    membership.
+  - Columns whose metadata the platform is still processing are deferred and listed at the end, so
+    you can rerun later.
 
 ## Seed scenario coverage
 
@@ -118,6 +128,11 @@ workspace, make it importable (for example, by running with the skills `scripts`
 
 ## Deferred follow-up
 
-The model does not yet create the 5-stage BPF or the app forms/views, security roles, flows, actual
-Copilot Studio actions, scheduled adverse-news ingestion, or binary archive documents. Those remain
-separate implementation-plan items.
+The BPF and the Stage 1 app forms and views are now delivered; see
+[03-model-driven-app.md](03-model-driven-app.md). Still deferred as separate implementation-plan
+items:
+
+- security roles and flows;
+- the actual Copilot Studio actions;
+- scheduled adverse-news ingestion;
+- binary archive documents.

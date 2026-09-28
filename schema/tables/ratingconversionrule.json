@@ -7,53 +7,63 @@
     {
       "name": "DemoKey",
       "type": "string",
+      "displayName": "Demo Key",
       "alternateKey": true
     },
     {
       "name": "RuleName",
       "type": "string",
+      "displayName": "Rule Name",
       "alternateKey": false
     },
     {
       "name": "MinimumScore",
       "type": "integer",
+      "displayName": "Minimum Score",
       "alternateKey": false
     },
     {
       "name": "MaximumScore",
       "type": "integer",
+      "displayName": "Maximum Score",
       "alternateKey": false
     },
     {
       "name": "MagnaRating",
       "type": "choice",
       "choice": "rating",
+      "displayName": "Magna Rating",
       "alternateKey": false
     },
     {
       "name": "CreditLimitGuidance",
       "type": "text",
+      "displayName": "Credit Limit Guidance",
       "alternateKey": false
     },
     {
       "name": "ApprovalStatus",
       "type": "choice",
       "choice": "approval_status",
+      "displayName": "Approval Status",
       "alternateKey": false
     },
     {
       "name": "EffectiveFrom",
       "type": "datetime",
+      "displayName": "Effective From",
       "alternateKey": false
     },
     {
       "name": "EffectiveTo",
       "type": "datetime",
+      "displayName": "Effective To",
       "alternateKey": false
     },
     {
       "name": "DemoOnly",
       "type": "boolean",
+      "displayName": "Demo Only",
       "alternateKey": false
     }
   ],

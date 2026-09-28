@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AppModule>
+  <UniqueName>mag_supplierfinancialriskreview</UniqueName>
+  <IntroducedVersion>1.0</IntroducedVersion>
+  <WebResourceId>069f29c4-5bbb-f111-aaad-6045bd031325</WebResourceId>
+  <OptimizedFor></OptimizedFor>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+  <FormFactor>1</FormFactor>
+  <ClientType>4</ClientType>
+  <NavigationType>0</NavigationType>
+  <AppModuleComponents>
+    <AppModuleComponent type="1" schemaName="mag_dnbprofile" />
+    <AppModuleComponent type="1" schemaName="mag_financialreviewrequest" />
+    <AppModuleComponent type="1" schemaName="mag_gsaratingrecord" />
+    <AppModuleComponent type="1" schemaName="mag_supplier" />
+    <AppModuleComponent type="26" id="{c9caa029-b6fb-4d25-86da-011781b9640b}" />
+    <AppModuleComponent type="26" id="{c88190bc-3f49-4e24-811d-09fda1a5dd0b}" />
+    <AppModuleComponent type="26" id="{3085f427-1f18-4bc4-a27e-0cd7c6f9a9d5}" />
+    <AppModuleComponent type="26" id="{91ac1e62-6e4a-4741-8172-2c8ef83dc9f2}" />
+    <AppModuleComponent type="26" id="{624c8375-8839-46b0-b5eb-3f55a5c01020}" />
+    <AppModuleComponent type="26" id="{4f06e1f7-a22a-405b-b7cc-417c75a23df9}" />
+    <AppModuleComponent type="26" id="{7c947833-2a90-49df-b024-518a6897d351}" />
+    <AppModuleComponent type="26" id="{cccfc2c1-3427-4ac8-9ec8-8ab7f69ccbba}" />
+    <AppModuleComponent type="26" id="{5d8734f1-541f-48ba-844e-8c8447cdba57}" />
+    <AppModuleComponent type="26" id="{6067282b-3d0b-4446-bb1b-db3d8d2ad797}" />
+    <AppModuleComponent type="26" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
+    <AppModuleComponent type="26" id="{038bf0d1-a5d2-4bc9-9c77-f02d6719058e}" />
+    <AppModuleComponent type="26" id="{c28c8b64-821b-48b3-90dc-fca17ba29908}" />
+    <AppModuleComponent type="60" id="{d5c0ea34-0dfd-4f3c-997b-1256578f5392}" />
+    <AppModuleComponent type="60" id="{a2c92bca-45bf-46d2-ae8c-1b26a2585b0f}" />
+    <AppModuleComponent type="60" id="{0cb796dd-ca49-4e50-a254-2f86fb2ab0ea}" />
+    <AppModuleComponent type="60" id="{3c66ac00-bd9b-4993-8727-368824e8bfec}" />
+    <AppModuleComponent type="60" id="{1d0128d8-b90f-43db-8f66-4110c8567a71}" />
+    <AppModuleComponent type="60" id="{13008d34-4892-4ab2-aa23-48033fdbedf0}" />
+    <AppModuleComponent type="60" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
+    <AppModuleComponent type="60" id="{578a2aac-f673-4bed-85bb-eb058d094c2f}" />
+    <AppModuleComponent type="62" schemaName="mag_supplierfinancialriskreview" />
+  </AppModuleComponents>
+  <AppModuleRoleMaps>
+    <Role id="{627090ff-40a3-4053-8790-584edc5be201}" />
+    <Role id="{119f245c-3cc8-4b62-b31c-d1a046ced15d}" />
+  </AppModuleRoleMaps>
+  <LocalizedNames>
+    <LocalizedName description="Supplier Financial Risk Review" languagecode="1033" />
+  </LocalizedNames>
+  <Descriptions>
+    <Description description="Supplier Risk Management demo: buyers request supplier financial ratings and reviewers run the five-stage financial review. Step 1 (request and GSA/DUNS pre-check) slice." languagecode="1033" />
+  </Descriptions>
+  <appsettings>
+    <appsetting settingdefinitionid.uniquename="AppChannel">
+      <iscustomizable>1</iscustomizable>
+      <value>1</value>
+    </appsetting>
+    <appsetting settingdefinitionid.uniquename="HeaderAndNavigationRefresh">
+      <iscustomizable>1</iscustomizable>
+      <value>2</value>
+    </appsetting>
+    <appsetting settingdefinitionid.uniquename="NewLookAlwaysOn">
+      <iscustomizable>1</iscustomizable>
+      <value>true</value>
+    </appsetting>
+  </appsettings>
+</AppModule>
