@@ -1,0 +1,101 @@
+{
+  "logicalName": "mag_dnbprofile",
+  "schemaName": "mag_DNBProfile",
+  "displayName": "D&B Profile",
+  "description": "Synthetic D&B/public-registry profile records for supplier prefill.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "DUNS",
+      "type": "string",
+      "maxLength": 9,
+      "alternateKey": false
+    },
+    {
+      "name": "LegalName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Street",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Region",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Website",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "BusinessCategory",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ManufacturingZone",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "EstablishedYear",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "ShareholderSummary",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ProductLines",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceUrl",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ProfileCheckedOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "SyntheticData",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-INT-001",
+    "SRM-OPS-001"
+  ]
+}

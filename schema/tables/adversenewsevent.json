@@ -1,0 +1,66 @@
+{
+  "logicalName": "mag_adversenewsevent",
+  "schemaName": "mag_AdverseNewsEvent",
+  "displayName": "Adverse News Event",
+  "description": "Synthetic, source-attributed adverse-event monitoring results.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "Category",
+      "type": "choice",
+      "choice": "adverse_category",
+      "alternateKey": false
+    },
+    {
+      "name": "Severity",
+      "type": "choice",
+      "choice": "severity",
+      "alternateKey": false
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Description",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ReleaseDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceUrl",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Resolved",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "SyntheticData",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-OPS-001"
+  ]
+}

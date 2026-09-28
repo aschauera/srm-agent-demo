@@ -1,0 +1,364 @@
+{
+  "rating": {
+    "options": [
+      "Green",
+      "Yellow",
+      "Red",
+      "Not rated"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "review_status": {
+    "options": [
+      "Not Started",
+      "In Progress",
+      "Completed"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "review_path": {
+    "options": [
+      "GSA Reuse",
+      "Coface Fast-Track",
+      "Full Review"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "gsa_precheck": {
+    "options": [
+      "Valid active rating",
+      "Rating expired",
+      "No matching supplier",
+      "Skip - no DUNS"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "coface_tier": {
+    "options": [
+      "Low",
+      "Medium",
+      "High",
+      "Unavailable"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "request_type": {
+    "options": [
+      "Financial statements",
+      "Non-financial questionnaire",
+      "Supplemental credentials"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "request_status": {
+    "options": [
+      "Draft",
+      "Sent",
+      "Reminder sent",
+      "Escalated",
+      "Received",
+      "Closed"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004,
+      100000005
+    ]
+  },
+  "document_type": {
+    "options": [
+      "Balance sheet",
+      "Income statement",
+      "Cash flow statement",
+      "Audit report",
+      "Business license",
+      "Asset or lease proof",
+      "Shareholder structure",
+      "Other"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004,
+      100000005,
+      100000006,
+      100000007
+    ]
+  },
+  "ocr_status": {
+    "options": [
+      "Not started",
+      "Queued",
+      "Complete",
+      "Needs review",
+      "Failed"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004
+    ]
+  },
+  "archive_subfolder": {
+    "options": [
+      "Supplier Submitted Financial Documents",
+      "Third-Party Credit Records",
+      "Communication Audit Trail",
+      "Final Review Deliverables"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "risk_type": {
+    "options": [
+      "Litigation",
+      "Arbitration",
+      "Off-balance-sheet guarantee",
+      "Customer concentration",
+      "Owned vs leased assets",
+      "Management turnover",
+      "Regulatory penalty",
+      "Other"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004,
+      100000005,
+      100000006,
+      100000007
+    ]
+  },
+  "severity": {
+    "options": [
+      "Low",
+      "Medium",
+      "High"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "ownership_status": {
+    "options": [
+      "Owned",
+      "Leased",
+      "Mixed",
+      "Unknown"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "direction": {
+    "options": [
+      "Inbound",
+      "Outbound"
+    ],
+    "values": [
+      100000000,
+      100000001
+    ]
+  },
+  "channel": {
+    "options": [
+      "Email",
+      "Phone",
+      "System"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "language": {
+    "options": [
+      "English",
+      "German",
+      "Chinese",
+      "Other"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "materiality": {
+    "options": [
+      "Low",
+      "Medium",
+      "High"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "prompt_behavior": {
+    "options": [
+      "None",
+      "Soft reminder",
+      "Mandatory prompt"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "warning_status": {
+    "options": [
+      "Open",
+      "Under review",
+      "Resolved",
+      "Dismissed"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003
+    ]
+  },
+  "actor_type": {
+    "options": [
+      "Human",
+      "Agent",
+      "System"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002
+    ]
+  },
+  "archive_item_type": {
+    "options": [
+      "Document",
+      "Email",
+      "Working paper",
+      "Risk extract",
+      "Rating",
+      "Call transcript"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004,
+      100000005
+    ]
+  },
+  "adverse_category": {
+    "options": [
+      "Litigation or arbitration",
+      "Guarantee liability",
+      "Regulatory fine",
+      "Production suspension",
+      "Equity freezing",
+      "Debt default",
+      "Other"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004,
+      100000005,
+      100000006
+    ]
+  },
+  "approval_status": {
+    "options": [
+      "Draft - demo only",
+      "Approved"
+    ],
+    "values": [
+      100000000,
+      100000001
+    ]
+  },
+  "operator": {
+    "options": [
+      "Greater than",
+      "Greater than or equal",
+      "Less than",
+      "Less than or equal",
+      "Equals"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004
+    ]
+  },
+  "dimension": {
+    "options": [
+      "Liquidity",
+      "Leverage",
+      "Profitability",
+      "Cash flow",
+      "Non-financial"
+    ],
+    "values": [
+      100000000,
+      100000001,
+      100000002,
+      100000003,
+      100000004
+    ]
+  }
+}

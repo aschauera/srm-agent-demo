@@ -1,0 +1,355 @@
+=== ppt/slides/slide1.xml ===
+Supplier Financial Review Process — AI Efficiency Opportunity Flow
+Draft workload split based on current manual process descriptions; percentages are discussion assumptions
+Key message: Information Collection + Analysis carry the largest estimated manual burden (65%); these are the primary AI automation targets.
+STEP 1
+REQUEST / PRE-CHECK
+10%
+manual workload
+Current manual steps
+Buyer SharePoint request
+Reviewer notification
+Check DUNS / GSA reuse
+AI efficiency levers
+Field auto-completion
+GSA DUNS auto-check
+Auto-close reusable rating
+High automation
+STEP 2
+INFORMATION COLLECTION
+30%
+manual workload
+Current manual steps
+Collect financial statements
+Request non-financial info
+Coface / public risk lookup
+AI efficiency levers
+Coface API / fuzzy match
+Auto email checklist & reminders
+Auto-file supplier replies
+Very high impact
+STEP 3
+ANALYSIS / RATING
+35%
+manual workload
+Current manual steps
+Input data to working paper
+Calculate financial metrics
+Qualitative judgement & rating
+AI efficiency levers
+OCR financial extraction
+Pre-built risk formulas / flags
+Draft rating narrative
+Top priority
+STEP 4
+COMMUNICATION
+15%
+manual workload
+Current manual steps
+Clarify missing data
+Notify Buyer of conclusion
+Update SharePoint / GSA / eRFX
+AI efficiency levers
+Draft supplier follow-ups
+Call transcription / translation
+One-click system sync
+Medium-high
+STEP 5
+ARCHIVING / DASHBOARD
+10%
+manual workload
+Current manual steps
+Create archive folders
+Sort support evidence
+Prepare audit pack / summary
+AI efficiency levers
+Auto eRFX folder structure
+Document classification & metadata
+One-page summary + lock
+High control value
+Shortcut path: valid active GSA rating → auto-completed;  supplier communication, collection and full analysis are bypassed.
+Full review path: no GSA match / expired rating / no DUNS / no valid Coface score → collections + analysis + human decision needed.
+Governance note: AI should prepare, pre-fill and flag; reviewer remains accountable for final financial rating and judgement override.
+Estimated manual workload allocation
+10%
+30%
+35%
+15%
+10%
+=== ppt/slides/slide2.xml ===
+when buyers require a supplier financial rating, they submit a request to our team via SharePoint. The request form contains all the information listed in the attachment
+Once submitted, reviewers will receive an automated email notification
+Revamp the screenshot’s "New Item" submission form with SharePoint native Power Automate & lightweight LLMs.
+AI-Powered Field Auto-Completion 
+After entering the DUNS Number, the AI automatically calls external industrial & Dun & Bradstreet APIs to populate data in one click, including full supplier legal name, registered address, city, country, official website, primary business category and manufacturing zone. Buyers are freed from manual entry of each field one by one.
+2. Cross-GSA DUNS Auto Pre-Check  - Eliminate redundant manual review workload for Financial Risk ReviewersAdd a new section titled GSA Financial Rating Auto-Check Result, where the system auto-populates one of four statuses as follows:
+Valid active rating exists in GSA (Valid rating available for direct reuse
+Rating expired in GSA (Re-audit required)
+No matching supplier record found in GSA (Full new audit needed)
+Skip GSA Check: Supplier has no DUNS number (GSA pre-verification bypassed due to missing DUNS 
+Formal IT & Supplier Risk Control Version (for SharePoint requirement document)Branch 1: Valid GSA Rating Matched via DUNS with No Mandatory Re-review Requirements (Optimal Workload Reduction Route)The AI automatically fetches complete historical data from GSA, including Rating, risk remarks, rating date and expiry date. All data is populated in one click into the Financial Risk Team Information section on the SharePoint form. The Status field is updated to Completed automatically, with auto-filled values for Reviewer, Rating, Remarks and rating date.A new entry is auto-generated in the Tracking File ledger tagged: Completed – Reuse Existing GSA DUNS Rating.The system sends two notification emails automatically:1. To Buyer: Notify that financial review is not required, attach full details of the existing GSA rating, and close the workflow directly.
+2. To Reviewer: Send a filing-only notification; no action needed on this submission, and no document collection email to the supplier shall be sent.All supplier communication, financial statement collection and AI financial analysis steps are fully bypassed with zero manual intervention.
+=== ppt/slides/slide3.xml ===
+when buyers require a supplier financial rating, they submit a request to our team via SharePoint. The request form contains all the information listed in the attachment
+Once submitted, reviewers will receive an automated email notification. 
+Branch 2: Reuse Criteria Not Satisfied (3 Scenarios Trigger Full Review Process) The standard full review workflow will activate if any of the below conditions apply:
+No supplier record retrieved from GSA using the DUNS Number
+A GSA rating exists but has expired
+The rating remains valid yet mandatory re-review rules are triggered
+The supplier does not have a DUNS Number, blocking GSA data lookupExecution Workflow
+The SharePoint form Status remains Not Started, and a to-do notification email is automatically dispatched to the Reviewer
+Fallback Logic for Suppliers Without DUNS Numbers
+Upon selecting the option No DUNS / DUNS applying on the form, the GSA pre-check function will be automatically disabled, and a bypass notification will be displayed on the panel.
+Since the AI cannot retrieve cross-system data from GSA, the submission will directly enter the full manual review workflow.
+3. Coface Application - Eliminate manual Coface logins for Reviewers; third-party credit data embedded in approval emails to reduce single-review labor hours.
+1. How AI enables this integration (Power Automate + Azure OpenAI + Coface API)The entire automation can be realized with Microsoft’s native Power Platform AI tools, without heavy custom development. AI undertakes three core tasks:
+(1) AI automatically pulls Coface Scores using DUNS numbers
+After the Buyer enters the supplier’s DUNS number on the SharePoint form, the workflow triggers a manual review path if the pre-check against the GSA procurement system returns no valid existing financial rating, expired rating or missing DUNS record. to select the correct entity.
+=== ppt/slides/slide4.xml ===
+when buyers require a supplier financial rating, they submit a request to our team via SharePoint. The request form contains all the information listed in the attachment
+Once submitted, reviewers will receive an automated email notification. 
+(2) AI renders Coface credit data into the Reviewer notification email
+AI formats the Coface Score, risk statements and risk alerts into HTML content with color-coded traffic light risk labels, directly embedded in the automated notification email to Reviewers.
+AI generates an AI-powered brief risk interpretation based on the Coface Score automatically (e.g., Coface Score 3/10 indicates high financial vulnerability; full financial document collection is prioritized), removing manual score interpretation work for Reviewers.
+All retrieved Coface credit data is auto-populated into the Financial Risk Team Information section of the SharePoint form for permanent record retention.
+(3) AI orchestrates multi-layer process branching logic
+AI executes three tiers of system judgment to control whether Coface data retrieval is triggered:
+Tier 1 – GSA pre-check: If a valid active financial rating exists in GSA, the request closes automatically; Coface lookup and review emails are skipped entirely.
+Tier 2 – Mandatory manual review trigger: If no valid rating is found in GSA, or the rating has expired, or the supplier holds no DUNS number, AI initiates the Coface API data pull.
+Tier 3 – Combined risk visibility: AI consolidates internal GSA rating history and external Coface credit scores to deliver dual risk references upfront, cutting down manual financial analysis time.
+AI calls the Coface API with the DUNS number as the unique matching key to fetch structured credit data: Coface Score, risk tier, payment track record, negative credit alerts and recommended credit limit.
+AI cleans and standardizes raw Coface data, filtering out redundant information and retaining only key risk indicators for the review team.
+For suppliers without a DUNS number: AI performs fuzzy matching against the Coface database using the combination of full legal supplier name and registered country. If multiple matching records are found, the system displays a shortlist on the SharePoint form for the Reviewer 
+=== ppt/slides/slide5.xml ===
+when buyers require a supplier financial rating, they submit a request to our team via SharePoint. The request form contains all the information listed in the attachment
+Once submitted, reviewers will receive an automated email notification. 
+2. End-to-End Automated Workflow with Coface Integration
+The Buyer submits a financial review request on SharePoint. AI runs an automatic pre-check of the GSA system using the supplier’s DUNS number.
+Path A: Valid existing rating found in GSA
+The request is auto-completed and closed. No Coface lookup or review notification email is generated.
+Path B: Manual review required (no GSA rating / expired rating / no DUNS)
+Step 1: AI connects to the Coface API and retrieves the supplier’s Coface Score and full credit report via DUNS matching.
+Step 2: AI embeds the Coface Score and AI-generated risk summary into the notification email for the Reviewer.
+Step 3: The system sends the email automatically, while writing all Coface data back to the corresponding SharePoint item.
+Step 4: AI auto-generates and sends customized document collection emails to the supplier to request financial statements, with automated reminder cycles for non-response.
+Step 5: After receiving supplier financial documents, AI performs OCR parsing of financial data to calculate Magna’s internal risk rating.
+Step 6: The newly generated internal financial rating is synced back to the GSA procurement system to close the data loop for future Buyer requests.
+3. Compatibility logic for suppliers without a DUNS number
+If no DUNS is available to support precise Coface matching, AI inserts a clear disclaimer in the notification email: No DUNS number provided; full Coface credit score unavailable. Risk assessment will be based solely on self-submitted financial statements and supporting credentials.
+=== ppt/slides/slide6.xml ===
+After the Analyst receives the notification email from SharePoint and obtains the Coface rating, the Analyst is required to contact the Coface Hotline to verify whether the Coface rating is generated based on data within the past 18 months.
+If confirmed, the Analyst shall directly convert the Coface rating into the Magna Financial Rating, send a notification email to the Buyer, upload the rating score to ERFX
+1. AI Automated Coface API Query Instead of Manual Hotline Calls
+The lightweight LLM integrated with Power Automate connects to the Coface open API to auto-check the data age behind each Coface rating, automatically confirming whether the assessment relies on financial data from the last 18 months, eliminating manual phone inquiries to the hotline.
+2. Auto Rating Conversion Engine
+Build an AI mapping rule set to convert valid Coface ratings to standard Magna Financial Ratings in real time without manual calculation by Analysts.
+3. Auto-Generated Buyer Notification Email
+AI populates a standardized email template with supplier name, DUNS number, converted Magna rating and Coface source details, and sends it to the Buyer automatically.
+4. One-Click ERFX Upload & Supporting Attachment Archiving
+Power Automate triggered by AI logic auto-uploads the final rating score to ERFX, archives the API’s official Coface response record and attaches it as supporting documents in both ERFX and the SharePoint form simultaneously.
+5. Full Audit Trail Auto-Recorded
+All AI-driven query logs, rating conversion records and file upload history are stored in the Tracking File ledger for compliance review, cutting Analyst manual operation time significantly.
+Final Step: Power Automate runs the Update Item action to write data back to the original SharePoint form entry, force-set the Status to Completed, and auto-populate Reviewer, Rating, Remarks and Rating Date fields.
+=== ppt/slides/slide7.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+1. AI Automates Generation & Dispatch of Financial Document Request Emails
+Original Pain Points
+Analysts manually copy supplier contact information from SharePoint, edit email templates, and list requested financial & non-financial questionnaires, which causes repetitive typing, missing information requests, and manual follow-up tracking.
+AI Capabilities
+Auto-populate all dynamic fields from the SharePoint request form, including supplier legal name, contact person, relevant Magna Division, and assigned Buyer, eliminating copy-paste work.
+Generate a customized request checklist covering both quantitative and qualitative requirements automatically: 
+Quantitative materials: Audited financial statements for the past 3 fiscal years + latest interim balance sheet, income statement and cash flow statement.
+Non-financial questionnaires embedded in the email: Disclosure of major litigations, arbitrations, off-balance-sheet guarantees, customer concentration breakdown, owned/leased asset status, and core management personnel changes.
+Trigger automatic email delivery with built-in intelligent reminder rules: A gentle follow-up on Day 3, and an escalation reminder copied to the Buyer on Day 7 if no response is received.
+Auto-file all supplier reply attachments to the corresponding SharePoint item once the supplier responds, linked to the central tracking file for audit traceability.
+Add supplementary credential requests for suppliers without a DUNS number as a fallback logic.
+=== ppt/slides/slide8.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+2. AI Parses Supplier Financial Files & Auto-Populates Working Papers for Quantitative Analysis
+Original Pain Points
+Analysts manually type figures from scanned/PDF financial statements into Excel working papers, then calculate financial metrics manually, leading to heavy labor and human data entry errors.
+AI Capabilities
+Multi-modal OCR AI extracts structured financial line items from PDFs, scanned copies and image-based statements, capturing full 3-year+interim balance sheet, P&L and cash flow data, then auto-fills all figures into the standard working paper.
+Pre-configure Magna’s quantitative risk formulas inside AI to automatically compute all core financial indicators: leverage ratio, liquidity metrics, gross margin, asset turnover, year-over-year fluctuation comparisons, without manual formula setup.
+AI automatically flags abnormal financial signals for analyst priority review, such as consecutive net losses, steeply rising debt ratios, negative operating cash flow, surging receivables and excess inventory.
+Sync all extracted financial data and calculated metrics back to the SharePoint request form for permanent record retention.
+=== ppt/slides/slide9.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+3. AI Assists Collection, Classification & Archiving of Non-Financial Risk Information
+Original Pain Points
+Analysts manually search public records for supplier negative events and scattered qualitative feedback, with no centralized storage of customer structure, asset ownership and personnel change records.
+AI Capabilities
+Automate public risk data lookup using the supplier’s DUNS number and legal name: Crawl official court judgment databases, arbitration filings, credit penalty announcements and corporate disclosure platforms to compile a consolidated non-financial risk summary including major lawsuits, unfulfilled liabilities and regulatory penalties.
+Extract key qualitative details from supplier reply emails via large language model, then categorize and store structured non-financial data in dedicated SharePoint fields: customer concentration ratio, asset ownership status, management turnover and contingent liability risks.
+Generate a preliminary qualitative risk scoring reference based on collected non-financial clues (e.g. high risk flag for large pending arbitration, medium liquidity risk for fully leased production facilities).
+=== ppt/slides/slide10.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+4. AI Streamlines Supplier Communications via Email & Call Transcription
+Original Pain Points
+Analysts draft clarification emails from scratch when data discrepancies occur; manual note-taking after phone calls often omits critical supplier feedback.
+AI Capabilities
+Auto-generate targeted follow-up clarification emails when AI detects inconsistent financial figures or incomplete non-financial disclosures; analysts only need minor edits before sending.
+Transcribe audio records of supplier phone calls into searchable text, auto-summarize core information including customer share, lease terms, litigation progress and future operation plans, then bind the structured call minutes to the matching SharePoint item.
+Provide real-time multi-language translation for cross-border supplier email communications to eliminate language barriers.
+=== ppt/slides/slide11.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+5. AI Merges Quantitative & Qualitative Data to Generate Preliminary Concluded Rating & Analysis Draft
+Original Pain Points
+Analysts cross-reference working paper metrics and non-financial notes manually against internal scoring rules, then write full risk assessment narratives from scratch.
+AI Capabilities
+Integrate quantitative indicators from working papers and AI-collected non-financial risk signals, apply Magna’s standardized traffic-light rating matrix, and output an automated preliminary concluded rating as a review reference for analysts.
+Auto-generate a complete risk assessment draft covering both quantitative and qualitative dimensions for quick analyst revision.
+Sample auto-generated narrative: Quantitative analysis shows the supplier’s debt-to-asset ratio has remained above 75% over three consecutive years with shrinking operating cash flow, indicating heavy debt repayment pressure. For non-financial risks, the entity is involved in one outstanding high-value commercial arbitration, all production plants are leased assets, and its top single customer accounts for over 60% of total revenue. The composite assessment flags medium financial risk, with tighter short-term purchasing credit limits recommended.
+=== ppt/slides/slide12.xml ===
+If no valid Coface Score can be retrieved, analysts need to conduct a full manual supplier financial review.
+The original end-to-end manual workflow is as follows:
+1. Analysts extract supplier contact details filled by the Buyer in SharePoint, send manual emails to the supplier to request financial statements covering the latest 3 full fiscal years plus the interim period.
+2. Manually input the received financial data into the standardized working paper for quantitative risk analysis.
+3. Collect and verify qualitative non-financial information that may impact the supplier’s financial stability, including outstanding off-balance-sheet exposures, major arbitrations, pending litigations, customer concentration structure, owned vs. leased production assets, and key personnel turnover.
+4. Conduct back-and-forth communications with suppliers via email or phone to clarify missing information.
+5. Synthesize quantitative and qualitative findings to finalize the concluded financial risk rating.
+6. Send a closing email to the Buyer to share the final financial rating and supporting rationale.
+6. AI Auto-Generate Closing Notification Email to Buyers & Sync Data Across All Systems
+Original Pain Points
+Analysts manually copy the final rating and risk rationale into emails to notify Buyers, then manually update the central tracking file and GSA procurement system separately.
+AI Capabilities
+Compose a standardized closing email automatically by pulling the final concluded rating and AI-generated risk analysis; analysts only approve before sending to the corresponding Buyer.
+One-click cross-system data synchronization without manual entry: 
+Auto-update the Financial Risk Team Information section of the SharePoint item with final Rating, Remarks and Rating Assigned Date;
+Tag the entry in the central tracking file with color coding to identify records from full manual review due to missing Coface Scores;
+Push the newly finalized financial rating back to the GSA procurement system via DUNS matching, enabling Buyers to reuse this rating for future requests and avoid repeated full manual reviews.
+=== ppt/slides/slide13.xml ===
+At present, our team creates dedicated archiving folders manually for every financial review case. After completing the full supplier assessment, analysts manually sort and upload all supporting documents, critical emails that back up the final financial rating, and the closing notification email sent to the Buyer into the corresponding archive folder.
+End-to-End AI Automated Archiving Solution Built on eRFX
+1. AI Auto-generate Standardized Archiving Folder Structure in eRFX (No Manual Creation)
+Trigger rule: Once the Cross-GSA DUNS pre-check confirms the case requires full manual review, AI automatically generates a unique standardized archive folder within the matching supplier’s eRFX profile, named by a unified ID format: [DUNS Number] - Supplier Legal Name - Financial Review Reference ID.
+Auto-build subfolders inside the main archive with fixed classification logic powered by AI: 
+Subfolder 1: Supplier Submitted Financial Documents (3-year + interim statements, audit reports, asset/lease proof, shareholder structure files)
+Subfolder 2: Third-Party Credit Records (Coface score reports, public litigation/arbitration risk extracts auto-scraped by AI)
+Subfolder 3: Communication Audit Trail (All inbound/outbound emails between analysts and suppliers, follow-up reminders, phone call AI transcript minutes)
+Subfolder 4: Final Review Deliverables (Completed quantitative working paper, AI-generated & finalized concluded rating analysis, closing notification email to Buyers)
+For suppliers without a DUNS number: AI generates a unique composite ID from supplier full legal name + registered country + factory location to create the dedicated archive folder, avoiding duplicate archives.
+=== ppt/slides/slide14.xml ===
+At present, our team creates dedicated archiving folders manually for every financial review case. After completing the full supplier assessment, analysts manually sort and upload all supporting documents, critical emails that back up the final financial rating, and the closing notification email sent to the Buyer into the corresponding archive folder.
+2. AI Intelligent Document Classification & Auto-Filing into eRFX Archive
+All documents and emails generated throughout the review lifecycle are automatically captured, tagged and filed by AI without manual sorting:
+Supplier uploaded financial files (direct eRFX submission)
+AI’s multi-modal OCR identifies document types (balance sheet, income statement, bank statement, business license), auto-tags each file, and moves them directly to the Supplier Submitted Financial Documents subfolder upon upload.
+2. Auto-generated system emails (document requests, follow-up reminders, Buyer closing notifications)
+AI parses email subject, content and attachment keywords to judge the email category, then archives the full email thread with all attachments to the matching subfolder in eRFX.
+3. Offline supplementary materials (analyst working papers, public risk search extracts, call transcripts)
+All analysis outputs generated from SharePoint or Power Automate workflows are pushed to eRFX via API, and AI auto-categorizes them into the corresponding archive subfolders in real time.
+4. Duplicate file filtering: AI detects identical repeated attachments and prevents redundant storage within the eRFX archive to save platform capacity.
+=== ppt/slides/slide15.xml ===
+At present, our team creates dedicated archiving folders manually for every financial review case. After completing the full supplier assessment, analysts manually sort and upload all supporting documents, critical emails that back up the final financial rating, and the closing notification email sent to the Buyer into the corresponding archive folder.
+3. AI Link All Archived Records to the Final Financial Rating in eRFX
+After analysts finalize the concluded financial rating inside eRFX’s built-in analysis model, AI establishes a permanent cross-link between the published rating result and the full archive folder.
+End-users (Buyers, auditors, risk team) viewing the supplier’s financial score in eRFX can click a hyperlink to open the complete archive bundle instantly, viewing all supporting audit materials behind the rating in one place.
+AI adds standardized searchable metadata to every archived file: DUNS number, review date, Magna Division, final risk rating tier, supplier region, document type. This enables keyword/filter-based one-click retrieval inside eRFX.
+=== ppt/slides/slide16.xml ===
+At present, our team creates dedicated archiving folders manually for every financial review case. After completing the full supplier assessment, analysts manually sort and upload all supporting documents, critical emails that back up the final financial rating, and the closing notification email sent to the Buyer into the corresponding archive folder.
+4. AI Automated Archive Completion & Locking Mechanism
+Once the analyst submits the final financial rating inside eRFX to close the review case:
+AI runs an automated completeness check to verify all mandatory supporting document categories are fully filed in the archive folder; if any critical materials are missing, AI sends a reminder notification to the analyst listing the gaps.
+When all required records are fully archived, AI marks the entire eRFX archive folder as locked read-only to prevent accidental deletion or modification of audit evidence, fully complying with group internal audit record retention rules.
+AI retains full version history of every archived file inside eRFX, recording upload time, source system and upload trigger for complete traceability.
+=== ppt/slides/slide17.xml ===
+One Page Summary about Supplier’s Financial Risk
+After implementing all the automation workflows mentioned above, we propose an additional AI-powered feature: generate a standardized Supplier One Page Summary for all suppliers with active spending records in eRFX.
+When users click into a supplier’s profile page within eRFX, the system will automatically compile all data into a consolidated single-page dashboard covering four core sections, all populated and maintained by AI with no manual compilation required.
+1. Supplier Company Profile (AI Auto-Sourced with Source Attribution)
+The AI model pulls public corporate data automatically using the supplier’s DUNS number, full legal entity name and registered country as search keywords. Data sources include official business registration databases, corporate official websites, Dun & Bradstreet archives, and industry public disclosures. Extracted information covers establishment date, shareholder structure, core product lines, manufacturing footprints, global subsidiaries, key customer groups, production capacity and public listing status.
+Large language models refine and consolidate fragmented raw data into a concise, unified company overview. Every factual statement is tagged with its original source link/platform to satisfy internal audit traceability requirements.
+The AI refreshes the profile on a monthly cadence. It automatically updates the summary and retains historical versions if material corporate changes occur, such as equity restructuring, business transformation or factory relocation.
+2. Consolidated Risk Metrics Panel: Coface Score, Magna Internal Financial Rating & SRM Risk Commentary
+The workflow auto-fetches three standardized risk indicators in real time: 
+Latest valid third-party Coface Score and risk tier via API integration;
+Final concluded Magna internal financial rating stored in eRFX archive records;
+Official SRM risk commentary, which reuses the exact risk narrative sent to Buyers in the closing notification email to ensure 100% consistent wording across all channels.
+AI visualizes risk levels with standardized traffic light color coding (Green / Yellow / Red) to clearly highlight low, medium and high financial risks, alongside credit limit control recommendations.
+All metrics refresh instantly upon completion of any new financial review for the supplier.
+=== ppt/slides/slide18.xml ===
+One Page Summary about Supplier’s Financial Risk
+3. Historical Review Trend Analysis
+Using the DUNS number as the unique matching key, AI aggregates all historical financial review tickets from SharePoint and archived eRFX assessment records, extracting the review date, corresponding Magna rating and Coface Score for each cycle.
+AI auto-generates visual trend charts (line/bar graphs) to illustrate upward/downward shifts in credit performance over the past 2–3 years, paired with auto-generated plain-language trend interpretation. For example: The supplier maintained Green low-risk rating in 2023, then downgraded to Yellow medium risk in 2025 due to consecutive annual operating losses.
+Severe rating downgrades are auto-highlighted in red to draw priority attention from Buyers and risk analysts.
+4. AI-Powered Negative News & Adverse Event Monitoring
+On a scheduled cycle, AI crawls multi-jurisdiction public databases including court judgment platforms, arbitration announcements, default records, regulatory penalty disclosures and industry news, searching by supplier legal name, DUNS and legal representative identity.
+The large language model filters irrelevant noise and only retains material adverse events that threaten financial stability, categorized clearly: major litigation/arbitration, third-party guarantee liabilities, regulatory fines, production suspension, equity freezing and debt default. Each record includes release date and original source hyperlink.
+AI applies risk severity classification (High / Medium / Low). If new high-risk events such as large pending lawsuits are detected, a prominent alert banner is displayed at the top of the One Page Summary.
+=== ppt/slides/slide19.xml ===
+One Page Summary about Supplier’s Financial Risk
+5. Native eRFX One Page Dashboard Rendering
+AI automatically formats all four modules (company profile, risk metrics, historical trends, negative news) into a fixed-layout single-page view embedded directly within the supplier’s eRFX profile, with no manual document drafting required.
+Access rule: The One Page Summary is only activated for suppliers with recorded spending in eRFX; the feature is hidden for zero-spend suppliers to optimize system resource consumption.
+Supporting auxiliary functions: 
+One-click PDF export of the full summary, which is auto-synced to the supplier’s dedicated eRFX archive folder as permanent supporting audit material;
+Role-based access control: Buyers, risk analysts and management can view full content, while restricted read-only users are blocked from sensitive adverse legal information to comply with data governance policies.
+=== ppt/slides/slide20.xml ===
+Early Warning System
+eRFX currently has an in-built Early Warning System: any stakeholder who receives unconfirmed adverse market rumours or supplier-related risk signals can log supporting reasoning within this module. All registered eRFX users will receive a notification once an early warning entry is submitted.
+We propose an AI-powered enhancement to this workflow:
+When a user finishes filling out and submits an Early Warning record in eRFX, the AI will automatically assess the severity and materiality of the risk information they input, then prompt the submitter with a guided question: Would you like to raise a formal SRM financial review request to Magna Risk Team for further in-depth investigation?
+If the submitter confirms this prompt, the system shall auto-generate and provide a direct pre-populated SharePoint Request link to the user instantly. Below is the detailed AI implementation logic:
+1. AI Real-Time Risk Judgement Triggered Upon Early Warning Submission
+Once the user completes all required fields of the Early Warning form (risk description, rumour source, potential financial impact, affected business volume, supplier DUNS & legal name), the embedded LLM AI conducts instant risk evaluation:
+AI parses the full text of the warning description, extracting key risk tags such as liquidity crisis, pending litigation, factory shutdown, equity transfer, payment default, mass layoffs, raw material supply disruption etc.
+AI cross-references the supplier’s historical Magna financial rating, existing Coface Score and annual spending volume stored in eRFX to calculate the material risk level (High / Medium / Low).
+AI sets the pop-up prompt rule automatically: 
+- High & Medium risk warnings: Mandatory pop-up prompt asking whether to create an SRM review request;
+- Low-risk trivial rumours (e.g. minor temporary logistics delay): AI provides an optional soft reminder without forced pop-up.
+=== ppt/slides/slide21.xml ===
+Early Warning System
+2. Auto Pre-Populate SharePoint Request Template & Generate Direct Link
+If the submitter selects "Yes" to launch a formal SRM review, AI executes back-end automation instantly:
+AI automatically inherits all core supplier identifiers from the Early Warning record: DUNS number, supplier legal name, manufacturing location region, supplier contact details, relevant Magna Division, Buyer contact information, and full risk description text copied from the warning entry.
+AI pre-fills all corresponding mandatory fields of the SharePoint New Financial Review Request form, eliminating manual retyping for the submitter.
+The system generates a unique, one-click direct access link pointing to this pre-filled SharePoint draft item, and displays the link on the eRFX Early Warning page for the submitter to copy and open immediately.
+The link carries embedded supplier risk context from the Early Warning, so the SRM Reviewer will see the full rumour background once they receive the SharePoint notification email.
+3. End-to-End Linked Data Synchronization Between eRFX Early Warning & SharePoint Request
+a. AI builds a permanent bidirectional association ID to link the eRFX Early Warning record and the matching SharePoint review request: 
+- The Early Warning detail page shows a clickable link to jump to the corresponding SharePoint financial review ticket;
+- The SharePoint request form auto-attaches a reference to the source eRFX Early Warning entry, with full warning content archived as supporting attachment.
+b. Real-time status sync: Once the SRM team completes the Magna financial review and updates the final rating in SharePoint & eRFX, AI pushes the review conclusion back to the original Early Warning record in eRFX, marking the warning as "Resolved" with full risk assessment remarks visible to all eRFX registered users.
+=== ppt/slides/slide22.xml ===
+Early Warning System
+4. Supplementary AI Auxiliary Capabilities
+AI intelligent risk classification suggestion: While the user types the Early Warning description, the LLM automatically recommends matching risk category tags (Litigation, Liquidity Risk, Operation Suspension, Credit Default etc.) to standardize warning data.
+Automated follow-up reminder: If the user closes the prompt without confirming to create a SharePoint request for a High-risk warning, AI sends a follow-up reminder email to the submitter after 24 hours, reiterating the recommendation to initiate an SRM review.
+Archive linkage: All Early Warning records and their associated SharePoint review documents are automatically filed into the supplier’s dedicated eRFX archive folder managed by AI, fully traceable for internal audit.

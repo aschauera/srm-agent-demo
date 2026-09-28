@@ -1,0 +1,139 @@
+{
+  "logicalName": "mag_financialworkingpaper",
+  "schemaName": "mag_FinancialWorkingPaper",
+  "displayName": "Financial Working Paper",
+  "description": "Fiscal-year and interim financial inputs, derived metrics, and anomaly flags.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "FiscalYear",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "Period",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Currency",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Revenue",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "CostOfGoodsSold",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "GrossProfit",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "NetIncome",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "OperatingCashFlow",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "CurrentAssets",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "CurrentLiabilities",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "TotalAssets",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "TotalDebt",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "AccountsReceivable",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "Inventory",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "LeverageRatio",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "LiquidityRatio",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "GrossMargin",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "AssetTurnover",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "YearOverYearDelta",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "AnomalyFlags",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ExtractionConfidence",
+      "type": "decimal",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": true
+    },
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    },
+    {
+      "name": "SourceDocument",
+      "target": "mag_supplierdocument",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-FIN-001"
+  ]
+}

@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{356feb3c-cc3e-4e5e-a7fa-ee10a5af8fdc}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
+        <row name="result" id="mag_ratingconversionruleid">
+          <cell name="mag_name" width="300" />
+          <cell name="createdon" width="125" />
+          <cell name="mag_demokey" width="150" />
+          <cell name="mag_rulename" width="150" />
+          <cell name="mag_minimumscore" width="150" />
+          <cell name="mag_maximumscore" width="150" />
+          <cell name="mag_magnarating" width="150" />
+          <cell name="mag_creditlimitguidance" width="150" />
+          <cell name="mag_approvalstatus" width="150" />
+          <cell name="mag_effectivefrom" width="150" />
+          <cell name="mag_effectiveto" width="150" />
+          <cell name="mag_demoonly" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="mag_ratingconversionrule">
+          <attribute name="mag_ratingconversionruleid" />
+          <attribute name="mag_name" />
+          <attribute name="createdon" />
+          <order attribute="mag_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="mag_demokey" />
+          <attribute name="mag_rulename" />
+          <attribute name="mag_minimumscore" />
+          <attribute name="mag_maximumscore" />
+          <attribute name="mag_magnarating" />
+          <attribute name="mag_creditlimitguidance" />
+          <attribute name="mag_approvalstatus" />
+          <attribute name="mag_effectivefrom" />
+          <attribute name="mag_effectiveto" />
+          <attribute name="mag_demoonly" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Rating Conversion Rules" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

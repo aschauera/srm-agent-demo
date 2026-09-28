@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ImportExportXml version="9.2.26093.131" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.131" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26093.00131">
+  <SolutionManifest>
+    <UniqueName>SRMAgentDemo</UniqueName>
+    <LocalizedNames>
+      <LocalizedName description="SRM Agent Demo" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Unmanaged development solution for the Supplier Risk Management Agent Demo project." languagecode="1033" />
+    </Descriptions>
+    <Version>1.0.0.0</Version>
+    <Managed>0</Managed>
+    <Publisher>
+      <UniqueName>SRMAgentDemo</UniqueName>
+      <LocalizedNames>
+        <LocalizedName description="SRM Agent Demo" languagecode="1033" />
+      </LocalizedNames>
+      <Descriptions>
+        <Description description="Dedicated publisher for the Supplier Risk Management Agent Demo solution." languagecode="1033" />
+      </Descriptions>
+      <EMailAddress xsi:nil="true"></EMailAddress>
+      <SupportingWebsiteUrl xsi:nil="true"></SupportingWebsiteUrl>
+      <CustomizationPrefix>mag</CustomizationPrefix>
+      <CustomizationOptionValuePrefix>80973</CustomizationOptionValuePrefix>
+      <Addresses>
+        <Address>
+          <AddressNumber>1</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+        <Address>
+          <AddressNumber>2</AddressNumber>
+          <AddressTypeCode>1</AddressTypeCode>
+          <City xsi:nil="true"></City>
+          <County xsi:nil="true"></County>
+          <Country xsi:nil="true"></Country>
+          <Fax xsi:nil="true"></Fax>
+          <FreightTermsCode xsi:nil="true"></FreightTermsCode>
+          <ImportSequenceNumber xsi:nil="true"></ImportSequenceNumber>
+          <Latitude xsi:nil="true"></Latitude>
+          <Line1 xsi:nil="true"></Line1>
+          <Line2 xsi:nil="true"></Line2>
+          <Line3 xsi:nil="true"></Line3>
+          <Longitude xsi:nil="true"></Longitude>
+          <Name xsi:nil="true"></Name>
+          <PostalCode xsi:nil="true"></PostalCode>
+          <PostOfficeBox xsi:nil="true"></PostOfficeBox>
+          <PrimaryContactName xsi:nil="true"></PrimaryContactName>
+          <ShippingMethodCode>1</ShippingMethodCode>
+          <StateOrProvince xsi:nil="true"></StateOrProvince>
+          <Telephone1 xsi:nil="true"></Telephone1>
+          <Telephone2 xsi:nil="true"></Telephone2>
+          <Telephone3 xsi:nil="true"></Telephone3>
+          <TimeZoneRuleVersionNumber xsi:nil="true"></TimeZoneRuleVersionNumber>
+          <UPSZone xsi:nil="true"></UPSZone>
+          <UTCOffset xsi:nil="true"></UTCOffset>
+          <UTCConversionTimeZoneCode xsi:nil="true"></UTCConversionTimeZoneCode>
+        </Address>
+      </Addresses>
+    </Publisher>
+    <RootComponents>
+      <RootComponent type="1" schemaName="mag_adversenewsevent" behavior="1" />
+      <RootComponent type="1" schemaName="mag_archiverecord" behavior="1" />
+      <RootComponent type="1" schemaName="mag_cofacecreditrecord" behavior="1" />
+      <RootComponent type="1" schemaName="mag_communicationlog" behavior="1" />
+      <RootComponent type="1" schemaName="mag_dnbprofile" behavior="1" />
+      <RootComponent type="1" schemaName="mag_documentrequest" behavior="1" />
+      <RootComponent type="1" schemaName="mag_earlywarning" behavior="0" />
+      <RootComponent type="1" schemaName="mag_financialreviewrequest" behavior="1" />
+      <RootComponent type="1" schemaName="mag_financialworkingpaper" behavior="1" />
+      <RootComponent type="1" schemaName="mag_gsaratingrecord" behavior="1" />
+      <RootComponent type="1" schemaName="mag_nonfinancialriskitem" behavior="1" />
+      <RootComponent type="1" schemaName="mag_ratingconversionrule" behavior="0" />
+      <RootComponent type="1" schemaName="mag_reviewaudittrail" behavior="1" />
+      <RootComponent type="1" schemaName="mag_riskscoringrule" behavior="0" />
+      <RootComponent type="1" schemaName="mag_supplier" behavior="0" />
+      <RootComponent type="1" schemaName="mag_supplierdocument" behavior="1" />
+      <RootComponent type="1" schemaName="mag_supplieronepagesummary" behavior="1" />
+    </RootComponents>
+    <MissingDependencies>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_adversenewsevent" displayName="Adverse News Event" solution="Active" />
+        <Dependent type="1" schemaName="mag_adversenewsevent" displayName="Adverse News Event" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_archiverecord" displayName="Archive Record" solution="Active" />
+        <Dependent type="1" schemaName="mag_archiverecord" displayName="Archive Record" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_cofacecreditrecord" displayName="Coface Credit Record" solution="Active" />
+        <Dependent type="1" schemaName="mag_cofacecreditrecord" displayName="Coface Credit Record" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_communicationlog" displayName="Communication Log" solution="Active" />
+        <Dependent type="1" schemaName="mag_communicationlog" displayName="Communication Log" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_dnbprofile" displayName="D&amp;B Profile" solution="Active" />
+        <Dependent type="1" schemaName="mag_dnbprofile" displayName="D&amp;B Profile" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_documentrequest" displayName="Document Request" solution="Active" />
+        <Dependent type="1" schemaName="mag_documentrequest" displayName="Document Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_financialreviewrequest" displayName="Financial Review Request" solution="Active" />
+        <Dependent type="1" schemaName="mag_financialreviewrequest" displayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_financialworkingpaper" displayName="Financial Working Paper" solution="Active" />
+        <Dependent type="1" schemaName="mag_financialworkingpaper" displayName="Financial Working Paper" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_gsaratingrecord" displayName="GSA Rating Record" solution="Active" />
+        <Dependent type="1" schemaName="mag_gsaratingrecord" displayName="GSA Rating Record" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_nonfinancialriskitem" displayName="Non-Financial Risk Item" solution="Active" />
+        <Dependent type="1" schemaName="mag_nonfinancialriskitem" displayName="Non-Financial Risk Item" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_reviewaudittrail" displayName="Review Audit Trail" solution="Active" />
+        <Dependent type="1" schemaName="mag_reviewaudittrail" displayName="Review Audit Trail" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_supplierdocument" displayName="Supplier Document" solution="Active" />
+        <Dependent type="1" schemaName="mag_supplierdocument" displayName="Supplier Document" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="1" schemaName="mag_supplieronepagesummary" displayName="Supplier One-Page Summary" solution="Active" />
+        <Dependent type="1" schemaName="mag_supplieronepagesummary" displayName="Supplier One-Page Summary" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_archiverecord_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_archiverecord_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_communicationlog_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_communicationlog_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_documentrequest_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_documentrequest_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_earlywarning_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_earlywarning_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_financialworkingpaper_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_financialworkingpaper_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_nonfinancialriskitem_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_nonfinancialriskitem_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_reviewaudittrail_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_reviewaudittrail_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
+        <Dependent type="10" schemaName="mag_financialreviewrequest_mag_supplierdocument_mag_ReviewRequestId" displayName="mag_financialreviewrequest_mag_supplierdocument_mag_ReviewRequestId" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" solution="Active" />
+        <Dependent type="10" schemaName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" displayName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" />
+      </MissingDependency>
+    </MissingDependencies>
+  </SolutionManifest>
+</ImportExportXml>

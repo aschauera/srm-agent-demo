@@ -1,0 +1,60 @@
+{
+  "logicalName": "mag_reviewaudittrail",
+  "schemaName": "mag_ReviewAuditTrail",
+  "displayName": "Review Audit Trail",
+  "description": "Append-oriented ledger of human, agent, and system activity.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "Action",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Actor",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ActorType",
+      "type": "choice",
+      "choice": "actor_type",
+      "alternateKey": false
+    },
+    {
+      "name": "OccurredOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "SystemTouched",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Details",
+      "type": "text",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": false
+    },
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-GOV-001"
+  ]
+}

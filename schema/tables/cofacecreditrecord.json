@@ -1,0 +1,91 @@
+{
+  "logicalName": "mag_cofacecreditrecord",
+  "schemaName": "mag_CofaceCreditRecord",
+  "displayName": "Coface Credit Record",
+  "description": "Synthetic Coface response records for exact and fuzzy-match lookup scenarios.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "DUNS",
+      "type": "string",
+      "maxLength": 9,
+      "alternateKey": false
+    },
+    {
+      "name": "SupplierName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Score",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "RiskTier",
+      "type": "choice",
+      "choice": "coface_tier",
+      "alternateKey": false
+    },
+    {
+      "name": "PaymentTrackRecord",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "NegativeAlerts",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "RecommendedCreditLimit",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "AssessmentDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "FinancialDataThrough",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "ReportLink",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "MatchConfidence",
+      "type": "decimal",
+      "alternateKey": false
+    },
+    {
+      "name": "SyntheticData",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-COF-001"
+  ]
+}

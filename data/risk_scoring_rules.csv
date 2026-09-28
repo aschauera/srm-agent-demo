@@ -1,0 +1,5 @@
+﻿DemoKey,Name,Metric,Operator,Threshold,Points,Dimension,Signal,ApprovalStatus,DemoOnly
+RULE-RISK-LEV,RULE-RISK-LEV,LeverageRatio,Greater than,0.75,3,Leverage,High leverage signal,Draft - demo only,True
+RULE-RISK-LIQ,RULE-RISK-LIQ,LiquidityRatio,Less than,1.0,3,Liquidity,Liquidity pressure signal,Draft - demo only,True
+RULE-RISK-CFO,RULE-RISK-CFO,OperatingCashFlow,Less than,0,2,Cash flow,Negative operating cash flow signal,Draft - demo only,True
+RULE-RISK-CONC,RULE-RISK-CONC,CustomerConcentration,Greater than,0.6,2,Non-financial,Customer concentration signal,Draft - demo only,True

@@ -1,0 +1,81 @@
+{
+  "logicalName": "mag_archiverecord",
+  "schemaName": "mag_ArchiveRecord",
+  "displayName": "Archive Record",
+  "description": "Synthetic eRFX archive folders, items, lock state, and searchable metadata.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "FolderIdentifier",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Subfolder",
+      "type": "choice",
+      "choice": "archive_subfolder",
+      "alternateKey": false
+    },
+    {
+      "name": "ItemType",
+      "type": "choice",
+      "choice": "archive_item_type",
+      "alternateKey": false
+    },
+    {
+      "name": "ItemName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ArchiveUrl",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Locked",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "Version",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "SearchableMetadata",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "UploadedOn",
+      "type": "datetime",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    },
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-ARC-001"
+  ]
+}

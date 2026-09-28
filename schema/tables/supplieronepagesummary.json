@@ -1,0 +1,74 @@
+{
+  "logicalName": "mag_supplieronepagesummary",
+  "schemaName": "mag_SupplierOnePageSummary",
+  "displayName": "Supplier One-Page Summary",
+  "description": "Generated supplier profile, consolidated risk metrics, trends, and alert banner.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "SummaryVersion",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "CompanyProfile",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "SourceAttribution",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "RiskMetricsPanel",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "TrendInterpretation",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "AdverseEventDigest",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "AlertBanner",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "GeneratedOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "PDFExportUrl",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "HasActiveSpend",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-OPS-001"
+  ]
+}

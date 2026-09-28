@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{ba6032f6-764a-4af3-b137-4917794d854a}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="mag_name" select="1" icon="1" preview="1">
+        <row name="result" id="mag_earlywarningid">
+          <cell name="mag_name" width="300" />
+          <cell name="createdon" width="125" />
+          <cell name="mag_demokey" width="150" />
+          <cell name="mag_warningref" width="150" />
+          <cell name="mag_description" width="150" />
+          <cell name="mag_rumoursource" width="150" />
+          <cell name="mag_potentialimpact" width="150" />
+          <cell name="mag_affectedvolume" width="150" />
+          <cell name="mag_risktags" width="150" />
+          <cell name="mag_materiality" width="150" />
+          <cell name="mag_promptbehavior" width="150" />
+          <cell name="mag_resolutionstatus" width="150" />
+          <cell name="mag_reminder24hoursent" width="150" />
+          <cell name="mag_submittedon" width="150" />
+          <cell name="mag_reviewrequestlink" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="mag_earlywarning">
+          <attribute name="mag_earlywarningid" />
+          <attribute name="mag_name" />
+          <attribute name="createdon" />
+          <order attribute="mag_name" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="mag_demokey" />
+          <attribute name="mag_warningref" />
+          <attribute name="mag_description" />
+          <attribute name="mag_rumoursource" />
+          <attribute name="mag_potentialimpact" />
+          <attribute name="mag_affectedvolume" />
+          <attribute name="mag_risktags" />
+          <attribute name="mag_materiality" />
+          <attribute name="mag_promptbehavior" />
+          <attribute name="mag_resolutionstatus" />
+          <attribute name="mag_reminder24hoursent" />
+          <attribute name="mag_submittedon" />
+          <attribute name="mag_reviewrequestlink" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Active Early Warnings" languagecode="1033" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

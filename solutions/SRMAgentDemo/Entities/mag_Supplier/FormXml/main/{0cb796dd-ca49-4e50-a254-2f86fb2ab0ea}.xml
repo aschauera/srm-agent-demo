@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{0cb796dd-ca49-4e50-a254-2f86fb2ab0ea}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{308eeab7-9cd0-46f8-b28e-08828bfd6bd8}" IsUserDefined="1">
+          <labels>
+            <label description="General" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{78557604-f5ed-4d2e-b046-519f69e450f1}">
+                  <labels>
+                    <label description="General" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{96ec32c5-fc80-4238-8420-47b4784cbaad}">
+                        <labels>
+                          <label description="Name" languagecode="1033" />
+                        </labels>
+                        <control id="mag_name" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="mag_name" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{976e6fbb-2d70-48f3-bf46-34f8b448c092}">
+                        <labels>
+                          <label description="Owner" languagecode="1033" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7ae3a64d-494f-4505-a132-17ef77ce1539}">
+                        <labels>
+                          <label description="DemoKey" languagecode="1033" />
+                        </labels>
+                        <control id="mag_demokey" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_demokey" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{a8910025-a352-4ac4-a3a4-8374da493e49}">
+                        <labels>
+                          <label description="SupplierCode" languagecode="1033" />
+                        </labels>
+                        <control id="mag_suppliercode" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_suppliercode" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{d147e65c-54ed-4dd1-b3b1-3b23765f135e}">
+                        <labels>
+                          <label description="LegalName" languagecode="1033" />
+                        </labels>
+                        <control id="mag_legalname" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_legalname" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{74bbe859-6d1b-4c52-bb53-0363e3bca928}">
+                        <labels>
+                          <label description="DUNS" languagecode="1033" />
+                        </labels>
+                        <control id="mag_duns" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_duns" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{93500a45-7f8d-4be3-b713-f6482806205d}">
+                        <labels>
+                          <label description="HasDUNS" languagecode="1033" />
+                        </labels>
+                        <control id="mag_hasduns" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="mag_hasduns" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7dd58747-750a-49d5-8c7c-53627ef4c155}">
+                        <labels>
+                          <label description="Street" languagecode="1033" />
+                        </labels>
+                        <control id="mag_street" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_street" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e8b28982-568d-4077-b641-0a664b878002}">
+                        <labels>
+                          <label description="City" languagecode="1033" />
+                        </labels>
+                        <control id="mag_city" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_city" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c2aa0652-4b36-4fa7-b28b-2a865bde41dd}">
+                        <labels>
+                          <label description="Country" languagecode="1033" />
+                        </labels>
+                        <control id="mag_country" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_country" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{62202f21-ac44-44f3-835c-9a7979c3e85d}">
+                        <labels>
+                          <label description="Region" languagecode="1033" />
+                        </labels>
+                        <control id="mag_region" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_region" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{b8fe35ad-0904-4f43-9239-a7200fb934df}">
+                        <labels>
+                          <label description="Website" languagecode="1033" />
+                        </labels>
+                        <control id="mag_website" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_website" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{09543162-5ad5-47b0-9010-2142d03cae70}">
+                        <labels>
+                          <label description="BusinessCategory" languagecode="1033" />
+                        </labels>
+                        <control id="mag_businesscategory" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_businesscategory" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e982d4d5-b7c7-4f55-8129-459fdf134d63}">
+                        <labels>
+                          <label description="ManufacturingZone" languagecode="1033" />
+                        </labels>
+                        <control id="mag_manufacturingzone" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_manufacturingzone" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{0beafd8d-c507-4f6a-8531-c907f18384f8}">
+                        <labels>
+                          <label description="MagnaDivision" languagecode="1033" />
+                        </labels>
+                        <control id="mag_magnadivision" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_magnadivision" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{cb1bf3dc-6f78-4dbf-a3f9-a6bb35affedf}">
+                        <labels>
+                          <label description="AnnualSpend" languagecode="1033" />
+                        </labels>
+                        <control id="mag_annualspend" classid="{c3efe0c3-0ec6-42be-8349-cbd9079dfd8e}" datafieldname="mag_annualspend" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{d9f7b425-4ce5-4b5f-bf29-de21c821ed3a}">
+                        <labels>
+                          <label description="HasActiveSpend" languagecode="1033" />
+                        </labels>
+                        <control id="mag_hasactivespend" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="mag_hasactivespend" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f1adc010-f97c-48ed-99ba-7d2366839bc6}">
+                        <labels>
+                          <label description="CurrentMagnaRating" languagecode="1033" />
+                        </labels>
+                        <control id="mag_currentmagnarating" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="mag_currentmagnarating" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{ce6eb6b7-ff91-43df-aee6-465ef4a95984}">
+                        <labels>
+                          <label description="CurrentCofaceScore" languagecode="1033" />
+                        </labels>
+                        <control id="mag_currentcofacescore" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="mag_currentcofacescore" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{a8a1c345-30e0-419a-9d59-05d4a02f100e}">
+                        <labels>
+                          <label description="ContactName" languagecode="1033" />
+                        </labels>
+                        <control id="mag_contactname" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_contactname" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{94bf78a5-0c14-4142-8cdc-288816baa5bd}">
+                        <labels>
+                          <label description="ContactEmail" languagecode="1033" />
+                        </labels>
+                        <control id="mag_contactemail" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_contactemail" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{6925233e-db77-4631-90d0-ab5a86b345d9}">
+                        <labels>
+                          <label description="FactoryLocation" languagecode="1033" />
+                        </labels>
+                        <control id="mag_factorylocation" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="mag_factorylocation" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Information" languagecode="1033" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="A form for this entity." languagecode="1033" />
+    </Descriptions>
+  </systemform>
+</forms>

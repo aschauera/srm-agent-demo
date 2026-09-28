@@ -1,0 +1,92 @@
+{
+  "logicalName": "mag_earlywarning",
+  "schemaName": "mag_EarlyWarning",
+  "displayName": "Early Warning",
+  "description": "Supplier early warning, AI materiality, prompt, and linked review request.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "WarningRef",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Description",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "RumourSource",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "PotentialImpact",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "AffectedVolume",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "RiskTags",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "Materiality",
+      "type": "choice",
+      "choice": "materiality",
+      "alternateKey": false
+    },
+    {
+      "name": "PromptBehavior",
+      "type": "choice",
+      "choice": "prompt_behavior",
+      "alternateKey": false
+    },
+    {
+      "name": "ResolutionStatus",
+      "type": "choice",
+      "choice": "warning_status",
+      "alternateKey": false
+    },
+    {
+      "name": "Reminder24HourSent",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "SubmittedOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewRequestLink",
+      "type": "string",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": true
+    },
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-EWS-001"
+  ]
+}

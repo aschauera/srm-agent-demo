@@ -1,0 +1,8 @@
+﻿DemoKey,Name,DUNS,Rating,Remarks,RatingDate,ExpiryDate,MandatoryRereview,ReviewerName,SyntheticData,SupplierDemoKey
+GSA-SUP-001,GSA mock rating SUP-001,900000001,Green,Synthetic GSA record for branch testing; no real procurement data.,2026-05-31T00:00:00Z,2027-09-28T00:00:00Z,False,Demo Reviewer 01,True,SUP-001
+GSA-SUP-002,GSA mock rating SUP-002,900000002,Yellow,Synthetic GSA record for branch testing; no real procurement data.,2026-05-31T00:00:00Z,2027-09-28T00:00:00Z,False,Demo Reviewer 02,True,SUP-002
+GSA-SUP-003,GSA mock rating SUP-003,900000003,Green,Synthetic GSA record for branch testing; no real procurement data.,2026-05-31T00:00:00Z,2027-09-28T00:00:00Z,False,Demo Reviewer 03,True,SUP-003
+GSA-SUP-004,GSA mock rating SUP-004,900000004,Red,Synthetic GSA record for branch testing; no real procurement data.,2025-04-06T00:00:00Z,2026-08-29T00:00:00Z,False,Demo Reviewer 04,True,SUP-004
+GSA-SUP-005,GSA mock rating SUP-005,900000005,Red,Synthetic GSA record for branch testing; no real procurement data.,2025-04-06T00:00:00Z,2026-08-29T00:00:00Z,False,Demo Reviewer 05,True,SUP-005
+GSA-SUP-006,GSA mock rating SUP-006,900000006,Yellow,Synthetic GSA record for branch testing; no real procurement data.,2026-05-31T00:00:00Z,2027-09-28T00:00:00Z,True,Demo Reviewer 06,True,SUP-006
+GSA-SUP-007,GSA mock rating SUP-007,900000007,Red,Synthetic GSA record for branch testing; no real procurement data.,2026-05-31T00:00:00Z,2027-09-28T00:00:00Z,True,Demo Reviewer 07,True,SUP-007

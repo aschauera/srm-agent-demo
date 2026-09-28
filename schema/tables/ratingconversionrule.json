@@ -1,0 +1,64 @@
+{
+  "logicalName": "mag_ratingconversionrule",
+  "schemaName": "mag_RatingConversionRule",
+  "displayName": "Rating Conversion Rule",
+  "description": "Configurable, draft-only illustrative Coface-to-Magna mapping for the demo.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "RuleName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "MinimumScore",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "MaximumScore",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "MagnaRating",
+      "type": "choice",
+      "choice": "rating",
+      "alternateKey": false
+    },
+    {
+      "name": "CreditLimitGuidance",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "ApprovalStatus",
+      "type": "choice",
+      "choice": "approval_status",
+      "alternateKey": false
+    },
+    {
+      "name": "EffectiveFrom",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "EffectiveTo",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "DemoOnly",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-COF-001"
+  ]
+}

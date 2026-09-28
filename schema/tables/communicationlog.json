@@ -1,0 +1,83 @@
+{
+  "logicalName": "mag_communicationlog",
+  "schemaName": "mag_CommunicationLog",
+  "displayName": "Communication Log",
+  "description": "Inbound and outbound communications, transcripts, summaries, and translation.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "Direction",
+      "type": "choice",
+      "choice": "direction",
+      "alternateKey": false
+    },
+    {
+      "name": "Channel",
+      "type": "choice",
+      "choice": "channel",
+      "alternateKey": false
+    },
+    {
+      "name": "Subject",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Body",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "CallTranscript",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "AISummary",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "Language",
+      "type": "choice",
+      "choice": "language",
+      "alternateKey": false
+    },
+    {
+      "name": "TranslatedText",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "OccurredOn",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "ActorName",
+      "type": "string",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "ReviewRequest",
+      "target": "mag_financialreviewrequest",
+      "required": true
+    },
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-COM-001",
+    "SRM-GOV-001"
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "logicalName": "mag_supplier",
+  "schemaName": "mag_Supplier",
+  "displayName": "Supplier",
+  "description": "Fictional supplier master used by the SRM financial review demo.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "SupplierCode",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "LegalName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "DUNS",
+      "type": "string",
+      "maxLength": 9,
+      "alternateKey": false
+    },
+    {
+      "name": "HasDUNS",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "Street",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Region",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "Website",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "BusinessCategory",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ManufacturingZone",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "MagnaDivision",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "AnnualSpend",
+      "type": "money",
+      "alternateKey": false
+    },
+    {
+      "name": "HasActiveSpend",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "CurrentMagnaRating",
+      "type": "choice",
+      "choice": "rating",
+      "alternateKey": false
+    },
+    {
+      "name": "CurrentCofaceScore",
+      "type": "integer",
+      "alternateKey": false
+    },
+    {
+      "name": "ContactName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "ContactEmail",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "FactoryLocation",
+      "type": "string",
+      "alternateKey": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-INT-001",
+    "SRM-OPS-001"
+  ]
+}

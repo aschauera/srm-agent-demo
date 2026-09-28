@@ -1,0 +1,66 @@
+{
+  "logicalName": "mag_gsaratingrecord",
+  "schemaName": "mag_GSARatingRecord",
+  "displayName": "GSA Rating Record",
+  "description": "Synthetic GSA procurement rating records for pre-check and reuse scenarios.",
+  "columns": [
+    {
+      "name": "DemoKey",
+      "type": "string",
+      "alternateKey": true
+    },
+    {
+      "name": "DUNS",
+      "type": "string",
+      "maxLength": 9,
+      "alternateKey": false
+    },
+    {
+      "name": "Rating",
+      "type": "choice",
+      "choice": "rating",
+      "alternateKey": false
+    },
+    {
+      "name": "Remarks",
+      "type": "text",
+      "alternateKey": false
+    },
+    {
+      "name": "RatingDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "ExpiryDate",
+      "type": "datetime",
+      "alternateKey": false
+    },
+    {
+      "name": "MandatoryRereview",
+      "type": "boolean",
+      "alternateKey": false
+    },
+    {
+      "name": "ReviewerName",
+      "type": "string",
+      "alternateKey": false
+    },
+    {
+      "name": "SyntheticData",
+      "type": "boolean",
+      "alternateKey": false
+    }
+  ],
+  "lookups": [
+    {
+      "name": "Supplier",
+      "target": "mag_supplier",
+      "required": false
+    }
+  ],
+  "primaryNameAttribute": "mag_Name",
+  "requirements": [
+    "SRM-INT-001"
+  ]
+}
