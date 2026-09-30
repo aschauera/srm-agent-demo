@@ -27,6 +27,7 @@
     <AppModuleComponent type="26" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
     <AppModuleComponent type="26" id="{038bf0d1-a5d2-4bc9-9c77-f02d6719058e}" />
     <AppModuleComponent type="26" id="{c28c8b64-821b-48b3-90dc-fca17ba29908}" />
+    <AppModuleComponent type="29" id="{33953086-244a-47da-943c-35a7b2bf1613}" />
     <AppModuleComponent type="60" id="{d5c0ea34-0dfd-4f3c-997b-1256578f5392}" />
     <AppModuleComponent type="60" id="{a2c92bca-45bf-46d2-ae8c-1b26a2585b0f}" />
     <AppModuleComponent type="60" id="{0cb796dd-ca49-4e50-a254-2f86fb2ab0ea}" />
@@ -34,6 +35,7 @@
     <AppModuleComponent type="60" id="{1d0128d8-b90f-43db-8f66-4110c8567a71}" />
     <AppModuleComponent type="60" id="{13008d34-4892-4ab2-aa23-48033fdbedf0}" />
     <AppModuleComponent type="60" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
+    <AppModuleComponent type="60" id="{61ec32ed-56a9-478b-84f1-a01d4d235214}" />
     <AppModuleComponent type="60" id="{578a2aac-f673-4bed-85bb-eb058d094c2f}" />
     <AppModuleComponent type="62" schemaName="mag_supplierfinancialriskreview" />
   </AppModuleComponents>

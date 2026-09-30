@@ -469,24 +469,24 @@
               <displayname description="CurrentMagnaRating" languagecode="1033" />
             </displaynames>
             <options>
-              <option value="100000000" ExternalValue="" IsHidden="0">
+              <option value="100000000" ExternalValue="" Color="#107C10" IsHidden="0">
                 <labels>
-                  <label description="GREEN" languagecode="1033" />
+                  <label description="Green" languagecode="1033" />
                 </labels>
               </option>
-              <option value="100000001" ExternalValue="" IsHidden="0">
+              <option value="100000001" ExternalValue="" Color="#F2C80F" IsHidden="0">
                 <labels>
-                  <label description="YELLOW" languagecode="1033" />
+                  <label description="Yellow" languagecode="1033" />
                 </labels>
               </option>
-              <option value="100000002" ExternalValue="" IsHidden="0">
+              <option value="100000002" ExternalValue="" Color="#D13438" IsHidden="0">
                 <labels>
-                  <label description="RED" languagecode="1033" />
+                  <label description="Red" languagecode="1033" />
                 </labels>
               </option>
-              <option value="100000003" ExternalValue="" IsHidden="0">
+              <option value="100000003" ExternalValue="" Color="#8A8886" IsHidden="0">
                 <labels>
-                  <label description="NOT_RATED" languagecode="1033" />
+                  <label description="Not rated" languagecode="1033" />
                 </labels>
               </option>
             </options>

@@ -54,37 +54,37 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LITIGATION_OR_ARBITRATION" languagecode="1033" />
+                  <label description="Litigation or arbitration" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="GUARANTEE_LIABILITY" languagecode="1033" />
+                  <label description="Guarantee liability" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="REGULATORY_FINE" languagecode="1033" />
+                  <label description="Regulatory fine" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="PRODUCTION_SUSPENSION" languagecode="1033" />
+                  <label description="Production suspension" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000004" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="EQUITY_FREEZING" languagecode="1033" />
+                  <label description="Equity freezing" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000005" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="DEBT_DEFAULT" languagecode="1033" />
+                  <label description="Debt default" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000006" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="OTHER" languagecode="1033" />
+                  <label description="Other" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -299,17 +299,17 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LOW" languagecode="1033" />
+                  <label description="Low" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="MEDIUM" languagecode="1033" />
+                  <label description="Medium" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="HIGH" languagecode="1033" />
+                  <label description="High" languagecode="1033" />
                 </labels>
               </option>
             </options>

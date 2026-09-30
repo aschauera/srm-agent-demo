@@ -199,17 +199,17 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="EMAIL" languagecode="1033" />
+                  <label description="Email" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="PHONE" languagecode="1033" />
+                  <label description="Phone" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="SYSTEM" languagecode="1033" />
+                  <label description="System" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -296,12 +296,12 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="INBOUND" languagecode="1033" />
+                  <label description="Inbound" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="OUTBOUND" languagecode="1033" />
+                  <label description="Outbound" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -351,22 +351,22 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="ENGLISH" languagecode="1033" />
+                  <label description="English" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="GERMAN" languagecode="1033" />
+                  <label description="German" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="CHINESE" languagecode="1033" />
+                  <label description="Chinese" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="OTHER" languagecode="1033" />
+                  <label description="Other" languagecode="1033" />
                 </labels>
               </option>
             </options>

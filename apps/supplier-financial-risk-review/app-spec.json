@@ -739,6 +739,20 @@
       "activeOnly": false
     }
   ],
+  "webResources": [
+    {
+      "name": "mag_/srm/reviewrequest.js",
+      "displayName": "SRM Review Request form logic",
+      "type": "js",
+      "contentPath": "webresources/reviewrequest.js"
+    },
+    {
+      "name": "mag_/srm/reviewrequest-status.html",
+      "displayName": "SRM Review Request status panel",
+      "type": "html",
+      "contentPath": "webresources/reviewrequest-status.html"
+    }
+  ],
   "forms": [
     {
       "entity": "mag_financialreviewrequest",
@@ -746,7 +760,15 @@
       "formType": "Main",
       "name": "Financial Review Request",
       "isDefault": true,
+      "prune": false,
       "description": "Step 1 review request: buyer request details, DUNS identification with D&B auto-fill, and the GSA Financial Rating Auto-Check Result.",
+      "events": [
+        {
+          "event": "onload",
+          "library": "mag_/srm/reviewrequest.js",
+          "function": "SRM.ReviewRequest.onLoad"
+        }
+      ],
       "quickViews": [
         {
           "lookup": "mag_supplierid",
@@ -861,7 +883,15 @@
       "entity": "mag_financialreviewrequest",
       "name": "Financial Review Request Quick Create",
       "formType": "QuickCreate",
+      "prune": false,
       "description": "Buyer submission form (replaces the SharePoint New Item form): supplier, DUNS and buyer details.",
+      "events": [
+        {
+          "event": "onload",
+          "library": "mag_/srm/reviewrequest.js",
+          "function": "SRM.ReviewRequest.onLoad"
+        }
+      ],
       "tabs": [
         {
           "label": "Request",
@@ -876,7 +906,22 @@
                 "mag_noduns",
                 "mag_buyername",
                 "mag_buyeremail",
-                "mag_division"
+                "mag_division",
+                {
+                  "name": "mag_gsaprecheckresult",
+                  "hidden": true,
+                  "readOnly": true
+                },
+                {
+                  "name": "mag_reviewpath",
+                  "hidden": true,
+                  "readOnly": true
+                },
+                {
+                  "name": "mag_reviewstatus",
+                  "hidden": true,
+                  "readOnly": true
+                }
               ]
             }
           ]

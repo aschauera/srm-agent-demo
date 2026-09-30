@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>SRM review status</title>
+    <!--
+        Stage 1 status panel (web resource mag_/srm/reviewrequest-status.html), SRM-UX-001.
+        Rendered by mag_/srm/reviewrequest.js through window.SRMStatus.render(model), where
+        model = { items: [{ title, label, color: "#RRGGBB", detail? }] }. On load the panel also
+        pulls the latest model the form script published on the app window (window.top), because
+        the platform can reload this frame after a push. Sized for one row of cards at the form's
+        rowspan of 2; narrow windows wrap and scroll.
+    -->
+    <style>
+        html, body { margin: 0; padding: 0; background: transparent; }
+        body { font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, sans-serif; font-size: 12px; color: #323130; }
+        .grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 2px; }
+        .item { flex: 1 1 105px; min-width: 105px; max-width: 260px; box-sizing: border-box; background: #fff;
+                border: 1px solid #edebe9; border-left: 4px solid #8a8886; border-radius: 4px; padding: 5px 7px; }
+        .title { font-size: 10px; color: #605e5c; text-transform: uppercase; letter-spacing: .2px; }
+        .pill { display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 10px; font-weight: 600;
+                background: #8a8886; color: #fff; }
+        .detail { margin-top: 3px; font-size: 11px; color: #605e5c; }
+        .empty { color: #605e5c; padding: 6px 2px; }
+    </style>
+</head>
+<body>
+    <div id="grid" class="grid" role="list" aria-label="Review status indicators">
+        <div class="empty">Loading status...</div>
+    </div>
+    <script>
+        (function () {
+            "use strict";
+            var GREY = "#8A8886";
+
+            function safeColor(color) {
+                return /^#[0-9a-f]{6}$/i.test(color || "") ? color : GREY;
+            }
+
+            // Dark text on light fills (e.g. the Yellow rating), white text otherwise.
+            function textColor(hex) {
+                var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
+                return (0.299 * r + 0.587 * g + 0.114 * b) > 170 ? "#201f1e" : "#ffffff";
+            }
+
+            function element(tag, className, text) {
+                var el = document.createElement(tag);
+                el.className = className;
+                if (text) {
+                    el.textContent = text;
+                }
+                return el;
+            }
+
+            var rendered = false;
+
+            function render(model) {
+                rendered = true;
+                var grid = document.getElementById("grid");
+                while (grid.firstChild) {
+                    grid.removeChild(grid.firstChild);
+                }
+                (model && model.items || []).forEach(function (item) {
+                    var color = safeColor(item.color);
+                    var card = element("div", "item");
+                    card.setAttribute("role", "listitem");
+                    card.style.borderLeftColor = color;
+                    card.appendChild(element("div", "title", item.title));
+                    var pill = element("span", "pill", item.label);
+                    pill.style.backgroundColor = color;
+                    pill.style.color = textColor(color);
+                    card.appendChild(pill);
+                    if (item.detail) {
+                        card.appendChild(element("div", "detail", item.detail));
+                    }
+                    card.title = item.title + ": " + item.label + (item.detail ? " (" + item.detail + ")" : "");
+                    grid.appendChild(card);
+                });
+            }
+
+            window.SRMStatus = { render: render };
+
+            // The form script pushes each model, but the platform can (re)load this iframe after a
+            // push, e.g. when Quick Create opens. So on load, also pull the latest model the form
+            // script published on the app window, accepting it only for the record on screen.
+            function normalizeId(id) {
+                return (id || "").replace(/[{}]/g, "").toLowerCase();
+            }
+
+            function currentRecordId() {
+                try {
+                    return normalizeId(window.top.Xrm.Page.data.entity.getId());
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function pull(attempt) {
+                if (rendered) {
+                    return;
+                }
+                var published = null;
+                try {
+                    published = window.top.SRMReviewStatus;
+                } catch (e) {
+                    published = null;
+                }
+                var id = currentRecordId();
+                if (published && (id === null || normalizeId(published.recordId) === id)) {
+                    render(published.model);
+                } else if (attempt < 60) {
+                    setTimeout(function () { pull(attempt + 1); }, 500);
+                }
+            }
+
+            pull(0);
+        }());
+    </script>
+</body>
+</html>

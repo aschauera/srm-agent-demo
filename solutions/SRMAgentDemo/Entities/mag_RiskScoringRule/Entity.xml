@@ -212,12 +212,12 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="DRAFT_DEMO_ONLY" languagecode="1033" />
+                  <label description="Draft - demo only" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="APPROVED" languagecode="1033" />
+                  <label description="Approved" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -359,27 +359,27 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LIQUIDITY" languagecode="1033" />
+                  <label description="Liquidity" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LEVERAGE" languagecode="1033" />
+                  <label description="Leverage" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="PROFITABILITY" languagecode="1033" />
+                  <label description="Profitability" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="CASH_FLOW" languagecode="1033" />
+                  <label description="Cash flow" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000004" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="NON_FINANCIAL" languagecode="1033" />
+                  <label description="Non-financial" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -506,27 +506,27 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="GREATER_THAN" languagecode="1033" />
+                  <label description="Greater than" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="GREATER_THAN_OR_EQUAL" languagecode="1033" />
+                  <label description="Greater than or equal" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LESS_THAN" languagecode="1033" />
+                  <label description="Less than" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LESS_THAN_OR_EQUAL" languagecode="1033" />
+                  <label description="Less than or equal" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000004" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="EQUALS" languagecode="1033" />
+                  <label description="Equals" languagecode="1033" />
                 </labels>
               </option>
             </options>

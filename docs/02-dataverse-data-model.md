@@ -90,8 +90,11 @@ in [relationships.json](../schema/relationships.json).
   Seed values are consistent with each record's stage and review path.
 - Column display names are derived from schema names (for example `GSARatingDate` becomes
   "GSA Rating Date"), with overrides in `LABEL_OVERRIDES`.
-  - `python scripts/02-create-tables.py --labels-only` converges the labels and solution
-    membership.
+  - Choice option labels come from `CHOICES`. The SDK first creates options labelled with enum
+    member names (for example `NOT_STARTED`), so the script relabels them to the schema labels (for
+    example "Not Started") with `UpdateOptionValue` and publishes.
+  - `python scripts/02-create-tables.py --labels-only` converges option labels, column labels, and
+    solution membership.
   - Columns whose metadata the platform is still processing are deferred and listed at the end, so
     you can rerun later.
 

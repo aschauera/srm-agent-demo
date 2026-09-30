@@ -238,32 +238,32 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="DRAFT" languagecode="1033" />
+                  <label description="Draft" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="SENT" languagecode="1033" />
+                  <label description="Sent" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="REMINDER_SENT" languagecode="1033" />
+                  <label description="Reminder sent" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="ESCALATED" languagecode="1033" />
+                  <label description="Escalated" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000004" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="RECEIVED" languagecode="1033" />
+                  <label description="Received" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000005" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="CLOSED" languagecode="1033" />
+                  <label description="Closed" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -313,17 +313,17 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="FINANCIAL_STATEMENTS" languagecode="1033" />
+                  <label description="Financial statements" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="NON_FINANCIAL_QUESTIONNAIRE" languagecode="1033" />
+                  <label description="Non-financial questionnaire" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="SUPPLEMENTAL_CREDENTIALS" languagecode="1033" />
+                  <label description="Supplemental credentials" languagecode="1033" />
                 </labels>
               </option>
             </options>

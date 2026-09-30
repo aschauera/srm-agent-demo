@@ -706,6 +706,81 @@ def ensure_column_labels_and_membership() -> None:
     print(f"Verified column labels and solution membership ({changed} relabelled).", flush=True)
 
 
+def choice_options(logical: str, attribute: str) -> list[dict]:
+    return web_api(
+        "GET",
+        f"EntityDefinitions(LogicalName='{logical}')/Attributes(LogicalName='{attribute}')"
+        "/Microsoft.Dynamics.CRM.PicklistAttributeMetadata?$select=LogicalName&$expand=OptionSet($select=Options)",
+    )["OptionSet"]["Options"]
+
+
+def ensure_choice_option_labels() -> list[str]:
+    """Converge choice option labels; the SDK creates options labelled with enum member names."""
+    changed = 0
+    deferred: list[str] = []
+    for table in TABLES:
+        logical = table["logicalName"]
+        for column in table["columns"]:
+            if column["type"] != "choice":
+                continue
+            name = f"{PREFIX}_{column['name']}".lower()
+            wanted = CHOICES[column["choice"]]
+            for option in choice_options(logical, name):
+                index = option["Value"] - 100000000
+                if not 0 <= index < len(wanted):
+                    continue
+                current = (option["Label"].get("UserLocalizedLabel") or {}).get("Label")
+                if current == wanted[index]:
+                    continue
+                body = {
+                    "EntityLogicalName": logical,
+                    "AttributeLogicalName": name,
+                    "Value": option["Value"],
+                    "Label": {
+                        "@odata.type": "Microsoft.Dynamics.CRM.Label",
+                        "LocalizedLabels": [{
+                            "@odata.type": "Microsoft.Dynamics.CRM.LocalizedLabel",
+                            "Label": wanted[index],
+                            "LanguageCode": 1033,
+                        }],
+                    },
+                    "MergeLabels": True,
+                    "SolutionUniqueName": SOLUTION,
+                }
+                try:
+                    retry_metadata(lambda: web_api("POST", "UpdateOptionValue", body), f"Relabel {logical}.{name}")
+                except RuntimeError as error:
+                    if "still being processed" not in str(error):
+                        raise
+                    # The lock covers the whole column; defer its remaining options too.
+                    deferred.append(f"{logical}.{name}")
+                    break
+                changed += 1
+                print(f"Relabelled option {logical}.{name}={option['Value']}: {current!r} -> {wanted[index]!r}", flush=True)
+    # Publish unconditionally: an interrupted earlier run may have left relabelled options unpublished.
+    entities = "".join(f"<entity>{table['logicalName']}</entity>" for table in TABLES)
+    web_api("POST", "PublishXml", {"ParameterXml": f"<importexportxml><entities>{entities}</entities></importexportxml>"})
+    if deferred:
+        print("Deferred choice option labels (platform still processing): " + ", ".join(deferred), flush=True)
+    print(f"Verified choice option labels ({changed} relabelled, {len(deferred)} columns deferred).", flush=True)
+    return deferred
+
+
+def converge_labels() -> None:
+    """Converge option labels, column labels and membership; report every deferral together."""
+    deferred = ensure_choice_option_labels()
+    try:
+        ensure_column_labels_and_membership()
+    finally:
+        if deferred:
+            print("Rerun --labels-only later for the deferred choice columns.", flush=True)
+    if deferred:
+        raise RuntimeError(
+            "Choice option labels not converged (platform still processing; rerun --labels-only later): "
+            + ", ".join(deferred)
+        )
+
+
 _FULL_ROOTS: set[str] | None = None
 
 
@@ -791,14 +866,14 @@ def main() -> None:
     parser.add_argument(
         "--labels-only",
         action="store_true",
-        help="Only converge column display labels and solution membership.",
+        help="Only converge choice option labels, column display labels and solution membership.",
     )
     args = parser.parse_args()
     if args.spec_only:
         print(f"Wrote schema definitions for {len(TABLES)} tables.")
         return
     if args.labels_only:
-        ensure_column_labels_and_membership()
+        converge_labels()
         return
     client = get_client("dv-metadata")
     for index, table in enumerate(TABLES):
@@ -842,7 +917,7 @@ def main() -> None:
             time.sleep(8)
 
     if args.tables_only:
-        ensure_column_labels_and_membership()
+        converge_labels()
         print("Table and column verification complete; skipped relationships and keys.")
         return
 
@@ -892,7 +967,7 @@ def main() -> None:
         print(f"Created alternate key {key.schema_name}: {key.status}", flush=True)
         time.sleep(3)
     ensure_solution_keys(client)
-    ensure_column_labels_and_membership()
+    converge_labels()
     print("Datamodel metadata provisioning complete.", flush=True)
 
 

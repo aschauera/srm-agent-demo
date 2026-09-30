@@ -93,9 +93,19 @@ spec = {
          "columns": ["mag_name", "mag_reviewpath", "mag_reviewstatus", "mag_finalrating", "mag_ratingdate", "createdon"],
          "sort": [{"attr": "createdon", "dir": "desc"}], "activeOnly": False},
     ],
+    "webResources": [
+        {"name": "mag_/srm/reviewrequest.js", "displayName": "SRM Review Request form logic",
+         "type": "js", "contentPath": "webresources/reviewrequest.js"},
+        {"name": "mag_/srm/reviewrequest-status.html", "displayName": "SRM Review Request status panel",
+         "type": "html", "contentPath": "webresources/reviewrequest-status.html"},
+    ],
     "forms": [
         {"entity": R, "type": "main", "formType": "Main", "name": "Financial Review Request", "isDefault": True,
+         # prune=False keeps the status panel and form library added by 06-configure-review-request-form.py.
+         "prune": False,
          "description": "Step 1 review request: buyer request details, DUNS identification with D&B auto-fill, and the GSA Financial Rating Auto-Check Result.",
+         "events": [{"event": "onload", "library": "mag_/srm/reviewrequest.js",
+                     "function": "SRM.ReviewRequest.onLoad"}],
          "quickViews": [{"lookup": "mag_supplierid", "targetEntity": S, "form": "Supplier D&B Profile",
                          "label": "Supplier Profile (D&B auto-fill)", "section": "sec_supplier_profile"}],
          "tabs": [
@@ -119,11 +129,16 @@ spec = {
                      "mag_ratingexpiry", "mag_buyernotified", {"name": "mag_remarks", "colspan": 2}]},
              ]},
          ]},
-        {"entity": R, "name": "Financial Review Request Quick Create", "formType": "QuickCreate",
+        {"entity": R, "name": "Financial Review Request Quick Create", "formType": "QuickCreate", "prune": False,
          "description": "Buyer submission form (replaces the SharePoint New Item form): supplier, DUNS and buyer details.",
+         "events": [{"event": "onload", "library": "mag_/srm/reviewrequest.js",
+                     "function": "SRM.ReviewRequest.onLoad"}],
          "tabs": [{"label": "Request", "sections": [{"label": "New Request", "columns": 1, "fields": [
              "mag_name", "mag_supplierid", "mag_dunsnumber", "mag_noduns",
-             "mag_buyername", "mag_buyeremail", "mag_division"]}]}]},
+             "mag_buyername", "mag_buyeremail", "mag_division",
+             {"name": "mag_gsaprecheckresult", "hidden": True, "readOnly": True},
+             {"name": "mag_reviewpath", "hidden": True, "readOnly": True},
+             {"name": "mag_reviewstatus", "hidden": True, "readOnly": True}]}]}]},
         {"entity": S, "name": "Supplier D&B Profile", "formType": "QuickView",
          "description": "Read-only D&B-sourced identity fields shown on the review request for the buyer to confirm.",
          # QuickView forms allow a single tab column and single-column sections only.
@@ -196,5 +211,3 @@ spec = {
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(json.dumps(spec, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 print(OUT)
-
-

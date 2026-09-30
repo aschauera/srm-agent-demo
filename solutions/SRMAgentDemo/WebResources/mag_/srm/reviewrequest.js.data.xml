@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WebResource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <WebResourceId>{cb55352a-06bc-f111-aaad-6045bd031325}</WebResourceId>
+  <Name>mag_/srm/reviewrequest.js</Name>
+  <DisplayName>SRM Review Request form logic</DisplayName>
+  <WebResourceType>3</WebResourceType>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsEnabledForMobileClient>0</IsEnabledForMobileClient>
+  <IsAvailableForMobileOffline>0</IsAvailableForMobileOffline>
+  <IsCustomizable>1</IsCustomizable>
+  <CanBeDeleted>1</CanBeDeleted>
+  <IsHidden>0</IsHidden>
+  <FileName>/WebResources/mag_srmreviewrequestjsCB55352A-06BC-F111-AAAD-6045BD031325</FileName>
+</WebResource>

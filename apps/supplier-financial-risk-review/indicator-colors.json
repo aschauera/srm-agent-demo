@@ -1,0 +1,27 @@
+{
+  "description": "Demo visual convention for Stage 1 status indicators, not Magna policy. Colors are written to the choice option metadata (OptionMetadata.Color) by scripts/06-configure-review-request-form.py; the form script and status panel read them from metadata at runtime. Change a color here and rerun the script.",
+  "choices": {
+    "gsa_precheck": {
+      "Valid active rating": "#107C10",
+      "Rating expired": "#CA5010",
+      "No matching supplier": "#D13438",
+      "Skip - no DUNS": "#8A8886"
+    },
+    "review_status": {
+      "Not Started": "#8A8886",
+      "In Progress": "#0078D4",
+      "Completed": "#107C10"
+    },
+    "review_path": {
+      "GSA Reuse": "#107C10",
+      "Coface Fast-Track": "#0078D4",
+      "Full Review": "#CA5010"
+    },
+    "rating": {
+      "Green": "#107C10",
+      "Yellow": "#F2C80F",
+      "Red": "#D13438",
+      "Not rated": "#8A8886"
+    }
+  }
+}

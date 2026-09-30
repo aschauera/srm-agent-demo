@@ -14,6 +14,32 @@
           <columns>
             <column width="100%">
               <sections>
+                <section id="18f9c4a9-0791-5961-a0bf-64d67aa39e73" name="sec_status" showlabel="true" visible="true" columns="1">
+                  <labels>
+                    <label description="Review Status" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="17e4f73b-71c2-5629-9175-b5ab64e3d562" showlabel="false" visible="true" colspan="1" rowspan="2" auto="false">
+                        <labels>
+                          <label description="Review status indicators" languagecode="1033" />
+                        </labels>
+                        <control id="WebResource_srm_status" classid="{9FDF5F91-88B1-47f4-AD53-C11EFC01A01D}">
+                          <parameters>
+                            <Url>mag_/srm/reviewrequest-status.html</Url>
+                            <PassParameters>false</PassParameters>
+                            <ShowOnMobileClient>true</ShowOnMobileClient>
+                            <Security>false</Security>
+                            <Scrolling>auto</Scrolling>
+                            <Border>false</Border>
+                            <WebResourceId>{c97e5130-06bc-f111-aaad-6045bd031325}</WebResourceId>
+                          </parameters>
+                        </control>
+                      </cell>
+                    </row>
+                    <row />
+                  </rows>
+                </section>
                 <section id="0667c12c-3ed6-4ae7-bb8f-8440f7d1c4e8" name="sec_request" showlabel="true" visible="true" columns="11">
                   <labels>
                     <label description="Request Details" languagecode="1033" />
@@ -106,7 +132,7 @@
                         <labels>
                           <label description="No DUNS / DUNS Applying" languagecode="1033" />
                         </labels>
-                        <control id="c9a21ec1-3e42-4bbe-a278-c96e89e3628b" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="mag_noduns" disabled="false" isrequired="false" />
+                        <control id="c9a21ec1-3e42-4bbe-a278-c96e89e3628b" classid="{F9A8A302-114E-466A-B582-6771B2AE0D92}" datafieldname="mag_noduns" disabled="false" isrequired="false" uniqueid="{c9a21ec1-3e42-4bbe-a278-c96e89e3628b}" />
                       </cell>
                     </row>
                     <row>
@@ -249,6 +275,16 @@
           </columns>
         </tab>
       </tabs>
+      <formLibraries>
+        <Library name="mag_/srm/reviewrequest.js" libraryUniqueId="{17e9fa4f-bb02-540b-96ff-076e071925a0}" />
+      </formLibraries>
+      <events>
+        <event name="onload" application="false" active="false">
+          <Handlers>
+            <Handler functionName="SRM.ReviewRequest.onLoad" libraryName="mag_/srm/reviewrequest.js" handlerUniqueId="{08b62a65-af94-5117-abc0-0e4d72c4e4dc}" enabled="true" parameters="" passExecutionContext="true" />
+          </Handlers>
+        </event>
+      </events>
       <header id="{0d0001cc-3e1e-414e-964c-4a2f01f8bfb2}" celllabelposition="Top" columns="111" labelwidth="115" celllabelalignment="Left">
         <rows>
           <row>
@@ -294,6 +330,30 @@
       <DisplayConditions Order="0" FallbackForm="true">
         <Everyone />
       </DisplayConditions>
+      <controlDescriptions>
+        <controlDescription forControl="{c9a21ec1-3e42-4bbe-a278-c96e89e3628b}">
+          <customControl id="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}">
+            <parameters>
+              <datafieldname>mag_noduns</datafieldname>
+            </parameters>
+          </customControl>
+          <customControl formFactor="0" name="MscrmControls.FieldControls.ToggleControl">
+            <parameters>
+              <value type="TwoOptions">mag_noduns</value>
+            </parameters>
+          </customControl>
+          <customControl formFactor="1" name="MscrmControls.FieldControls.ToggleControl">
+            <parameters>
+              <value type="TwoOptions">mag_noduns</value>
+            </parameters>
+          </customControl>
+          <customControl formFactor="2" name="MscrmControls.FieldControls.ToggleControl">
+            <parameters>
+              <value type="TwoOptions">mag_noduns</value>
+            </parameters>
+          </customControl>
+        </controlDescription>
+      </controlDescriptions>
     </form>
     <IsCustomizable>1</IsCustomizable>
     <CanBeDeleted>1</CanBeDeleted>

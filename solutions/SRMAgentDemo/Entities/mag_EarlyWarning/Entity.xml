@@ -359,17 +359,17 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="LOW" languagecode="1033" />
+                  <label description="Low" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="MEDIUM" languagecode="1033" />
+                  <label description="Medium" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="HIGH" languagecode="1033" />
+                  <label description="High" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -495,17 +495,17 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="NONE" languagecode="1033" />
+                  <label description="None" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="SOFT_REMINDER" languagecode="1033" />
+                  <label description="Soft reminder" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="MANDATORY_PROMPT" languagecode="1033" />
+                  <label description="Mandatory prompt" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -610,22 +610,22 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="OPEN" languagecode="1033" />
+                  <label description="Open" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="UNDER_REVIEW" languagecode="1033" />
+                  <label description="Under review" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="RESOLVED" languagecode="1033" />
+                  <label description="Resolved" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="DISMISSED" languagecode="1033" />
+                  <label description="Dismissed" languagecode="1033" />
                 </labels>
               </option>
             </options>

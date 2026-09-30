@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26093.131" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.131" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26093.00131">
+<ImportExportXml version="9.2.26093.131" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26093.131" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26093.00132">
   <SolutionManifest>
     <UniqueName>SRMAgentDemo</UniqueName>
     <LocalizedNames>
@@ -101,6 +101,8 @@
       <RootComponent type="1" schemaName="mag_supplieronepagesummary" behavior="1" />
       <RootComponent type="1" schemaName="new_supplierfinancialreview" behavior="0" />
       <RootComponent type="29" id="{33953086-244a-47da-943c-35a7b2bf1613}" behavior="0" />
+      <RootComponent type="61" schemaName="mag_/srm/reviewrequest.js" behavior="0" />
+      <RootComponent type="61" schemaName="mag_/srm/reviewrequest-status.html" behavior="0" />
       <RootComponent type="61" schemaName="mag_supplierfinancialriskreview_icon" behavior="0" />
       <RootComponent type="62" schemaName="mag_supplierfinancialriskreview" behavior="0" />
       <RootComponent type="80" schemaName="mag_supplierfinancialriskreview" behavior="0" />
@@ -329,6 +331,18 @@
       <MissingDependency>
         <Required type="60" displayName="Information" parentDisplayName="GSA Rating Record" solution="Active" id="{a2c92bca-45bf-46d2-ae8c-1b26a2585b0f}" />
         <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2609.3001)">
+          <package appName="Base Custom Controls" version="9.0.2609.3001">BaseCustomControlsCore (9.0.2609.3001)</package>
+        </Required>
+        <Dependent type="60" displayName="Financial Review Request Quick Create" parentDisplayName="Financial Review Request" id="{61ec32ed-56a9-478b-84f1-a01d4d235214}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2609.3001)">
+          <package appName="Base Custom Controls" version="9.0.2609.3001">BaseCustomControlsCore (9.0.2609.3001)</package>
+        </Required>
+        <Dependent type="60" displayName="Financial Review Request" parentDisplayName="Financial Review Request" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.20)" id.uniquename="AppChannel">

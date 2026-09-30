@@ -202,32 +202,32 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="DOCUMENT" languagecode="1033" />
+                  <label description="Document" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="EMAIL" languagecode="1033" />
+                  <label description="Email" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="WORKING_PAPER" languagecode="1033" />
+                  <label description="Working paper" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="RISK_EXTRACT" languagecode="1033" />
+                  <label description="Risk extract" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000004" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="RATING" languagecode="1033" />
+                  <label description="Rating" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000005" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="CALL_TRANSCRIPT" languagecode="1033" />
+                  <label description="Call transcript" languagecode="1033" />
                 </labels>
               </option>
             </options>
@@ -441,22 +441,22 @@
             <options>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="SUPPLIER_SUBMITTED_FINANCIAL_DOCUMENTS" languagecode="1033" />
+                  <label description="Supplier Submitted Financial Documents" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000001" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="THIRD_PARTY_CREDIT_RECORDS" languagecode="1033" />
+                  <label description="Third-Party Credit Records" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000002" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="COMMUNICATION_AUDIT_TRAIL" languagecode="1033" />
+                  <label description="Communication Audit Trail" languagecode="1033" />
                 </labels>
               </option>
               <option value="100000003" ExternalValue="" IsHidden="0">
                 <labels>
-                  <label description="FINAL_REVIEW_DELIVERABLES" languagecode="1033" />
+                  <label description="Final Review Deliverables" languagecode="1033" />
                 </labels>
               </option>
             </options>
