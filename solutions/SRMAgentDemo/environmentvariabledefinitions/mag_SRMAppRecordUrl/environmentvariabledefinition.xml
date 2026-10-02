@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_SRMAppRecordUrl">
+  <description default="Review request URL prefix in the Supplier Financial Risk Review app; the record ID is appended.">
+    <label description="Review request URL prefix in the Supplier Financial Risk Review app; the record ID is appended." languagecode="1033" />
+  </description>
+  <displayname default="SRM app record URL">
+    <label description="SRM app record URL" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

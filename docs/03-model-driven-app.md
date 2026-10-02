@@ -9,8 +9,9 @@ the app-builder engine from the declarative spec
 [app-spec.json](../apps/supplier-financial-risk-review/app-spec.json). The rendered design document
 is [model-app-plan.md](../apps/supplier-financial-risk-review/model-app-plan.md).
 
-Later work items will add the forms for Stages 2–5, the other planned areas and views, the
-dashboards, security roles, and the branch automation.
+Later work items will add the forms for Stages 2–5, the other planned areas and views,
+dashboards, and security roles. The Stage 1 server automation is deployed and verified; see
+[06-agent-flows-and-actions.md](./06-agent-flows-and-actions.md).
 
 | Requirement ID | Requirement | Source |
 |---|---|---|
@@ -275,24 +276,19 @@ apply a structural change, tear down the affected artifact and rebuild.
 - Dashboards: Risk Team and Supplier Risk. The generative-page approach is still to be decided.
 - Security roles for the Buyer and Financial Risk Reviewer personas. The app currently opens for
   system administrators only.
-- Branch automation that moves the BPF active stage for Shortcut A and Shortcut B.
-- Stage 1 server automation (flows):
-  - derive the GSA pre-check result from the DUNS and the GSA mock data;
-  - enforce the No DUNS rule server-side;
-  - GSA reuse auto-close: fill the FRT fields, set status Completed, and add the ledger entry
-    "Completed – Reuse Existing GSA DUNS Rating";
-  - buyer and reviewer notification emails;
-  - D&B auto-fill from the DUNS.
-
-  The form currently shows and validates these values but does not compute them.
+- Shortcut B (Coface fast-track) BPF stage movement remains deferred to Stage 2.
+- The Stage 1 server automation runs in DemoPRE and passed a live five-branch smoke test
+  (2026-10-02). It covers the GSA pre-check, the No DUNS skip, the GSA reuse auto-close with
+  its ledger entry and Shortcut A stage move, the notifications, and the D&B fill. See
+  [06-agent-flows-and-actions.md](./06-agent-flows-and-actions.md).
 - The request form's list of required buyer fields is an assumption: Supplier, Buyer Name, and
   Buyer Email. Buyer Email's basic syntax check is also a client-side usability check, not a
   source-defined email policy. The source's attachment listing the SharePoint form fields was not
   extracted.
 - Seeded review requests carry step-flag values consistent with their path.
   `07-align-bpf-stages.py` creates or updates their BPF instances from the seed `CurrentStage`, so
-  completed GSA reuse requests rest active on *Archiving & Publication*. Moving the stage for new
-  requests is part of the deferred shortcut automation.
+  completed GSA reuse requests rest active on *Archiving & Publication*. For new requests, the
+  intake flow moves the stage; this was verified live.
 - The Active view repeats the request reference in Name, Demo Key and Request Ref. Trim it when the
   planned views are built.
 - No DUNS / DUNS Applying shows the Boolean labels *True* / *False* next to the toggle. Relabel the

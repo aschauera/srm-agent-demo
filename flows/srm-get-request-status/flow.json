@@ -1,0 +1,17 @@
+{
+  "displayName": "SRM - Get review request status",
+  "description": "Agent tool: returns the status, review path, GSA pre-check outcome, process stage and rating state of a review request by its reference. Read-only.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e04",
+  "owningAgent": "srm-orchestrator",
+  "processStep": "All stages (status Q&A)",
+  "requirements": [
+    "SRM-PLT-002"
+  ],
+  "trigger": "When an agent calls the flow (input: requestref).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": [
+    "mag_SRMAppRecordUrl"
+  ]
+}

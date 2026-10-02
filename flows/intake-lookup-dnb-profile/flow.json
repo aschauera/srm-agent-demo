@@ -1,0 +1,16 @@
+{
+  "displayName": "SRM Intake - Look up D&B profile",
+  "description": "Agent tool: returns the mock D&B profile for a DUNS number (legal name, address, website, business category, manufacturing zone) and whether the supplier already exists.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e02",
+  "owningAgent": "intake-and-pre-check",
+  "processStep": "Stage 1 - Request & Pre-Check",
+  "requirements": [
+    "SRM-INT-011",
+    "SRM-INT-012"
+  ],
+  "trigger": "When an agent calls the flow (input: duns).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": []
+}

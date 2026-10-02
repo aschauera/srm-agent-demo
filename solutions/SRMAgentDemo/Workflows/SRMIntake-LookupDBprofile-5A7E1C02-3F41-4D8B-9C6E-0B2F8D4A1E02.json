@@ -1,0 +1,229 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "mag_SRMDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "duns": {
+                  "title": "DUNS number",
+                  "type": "string",
+                  "description": "Nine-digit D-U-N-S number; dashes and spaces are ignored",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "required": [
+                "duns"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Normalized_DUNS": {
+          "type": "Compose",
+          "runAfter": {},
+          "inputs": "@replace(replace(replace(trim(coalesce(triggerBody()?['duns'], '')), '-', ''), ' ', ''), '.', '')"
+        },
+        "List_DnB_profile": {
+          "type": "OpenApiConnection",
+          "runAfter": {
+            "Normalized_DUNS": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "parameters": {
+              "entityName": "mag_dnbprofiles",
+              "$select": "mag_legalname,mag_street,mag_city,mag_country,mag_region,mag_website,mag_businesscategory,mag_manufacturingzone",
+              "$filter": "mag_duns eq '@{outputs('Normalized_DUNS')}'",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "DnB_profile": {
+          "type": "Compose",
+          "runAfter": {
+            "List_DnB_profile": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@first(outputs('List_DnB_profile')?['body/value'])"
+        },
+        "List_supplier": {
+          "type": "OpenApiConnection",
+          "runAfter": {
+            "DnB_profile": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "parameters": {
+              "entityName": "mag_suppliers",
+              "$select": "mag_name,mag_duns",
+              "$filter": "mag_duns eq '@{outputs('Normalized_DUNS')}'",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "Existing_supplier": {
+          "type": "Compose",
+          "runAfter": {
+            "List_supplier": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@first(outputs('List_supplier')?['body/value'])"
+        },
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "runAfter": {
+            "Existing_supplier": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "found": {
+                  "title": "Found",
+                  "description": "",
+                  "type": "boolean",
+                  "x-ms-content-hint": "BOOLEAN",
+                  "x-ms-dynamically-added": true
+                },
+                "duns": {
+                  "title": "DUNS",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "legalname": {
+                  "title": "Legal name",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "street": {
+                  "title": "Street",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "city": {
+                  "title": "City",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "country": {
+                  "title": "Country",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "website": {
+                  "title": "Website",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "businesscategory": {
+                  "title": "Business category",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "manufacturingzone": {
+                  "title": "Manufacturing zone",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "supplierexists": {
+                  "title": "Supplier exists",
+                  "description": "",
+                  "type": "boolean",
+                  "x-ms-content-hint": "BOOLEAN",
+                  "x-ms-dynamically-added": true
+                },
+                "suppliername": {
+                  "title": "Supplier name",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "found": "@not(equals(outputs('DnB_profile'), null))",
+              "duns": "@{outputs('Normalized_DUNS')}",
+              "legalname": "@{outputs('DnB_profile')?['mag_legalname']}",
+              "street": "@{outputs('DnB_profile')?['mag_street']}",
+              "city": "@{outputs('DnB_profile')?['mag_city']}",
+              "country": "@{outputs('DnB_profile')?['mag_country']}",
+              "website": "@{outputs('DnB_profile')?['mag_website']}",
+              "businesscategory": "@{outputs('DnB_profile')?['mag_businesscategory']}",
+              "manufacturingzone": "@{outputs('DnB_profile')?['mag_manufacturingzone']}",
+              "supplierexists": "@not(equals(outputs('Existing_supplier'), null))",
+              "suppliername": "@{outputs('Existing_supplier')?['mag_name']}"
+            }
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

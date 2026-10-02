@@ -135,6 +135,7 @@ def c(
     choice: str | None = None,
     max_length: int | None = None,
     label: str | None = None,
+    auto_number: tuple[str, int] | None = None,
 ) -> dict:
     column = {"name": name, "type": kind}
     if label:
@@ -143,6 +144,8 @@ def c(
         column["choice"] = choice
     if max_length:
         column["maxLength"] = max_length
+    if auto_number:
+        column["autoNumberFormat"], column["autoNumberSeed"] = auto_number
     return column
 
 
@@ -171,7 +174,9 @@ TABLES = [
         "displayName": "Financial Review Request",
         "description": "Review request and BPF host record for the five-stage SRM process.",
         "columns": [
-            c("DemoKey"), c("RequestRef"), c("BuyerName"), c("BuyerEmail"), c("ReviewerName"),
+            # Seeded requests use REQ-2026-001..012, so new requests continue the sequence at 013.
+            c("DemoKey"), c("RequestRef", auto_number=("REQ-{DATETIMEUTC:yyyy}-{SEQNUM:3}", 13)),
+            c("BuyerName"), c("BuyerEmail"), c("ReviewerName"),
             c("Division"), c("ReviewStatus", "choice", choice="review_status"),
             c("ReviewPath", "choice", choice="review_path"),
             c("GSAPrecheckResult", "choice", choice="gsa_precheck"),
@@ -766,11 +771,42 @@ def ensure_choice_option_labels() -> list[str]:
     return deferred
 
 
+def ensure_auto_numbers() -> None:
+    """Converge autonumber formats; the seed is set only when the format is first applied."""
+    for table in TABLES:
+        for column in table["columns"]:
+            if "autoNumberFormat" not in column:
+                continue
+            logical = table["logicalName"]
+            name = f"{PREFIX}_{column['name']}".lower()
+            path = f"EntityDefinitions(LogicalName='{logical}')/Attributes(LogicalName='{name}')"
+            definition = web_api("GET", f"{path}/Microsoft.Dynamics.CRM.StringAttributeMetadata")
+            if definition.get("AutoNumberFormat") == column["autoNumberFormat"]:
+                print(f"Autonumber {logical}.{name} already {column['autoNumberFormat']}", flush=True)
+                continue
+            definition.pop("@odata.context", None)
+            definition["@odata.type"] = "Microsoft.Dynamics.CRM.StringAttributeMetadata"
+            definition["AutoNumberFormat"] = column["autoNumberFormat"]
+            retry_metadata(
+                lambda: web_api("PUT", path, definition, {
+                    "MSCRM.MergeLabels": "true",
+                    "MSCRM.SolutionUniqueName": SOLUTION,
+                }),
+                f"Set autonumber {logical}.{name}",
+            )
+            web_api("POST", "SetAutoNumberSeed", {
+                "EntityName": logical, "AttributeName": name, "Value": column["autoNumberSeed"],
+            })
+            print(f"Autonumber {logical}.{name} set to {column['autoNumberFormat']} "
+                  f"from {column['autoNumberSeed']}", flush=True)
+
+
 def converge_labels() -> None:
-    """Converge option labels, column labels and membership; report every deferral together."""
+    """Converge option labels, column labels, autonumbers and membership; report every deferral together."""
     deferred = ensure_choice_option_labels()
     try:
         ensure_column_labels_and_membership()
+        ensure_auto_numbers()
     finally:
         if deferred:
             print("Rerun --labels-only later for the deferred choice columns.", flush=True)
@@ -866,7 +902,7 @@ def main() -> None:
     parser.add_argument(
         "--labels-only",
         action="store_true",
-        help="Only converge choice option labels, column display labels and solution membership.",
+        help="Only converge choice option labels, column display labels, autonumber formats and solution membership.",
     )
     args = parser.parse_args()
     if args.spec_only:

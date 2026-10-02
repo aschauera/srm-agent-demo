@@ -13,6 +13,8 @@
     {
       "name": "RequestRef",
       "type": "string",
+      "autoNumberFormat": "REQ-{DATETIMEUTC:yyyy}-{SEQNUM:3}",
+      "autoNumberSeed": 13,
       "displayName": "Request Ref",
       "alternateKey": false
     },

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Workflow WorkflowId="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e03}" Name="SRM Intake - Submit review request" Description="Agent tool: creates a financial review request for a supplier identified by DUNS (creating the supplier from its D&amp;B profile if it is new) or by name with No DUNS. The pre-check flow then runs automatically." xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <JsonFileName>/Workflows/SRMIntake-Submitreviewrequest-5A7E1C02-3F41-4D8B-9C6E-0B2F8D4A1E03.json</JsonFileName>
+  <Type>1</Type>
+  <Subprocess>0</Subprocess>
+  <Category>5</Category>
+  <Mode>0</Mode>
+  <Scope>4</Scope>
+  <OnDemand>0</OnDemand>
+  <TriggerOnCreate>0</TriggerOnCreate>
+  <TriggerOnDelete>0</TriggerOnDelete>
+  <AsyncAutodelete>0</AsyncAutodelete>
+  <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+  <StateCode>1</StateCode>
+  <StatusCode>2</StatusCode>
+  <RunAs>1</RunAs>
+  <IsTransacted>1</IsTransacted>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsCustomizable>1</IsCustomizable>
+  <BusinessProcessType>0</BusinessProcessType>
+  <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+  <ModernFlowType>1</ModernFlowType>
+  <PrimaryEntity>none</PrimaryEntity>
+  <LocalizedNames>
+    <LocalizedName languagecode="1033" description="SRM Intake - Submit review request" />
+  </LocalizedNames>
+  <Descriptions>
+    <Description languagecode="1033" description="Agent tool: creates a financial review request for a supplier identified by DUNS (creating the supplier from its D&amp;B profile if it is new) or by name with No DUNS. The pre-check flow then runs automatically." />
+  </Descriptions>
+</Workflow>

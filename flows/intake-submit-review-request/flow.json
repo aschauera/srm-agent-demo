@@ -1,0 +1,20 @@
+{
+  "displayName": "SRM Intake - Submit review request",
+  "description": "Agent tool: creates a financial review request for a supplier identified by DUNS (creating the supplier from its D&B profile if it is new) or by name with No DUNS. The pre-check flow then runs automatically.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e03",
+  "owningAgent": "intake-and-pre-check",
+  "processStep": "Stage 1 - Request & Pre-Check",
+  "requirements": [
+    "SRM-INT-002",
+    "SRM-INT-011",
+    "SRM-INT-012",
+    "SRM-GOV-004"
+  ],
+  "trigger": "When an agent calls the flow (inputs: duns, noduns, suppliername, buyername, buyeremail, division, dnbconfirmed).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": [
+    "mag_SRMAppRecordUrl"
+  ]
+}

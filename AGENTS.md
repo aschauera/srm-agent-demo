@@ -248,6 +248,10 @@ and `flows/environment-variables.json`, using `mag_` schema names.
 6. Create flows in draft (`statecode = 0`). Binding connections in DemoPRE is a manual, user-owned
    step; activate a flow (`statecode = 1`) only after its connection references are bound, and
    report which flows remain inactive and why.
+   A flow with a Dataverse trigger (`SubscribeWebhookTrigger`) that was created or updated through
+   the Web API shows as On, but its trigger does not fire until the flow is opened and saved once
+   in the Power Automate designer (verified in DemoPRE, 2026-10-02). This save is a manual,
+   user-owned step. Do not report such a flow as working until a live smoke test shows runs.
 7. Flows that make consequential changes, such as rating conversions, synchronization, or archival,
    must write to `mag_ReviewAuditTrail` and must not set the final financial rating.
 8. After a successful deployment, run [Solution Source Synchronization](#solution-source-synchronization).

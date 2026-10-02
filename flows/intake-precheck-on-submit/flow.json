@@ -1,0 +1,23 @@
+{
+  "displayName": "SRM Intake - GSA pre-check on submit",
+  "description": "Runs the Stage 1 GSA DUNS pre-check when a review request is added or its supplier, DUNS or No DUNS value changes: sets the pre-check outcome and review path, auto-closes the GSA reuse path, completes the supplier from D&B, notifies buyer and reviewer, and writes the ledger.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e01",
+  "owningAgent": "intake-and-pre-check",
+  "processStep": "Stage 1 - Request & Pre-Check",
+  "requirements": [
+    "SRM-INT-008",
+    "SRM-INT-009",
+    "SRM-INT-010",
+    "SRM-INT-011",
+    "SRM-GOV-004"
+  ],
+  "trigger": "Dataverse: row added or modified on mag_financialreviewrequest (organization scope), filtered to mag_dunsnumber, mag_noduns and mag_supplierid; a trigger condition skips completed requests.",
+  "connectionReferences": [
+    "mag_SRMDataverse",
+    "mag_SRMOutlook"
+  ],
+  "environmentVariables": [
+    "mag_SRMDemoMailbox",
+    "mag_SRMAppRecordUrl"
+  ]
+}

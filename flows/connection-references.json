@@ -1,0 +1,14 @@
+[
+  {
+    "logicalName": "mag_SRMDataverse",
+    "displayName": "SRM Dataverse",
+    "connectorId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+    "description": "Dataverse connection used by every SRM agent flow."
+  },
+  {
+    "logicalName": "mag_SRMOutlook",
+    "displayName": "SRM Outlook",
+    "connectorId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+    "description": "Office 365 Outlook connection that sends SRM demo notifications to the demo mailbox. Approved 2026-09-30."
+  }
+]

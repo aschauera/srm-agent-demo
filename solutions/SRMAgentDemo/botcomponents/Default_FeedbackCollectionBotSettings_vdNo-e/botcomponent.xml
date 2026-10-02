@@ -1,0 +1,9 @@
+<botcomponent schemaname="Default_FeedbackCollectionBotSettings_vdNo-e">
+  <componenttype>18</componenttype>
+  <iscustomizable>0</iscustomizable>
+  <parentbotid>
+    <schemaname>mag_srmintakeprecheck_yrOw9c</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

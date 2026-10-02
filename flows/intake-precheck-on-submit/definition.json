@@ -1,0 +1,821 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    },
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMOutlook"
+      },
+      "api": {
+        "name": "shared_office365"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM demo notification mailbox (mag_SRMDemoMailbox)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMDemoMailbox",
+          "description": "Mailbox that receives every SRM demo notification"
+        }
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      }
+    },
+    "triggers": {
+      "When_a_review_request_is_submitted": {
+        "type": "OpenApiConnectionWebhook",
+        "inputs": {
+          "parameters": {
+            "subscriptionRequest/message": 4,
+            "subscriptionRequest/entityname": "mag_financialreviewrequest",
+            "subscriptionRequest/scope": 4,
+            "subscriptionRequest/filteringattributes": "mag_dunsnumber,mag_noduns,mag_supplierid"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "SubscribeWebhookTrigger",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        },
+        "conditions": [
+          {
+            "expression": "@not(equals(triggerOutputs()?['body/mag_reviewstatus'], 100000002))"
+          }
+        ]
+      }
+    },
+    "actions": {
+      "Request_id": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@triggerOutputs()?['body/mag_financialreviewrequestid']"
+      },
+      "Get_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_id": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "recordId": "@outputs('Request_id')",
+            "$select": "mag_name,mag_requestref,mag_dunsnumber,mag_noduns,_mag_supplierid_value,mag_buyername,mag_buyeremail,mag_reviewername,mag_reviewstatus,mag_reviewernotified"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "GetItem",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request_ref": {
+        "type": "Compose",
+        "runAfter": {
+          "Get_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(body('Get_request')?['mag_name'], body('Get_request')?['mag_requestref'], outputs('Request_id'))"
+      },
+      "List_GSA_rating": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_gsaratingrecords",
+            "$select": "mag_rating,mag_remarks,mag_ratingdate,mag_expirydate,mag_mandatoryrereview,mag_reviewername",
+            "$filter": "mag_duns eq '@{coalesce(body('Get_request')?['mag_dunsnumber'], '-')}'",
+            "$orderby": "mag_ratingdate desc",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "GSA_record": {
+        "type": "Compose",
+        "runAfter": {
+          "List_GSA_rating": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_GSA_rating')?['body/value'])"
+      },
+      "Outcome": {
+        "type": "Compose",
+        "runAfter": {
+          "GSA_record": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(or(equals(body('Get_request')?['mag_noduns'], true), empty(body('Get_request')?['mag_dunsnumber'])), 'skip', if(equals(outputs('GSA_record'), null), 'nomatch', if(less(ticks(coalesce(outputs('GSA_record')?['mag_expirydate'], '1900-01-01T00:00:00Z')), ticks(startOfDay(utcNow()))), 'expired', if(equals(outputs('GSA_record')?['mag_mandatoryrereview'], true), 'mandatory', 'reuse'))))"
+      },
+      "Precheck_label": {
+        "type": "Compose",
+        "runAfter": {
+          "Outcome": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Outcome'),'skip'),'Skip - no DUNS',if(equals(outputs('Outcome'),'nomatch'),'No matching supplier',if(equals(outputs('Outcome'),'expired'),'Rating expired','Valid active rating')))"
+      },
+      "Reason": {
+        "type": "Compose",
+        "runAfter": {
+          "Precheck_label": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Outcome'),'skip'),'The supplier has no DUNS number, so the GSA pre-check was bypassed.',if(equals(outputs('Outcome'),'nomatch'),'No GSA record matches the DUNS number.',if(equals(outputs('Outcome'),'expired'),'The GSA rating has expired and must be re-audited.','The GSA rating is valid, but a mandatory re-review rule is triggered.')))"
+      },
+      "Is_GSA_reuse": {
+        "type": "If",
+        "runAfter": {
+          "Reason": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Outcome')",
+            "reuse"
+          ]
+        },
+        "actions": {
+          "Complete_with_GSA_reuse": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_name": "@outputs('Request_ref')",
+                "item/mag_gsaprecheckresult": 100000000,
+                "item/mag_reviewpath": 100000000,
+                "item/mag_reviewstatus": 100000002,
+                "item/mag_mandatoryrereview": false,
+                "item/mag_gsarating": "@if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated')))",
+                "item/mag_gsaremarks": "@outputs('GSA_record')?['mag_remarks']",
+                "item/mag_gsaratingdate": "@outputs('GSA_record')?['mag_ratingdate']",
+                "item/mag_gsaratingexpiry": "@outputs('GSA_record')?['mag_expirydate']",
+                "item/mag_finalrating": "@outputs('GSA_record')?['mag_rating']",
+                "item/mag_ratingdate": "@outputs('GSA_record')?['mag_ratingdate']",
+                "item/mag_ratingexpiry": "@outputs('GSA_record')?['mag_expirydate']",
+                "item/mag_remarks": "@outputs('GSA_record')?['mag_remarks']",
+                "item/mag_reviewername": "@coalesce(outputs('GSA_record')?['mag_reviewername'], body('Get_request')?['mag_reviewername'])",
+                "item/mag_reviewernotified": true,
+                "item/mag_buyernotified": true,
+                "item/mag_currentstage": 5
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Ledger_reuse": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Complete_with_GSA_reuse": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Completed - Reuse Existing GSA DUNS Rating",
+                "item/mag_action": "Completed - Reuse Existing GSA DUNS Rating",
+                "item/mag_actor": "Intake & Pre-Check (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "GSA (mock); Dataverse",
+                "item/mag_details": "@{concat('Valid GSA rating ', if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated'))), ' (rated ', formatDateTime(outputs('GSA_record')?['mag_ratingdate'],'yyyy-MM-dd'), ', expires ', formatDateTime(outputs('GSA_record')?['mag_expirydate'],'yyyy-MM-dd'), ', reviewer ', coalesce(outputs('GSA_record')?['mag_reviewername'],'n/a'), ') reused as the final rating. This copies a prior human-issued GSA rating; no AI rating was produced. Supplier communication, collection and analysis are bypassed.')}",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Email_buyer_not_required": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Ledger_reuse": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                "emailMessage/Subject": "[SRM demo, to buyer @{body('Get_request')?['mag_buyeremail']}] Financial review not required - @{outputs('Request_ref')}",
+                "emailMessage/Body": "<p>Dear @{body('Get_request')?['mag_buyername']},</p><p>A financial review is not required for request @{outputs('Request_ref')}. The supplier has a valid GSA financial rating for DUNS @{body('Get_request')?['mag_dunsnumber']} with no mandatory re-review, so the existing rating is reused and the request is closed.</p><p>GSA rating: <b>@{if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated')))}</b><br/>Rating date: @{formatDateTime(outputs('GSA_record')?['mag_ratingdate'],'yyyy-MM-dd')}<br/>Expiry date: @{formatDateTime(outputs('GSA_record')?['mag_expirydate'],'yyyy-MM-dd')}<br/>Reviewer: @{outputs('GSA_record')?['mag_reviewername']}<br/>Remarks: @{outputs('GSA_record')?['mag_remarks']}</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p><p><i>Demo notification generated by the SRM Intake &amp; Pre-Check agent flow. Fictional data only.</i></p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "operationId": "SendEmailV2",
+                "connectionName": "shared_office365"
+              }
+            }
+          },
+          "Log_buyer_email": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Email_buyer_not_required": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_communicationlogs",
+                "item/mag_name": "[SRM demo, to buyer @{body('Get_request')?['mag_buyeremail']}] Financial review not required - @{outputs('Request_ref')}",
+                "item/mag_subject": "[SRM demo, to buyer @{body('Get_request')?['mag_buyeremail']}] Financial review not required - @{outputs('Request_ref')}",
+                "item/mag_body": "<p>Dear @{body('Get_request')?['mag_buyername']},</p><p>A financial review is not required for request @{outputs('Request_ref')}. The supplier has a valid GSA financial rating for DUNS @{body('Get_request')?['mag_dunsnumber']} with no mandatory re-review, so the existing rating is reused and the request is closed.</p><p>GSA rating: <b>@{if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated')))}</b><br/>Rating date: @{formatDateTime(outputs('GSA_record')?['mag_ratingdate'],'yyyy-MM-dd')}<br/>Expiry date: @{formatDateTime(outputs('GSA_record')?['mag_expirydate'],'yyyy-MM-dd')}<br/>Reviewer: @{outputs('GSA_record')?['mag_reviewername']}<br/>Remarks: @{outputs('GSA_record')?['mag_remarks']}</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p><p><i>Demo notification generated by the SRM Intake &amp; Pre-Check agent flow. Fictional data only.</i></p>",
+                "item/mag_direction": 100000001,
+                "item/mag_channel": 100000000,
+                "item/mag_language": 100000000,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_actorname": "Intake & Pre-Check (agent flow)",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Email_reviewer_filing_only": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Log_buyer_email": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                "emailMessage/Subject": "[SRM demo, to reviewer] Filing only, no action needed - @{outputs('Request_ref')}",
+                "emailMessage/Body": "<p>Request @{outputs('Request_ref')} was completed automatically by reusing the existing GSA DUNS rating. No action is needed, and no document collection email is sent to the supplier.</p><p>GSA rating: <b>@{if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated')))}</b><br/>Rating date: @{formatDateTime(outputs('GSA_record')?['mag_ratingdate'],'yyyy-MM-dd')}<br/>Expiry date: @{formatDateTime(outputs('GSA_record')?['mag_expirydate'],'yyyy-MM-dd')}<br/>Reviewer: @{outputs('GSA_record')?['mag_reviewername']}<br/>Remarks: @{outputs('GSA_record')?['mag_remarks']}</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "operationId": "SendEmailV2",
+                "connectionName": "shared_office365"
+              }
+            }
+          },
+          "Log_reviewer_filing_email": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Email_reviewer_filing_only": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_communicationlogs",
+                "item/mag_name": "[SRM demo, to reviewer] Filing only, no action needed - @{outputs('Request_ref')}",
+                "item/mag_subject": "[SRM demo, to reviewer] Filing only, no action needed - @{outputs('Request_ref')}",
+                "item/mag_body": "<p>Request @{outputs('Request_ref')} was completed automatically by reusing the existing GSA DUNS rating. No action is needed, and no document collection email is sent to the supplier.</p><p>GSA rating: <b>@{if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated')))}</b><br/>Rating date: @{formatDateTime(outputs('GSA_record')?['mag_ratingdate'],'yyyy-MM-dd')}<br/>Expiry date: @{formatDateTime(outputs('GSA_record')?['mag_expirydate'],'yyyy-MM-dd')}<br/>Reviewer: @{outputs('GSA_record')?['mag_reviewername']}<br/>Remarks: @{outputs('GSA_record')?['mag_remarks']}</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p>",
+                "item/mag_direction": 100000001,
+                "item/mag_channel": 100000000,
+                "item/mag_language": 100000000,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_actorname": "Intake & Pre-Check (agent flow)",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Move_to_archiving_stage": {
+            "type": "Scope",
+            "runAfter": {
+              "Log_reviewer_filing_email": [
+                "Succeeded"
+              ]
+            },
+            "actions": {
+              "List_BPF_stages": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "parameters": {
+                    "entityName": "processstages",
+                    "$select": "processstageid,stagename",
+                    "$filter": "primaryentitytypecode eq 'mag_financialreviewrequest'"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "ListRecords",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Stage_request": {
+                "type": "Query",
+                "runAfter": {
+                  "List_BPF_stages": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "from": "@outputs('List_BPF_stages')?['body/value']",
+                  "where": "@equals(item()?['stagename'], 'Request & Pre-Check')"
+                }
+              },
+              "Stage_archiving": {
+                "type": "Query",
+                "runAfter": {
+                  "List_BPF_stages": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "from": "@outputs('List_BPF_stages')?['body/value']",
+                  "where": "@equals(item()?['stagename'], 'Archiving & Publication')"
+                }
+              },
+              "List_BPF_instance": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Stage_request": [
+                    "Succeeded"
+                  ],
+                  "Stage_archiving": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "parameters": {
+                    "entityName": "new_supplierfinancialreviews",
+                    "$select": "businessprocessflowinstanceid",
+                    "$filter": "_bpf_mag_financialreviewrequestid_value eq @{outputs('Request_id')}",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "ListRecords",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Has_BPF_instance": {
+                "type": "If",
+                "runAfter": {
+                  "List_BPF_instance": [
+                    "Succeeded"
+                  ]
+                },
+                "expression": {
+                  "greater": [
+                    "@length(outputs('List_BPF_instance')?['body/value'])",
+                    0
+                  ]
+                },
+                "actions": {
+                  "Move_BPF_instance": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {},
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "new_supplierfinancialreviews",
+                        "recordId": "@first(outputs('List_BPF_instance')?['body/value'])?['businessprocessflowinstanceid']",
+                        "item/activestageid@odata.bind": "processstages(@{first(body('Stage_archiving'))?['processstageid']})",
+                        "item/traversedpath": "@{first(body('Stage_request'))?['processstageid']},@{first(body('Stage_archiving'))?['processstageid']}"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Create_BPF_instance": {
+                      "type": "OpenApiConnection",
+                      "runAfter": {},
+                      "inputs": {
+                        "parameters": {
+                          "entityName": "new_supplierfinancialreviews",
+                          "item/bpf_name": "Supplier Financial Review",
+                          "item/bpf_mag_financialreviewrequestid@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                          "item/activestageid@odata.bind": "processstages(@{first(body('Stage_archiving'))?['processstageid']})",
+                          "item/traversedpath": "@{first(body('Stage_request'))?['processstageid']},@{first(body('Stage_archiving'))?['processstageid']}"
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                          "operationId": "CreateRecord",
+                          "connectionName": "shared_commondataserviceforapps"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Route_to_full_review": {
+              "type": "OpenApiConnection",
+              "runAfter": {},
+              "inputs": {
+                "parameters": {
+                  "entityName": "mag_financialreviewrequests",
+                  "recordId": "@outputs('Request_id')",
+                  "item/mag_name": "@outputs('Request_ref')",
+                  "item/mag_gsaprecheckresult": "@if(equals(outputs('Outcome'),'skip'),100000003,if(equals(outputs('Outcome'),'nomatch'),100000002,if(equals(outputs('Outcome'),'expired'),100000001,100000000)))",
+                  "item/mag_reviewpath": 100000002,
+                  "item/mag_reviewstatus": "@coalesce(body('Get_request')?['mag_reviewstatus'], 100000000)",
+                  "item/mag_mandatoryrereview": "@equals(outputs('Outcome'), 'mandatory')",
+                  "item/mag_gsarating": "@if(equals(outputs('GSA_record'), null), null, if(equals(outputs('GSA_record')?['mag_rating'],100000000),'Green',if(equals(outputs('GSA_record')?['mag_rating'],100000001),'Yellow',if(equals(outputs('GSA_record')?['mag_rating'],100000002),'Red','Not rated'))))",
+                  "item/mag_gsaremarks": "@outputs('GSA_record')?['mag_remarks']",
+                  "item/mag_gsaratingdate": "@outputs('GSA_record')?['mag_ratingdate']",
+                  "item/mag_gsaratingexpiry": "@outputs('GSA_record')?['mag_expirydate']",
+                  "item/mag_reviewernotified": true
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "UpdateRecord",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Ledger_precheck": {
+              "type": "OpenApiConnection",
+              "runAfter": {
+                "Route_to_full_review": [
+                  "Succeeded"
+                ]
+              },
+              "inputs": {
+                "parameters": {
+                  "entityName": "mag_reviewaudittrails",
+                  "item/mag_name": "@{concat('GSA pre-check: ', outputs('Precheck_label'), ' - full review required')}",
+                  "item/mag_action": "@{concat('GSA pre-check: ', outputs('Precheck_label'), ' - full review required')}",
+                  "item/mag_actor": "Intake & Pre-Check (agent flow)",
+                  "item/mag_actortype": 100000001,
+                  "item/mag_occurredon": "@utcNow()",
+                  "item/mag_systemtouched": "GSA (mock); Dataverse",
+                  "item/mag_details": "@{outputs('Reason')} Review path set to Full Review; the reviewer decides the final rating.",
+                  "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                  "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Reviewer_already_notified": {
+              "type": "If",
+              "runAfter": {
+                "Ledger_precheck": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "equals": [
+                  "@body('Get_request')?['mag_reviewernotified']",
+                  true
+                ]
+              },
+              "actions": {},
+              "else": {
+                "actions": {
+                  "Email_reviewer_todo": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {},
+                    "inputs": {
+                      "parameters": {
+                        "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                        "emailMessage/Subject": "[SRM demo, to reviewer] New financial review request - @{outputs('Request_ref')}",
+                        "emailMessage/Body": "<p>A new financial review request @{outputs('Request_ref')} from @{body('Get_request')?['mag_buyername']} needs a full review.</p><p>GSA pre-check: <b>@{outputs('Precheck_label')}</b>. @{outputs('Reason')}</p><p>Status: Not Started. <a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p>",
+                        "emailMessage/Importance": "Normal"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                        "operationId": "SendEmailV2",
+                        "connectionName": "shared_office365"
+                      }
+                    }
+                  },
+                  "Log_reviewer_todo_email": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Email_reviewer_todo": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "mag_communicationlogs",
+                        "item/mag_name": "[SRM demo, to reviewer] New financial review request - @{outputs('Request_ref')}",
+                        "item/mag_subject": "[SRM demo, to reviewer] New financial review request - @{outputs('Request_ref')}",
+                        "item/mag_body": "<p>A new financial review request @{outputs('Request_ref')} from @{body('Get_request')?['mag_buyername']} needs a full review.</p><p>GSA pre-check: <b>@{outputs('Precheck_label')}</b>. @{outputs('Reason')}</p><p>Status: Not Started. <a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p>",
+                        "item/mag_direction": 100000001,
+                        "item/mag_channel": 100000000,
+                        "item/mag_language": 100000000,
+                        "item/mag_occurredon": "@utcNow()",
+                        "item/mag_actorname": "Intake & Pre-Check (agent flow)",
+                        "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                        "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "CreateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Has_DUNS": {
+        "type": "If",
+        "runAfter": {
+          "Is_GSA_reuse": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "not": {
+            "equals": [
+              "@outputs('Outcome')",
+              "skip"
+            ]
+          }
+        },
+        "actions": {
+          "List_DnB_profile": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_dnbprofiles",
+                "$select": "mag_legalname,mag_street,mag_city,mag_country,mag_region,mag_website,mag_businesscategory,mag_manufacturingzone",
+                "$filter": "mag_duns eq '@{body('Get_request')?['mag_dunsnumber']}'",
+                "$top": 1
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "ListRecords",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "DnB_profile": {
+            "type": "Compose",
+            "runAfter": {
+              "List_DnB_profile": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@first(outputs('List_DnB_profile')?['body/value'])"
+          },
+          "Get_supplier": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "DnB_profile": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_suppliers",
+                "recordId": "@body('Get_request')?['_mag_supplierid_value']",
+                "$select": "mag_legalname,mag_street,mag_city,mag_country,mag_region,mag_website,mag_businesscategory,mag_manufacturingzone"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "GetItem",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Autofill_candidates": {
+            "type": "Compose",
+            "runAfter": {
+              "Get_supplier": [
+                "Succeeded"
+              ]
+            },
+            "inputs": [
+              {
+                "field": "mag_legalname",
+                "label": "Legal name",
+                "current": "@body('Get_supplier')?['mag_legalname']",
+                "value": "@outputs('DnB_profile')?['mag_legalname']"
+              },
+              {
+                "field": "mag_street",
+                "label": "Street",
+                "current": "@body('Get_supplier')?['mag_street']",
+                "value": "@outputs('DnB_profile')?['mag_street']"
+              },
+              {
+                "field": "mag_city",
+                "label": "City",
+                "current": "@body('Get_supplier')?['mag_city']",
+                "value": "@outputs('DnB_profile')?['mag_city']"
+              },
+              {
+                "field": "mag_country",
+                "label": "Country",
+                "current": "@body('Get_supplier')?['mag_country']",
+                "value": "@outputs('DnB_profile')?['mag_country']"
+              },
+              {
+                "field": "mag_region",
+                "label": "Region",
+                "current": "@body('Get_supplier')?['mag_region']",
+                "value": "@outputs('DnB_profile')?['mag_region']"
+              },
+              {
+                "field": "mag_website",
+                "label": "Website",
+                "current": "@body('Get_supplier')?['mag_website']",
+                "value": "@outputs('DnB_profile')?['mag_website']"
+              },
+              {
+                "field": "mag_businesscategory",
+                "label": "Business category",
+                "current": "@body('Get_supplier')?['mag_businesscategory']",
+                "value": "@outputs('DnB_profile')?['mag_businesscategory']"
+              },
+              {
+                "field": "mag_manufacturingzone",
+                "label": "Manufacturing zone",
+                "current": "@body('Get_supplier')?['mag_manufacturingzone']",
+                "value": "@outputs('DnB_profile')?['mag_manufacturingzone']"
+              }
+            ]
+          },
+          "Missing_fields": {
+            "type": "Query",
+            "runAfter": {
+              "Autofill_candidates": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@outputs('Autofill_candidates')",
+              "where": "@and(empty(item()?['current']), not(empty(item()?['value'])))"
+            }
+          },
+          "Filled_field_names": {
+            "type": "Select",
+            "runAfter": {
+              "Missing_fields": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@body('Missing_fields')",
+              "select": "@item()?['label']"
+            }
+          },
+          "Any_missing_fields": {
+            "type": "If",
+            "runAfter": {
+              "Filled_field_names": [
+                "Succeeded"
+              ]
+            },
+            "expression": {
+              "and": [
+                {
+                  "not": {
+                    "equals": [
+                      "@outputs('DnB_profile')",
+                      null
+                    ]
+                  }
+                },
+                {
+                  "greater": [
+                    "@length(body('Missing_fields'))",
+                    0
+                  ]
+                }
+              ]
+            },
+            "actions": {
+              "Autofill_supplier_from_DnB": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "parameters": {
+                    "entityName": "mag_suppliers",
+                    "recordId": "@body('Get_request')?['_mag_supplierid_value']",
+                    "item/mag_legalname": "@coalesce(body('Get_supplier')?['mag_legalname'], outputs('DnB_profile')?['mag_legalname'])",
+                    "item/mag_street": "@coalesce(body('Get_supplier')?['mag_street'], outputs('DnB_profile')?['mag_street'])",
+                    "item/mag_city": "@coalesce(body('Get_supplier')?['mag_city'], outputs('DnB_profile')?['mag_city'])",
+                    "item/mag_country": "@coalesce(body('Get_supplier')?['mag_country'], outputs('DnB_profile')?['mag_country'])",
+                    "item/mag_region": "@coalesce(body('Get_supplier')?['mag_region'], outputs('DnB_profile')?['mag_region'])",
+                    "item/mag_website": "@coalesce(body('Get_supplier')?['mag_website'], outputs('DnB_profile')?['mag_website'])",
+                    "item/mag_businesscategory": "@coalesce(body('Get_supplier')?['mag_businesscategory'], outputs('DnB_profile')?['mag_businesscategory'])",
+                    "item/mag_manufacturingzone": "@coalesce(body('Get_supplier')?['mag_manufacturingzone'], outputs('DnB_profile')?['mag_manufacturingzone'])"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Ledger_dnb_autofill": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Autofill_supplier_from_DnB": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "parameters": {
+                    "entityName": "mag_reviewaudittrails",
+                    "item/mag_name": "D&B auto-fill: supplier profile completed",
+                    "item/mag_action": "D&B auto-fill: supplier profile completed",
+                    "item/mag_actor": "Intake & Pre-Check (agent flow)",
+                    "item/mag_actortype": 100000001,
+                    "item/mag_occurredon": "@utcNow()",
+                    "item/mag_systemtouched": "D&B (mock); Dataverse",
+                    "item/mag_details": "@{concat('Filled from the D&B profile for DUNS ', body('Get_request')?['mag_dunsnumber'], ': ', join(body('Filled_field_names'), ', '), '. Existing supplier values were not overwritten; the buyer confirms the auto-fill on the request.')}",
+                    "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                    "item/mag_SupplierId@odata.bind": "mag_suppliers(@{body('Get_request')?['_mag_supplierid_value']})"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "CreateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      }
+    }
+  }
+}

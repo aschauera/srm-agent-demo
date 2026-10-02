@@ -1,0 +1,256 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "description": "Review request reference, for example REQ-2026-004",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "requestref"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "List_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {},
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_dunsnumber,mag_buyername,mag_reviewername,mag_reviewstatus,mag_reviewpath,mag_gsaprecheckresult,mag_mandatoryrereview,mag_preliminaryrating,mag_finalrating,mag_finalratingconfirmed,modifiedon",
+            "$filter": "@{concat('mag_requestref eq ''', replace(trim(coalesce(triggerBody()?['requestref'], '')), '''', ''''''), ''' or mag_name eq ''', replace(trim(coalesce(triggerBody()?['requestref'], '')), '''', ''''''), '''')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request": {
+        "type": "Compose",
+        "runAfter": {
+          "List_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_request')?['body/value'])"
+      },
+      "List_BPF_instance": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "new_supplierfinancialreviews",
+            "$select": "businessprocessflowinstanceid",
+            "$expand": "activestageid($select=stagename)",
+            "$filter": "_bpf_mag_financialreviewrequestid_value eq @{coalesce(outputs('Request')?['mag_financialreviewrequestid'], '00000000-0000-0000-0000-000000000000')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Respond_to_the_agent": {
+        "type": "Response",
+        "kind": "Skills",
+        "runAfter": {
+          "List_BPF_instance": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "found": {
+                "title": "Found",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "requestref": {
+                "title": "Request reference",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "supplier": {
+                "title": "Supplier",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "duns": {
+                "title": "DUNS",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "buyer": {
+                "title": "Buyer",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "reviewer": {
+                "title": "Reviewer",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "reviewstatus": {
+                "title": "Review status",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "reviewpath": {
+                "title": "Review path",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "gsaprecheck": {
+                "title": "GSA pre-check result",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "mandatoryrereview": {
+                "title": "Mandatory re-review",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "stage": {
+                "title": "Process stage",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "preliminaryrating": {
+                "title": "AI preliminary rating",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "finalrating": {
+                "title": "Final rating",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "finalratingconfirmed": {
+                "title": "Final rating confirmed by reviewer",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "lastupdated": {
+                "title": "Last updated",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "recordurl": {
+                "title": "Record URL",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "found": "@not(equals(outputs('Request'), null))",
+            "requestref": "@{coalesce(outputs('Request')?['mag_requestref'], outputs('Request')?['mag_name'])}",
+            "supplier": "@{outputs('Request')?['_mag_supplierid_value@OData.Community.Display.V1.FormattedValue']}",
+            "duns": "@{outputs('Request')?['mag_dunsnumber']}",
+            "buyer": "@{outputs('Request')?['mag_buyername']}",
+            "reviewer": "@{outputs('Request')?['mag_reviewername']}",
+            "reviewstatus": "@{outputs('Request')?['mag_reviewstatus@OData.Community.Display.V1.FormattedValue']}",
+            "reviewpath": "@{outputs('Request')?['mag_reviewpath@OData.Community.Display.V1.FormattedValue']}",
+            "gsaprecheck": "@{outputs('Request')?['mag_gsaprecheckresult@OData.Community.Display.V1.FormattedValue']}",
+            "mandatoryrereview": "@equals(outputs('Request')?['mag_mandatoryrereview'], true)",
+            "stage": "@{first(outputs('List_BPF_instance')?['body/value'])?['activestageid']?['stagename']}",
+            "preliminaryrating": "@{outputs('Request')?['mag_preliminaryrating@OData.Community.Display.V1.FormattedValue']}",
+            "finalrating": "@{outputs('Request')?['mag_finalrating@OData.Community.Display.V1.FormattedValue']}",
+            "finalratingconfirmed": "@equals(outputs('Request')?['mag_finalratingconfirmed'], true)",
+            "lastupdated": "@{outputs('Request')?['modifiedon']}",
+            "recordurl": "@{if(equals(outputs('Request'), null), '', concat(parameters('SRM app record URL (mag_SRMAppRecordUrl)'), outputs('Request')?['mag_financialreviewrequestid']))}"
+          }
+        }
+      }
+    }
+  }
+}

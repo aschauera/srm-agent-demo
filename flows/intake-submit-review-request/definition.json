@@ -1,0 +1,478 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "duns": {
+                "title": "DUNS number",
+                "type": "string",
+                "description": "Nine-digit D-U-N-S number; leave empty when the supplier has no DUNS",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "noduns": {
+                "title": "No DUNS",
+                "type": "boolean",
+                "description": "True when the supplier has no DUNS number or is applying for one",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "suppliername": {
+                "title": "Supplier name",
+                "type": "string",
+                "description": "Supplier name; required when No DUNS is true",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "buyername": {
+                "title": "Buyer name",
+                "type": "string",
+                "description": "Name of the requesting buyer",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "buyeremail": {
+                "title": "Buyer email",
+                "type": "string",
+                "description": "Email address of the requesting buyer",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "division": {
+                "title": "Division",
+                "type": "string",
+                "description": "Magna division requesting the review",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "dnbconfirmed": {
+                "title": "D&B auto-fill confirmed",
+                "type": "boolean",
+                "description": "True when the buyer confirmed the D&B supplier details",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "buyername",
+              "buyeremail"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Normalized_DUNS": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@replace(replace(replace(trim(coalesce(triggerBody()?['duns'], '')), '-', ''), ' ', ''), '.', '')"
+      },
+      "List_supplier": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Normalized_DUNS": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_suppliers",
+            "$select": "mag_supplierid,mag_name,mag_duns",
+            "$filter": "@{if(equals(triggerBody()?['noduns'], true), concat('mag_name eq ''', replace(coalesce(triggerBody()?['suppliername'], '-'), '''', ''''''), ''' or mag_legalname eq ''', replace(coalesce(triggerBody()?['suppliername'], '-'), '''', ''''''), ''''), concat('mag_duns eq ''', outputs('Normalized_DUNS'), ''''))}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "List_DnB_profile": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "List_supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_dnbprofiles",
+            "$select": "mag_legalname,mag_street,mag_city,mag_country,mag_region,mag_website,mag_businesscategory,mag_manufacturingzone",
+            "$filter": "mag_duns eq '@{if(equals(triggerBody()?['noduns'], true), '-', outputs('Normalized_DUNS'))}'",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "DnB_profile": {
+        "type": "Compose",
+        "runAfter": {
+          "List_DnB_profile": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_DnB_profile')?['body/value'])"
+      },
+      "Initialize_supplier_id": {
+        "type": "InitializeVariable",
+        "runAfter": {
+          "DnB_profile": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "variables": [
+            {
+              "name": "SupplierId",
+              "type": "string",
+              "value": "@{first(outputs('List_supplier')?['body/value'])?['mag_supplierid']}"
+            }
+          ]
+        }
+      },
+      "Supplier_missing_but_in_DnB": {
+        "type": "If",
+        "runAfter": {
+          "Initialize_supplier_id": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "and": [
+            {
+              "equals": [
+                "@variables('SupplierId')",
+                ""
+              ]
+            },
+            {
+              "not": {
+                "equals": [
+                  "@outputs('DnB_profile')",
+                  null
+                ]
+              }
+            }
+          ]
+        },
+        "actions": {
+          "Create_supplier_from_DnB": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_suppliers",
+                "item/mag_name": "@outputs('DnB_profile')?['mag_legalname']",
+                "item/mag_duns": "@outputs('Normalized_DUNS')",
+                "item/mag_hasduns": true,
+                "item/mag_legalname": "@outputs('DnB_profile')?['mag_legalname']",
+                "item/mag_street": "@outputs('DnB_profile')?['mag_street']",
+                "item/mag_city": "@outputs('DnB_profile')?['mag_city']",
+                "item/mag_country": "@outputs('DnB_profile')?['mag_country']",
+                "item/mag_region": "@outputs('DnB_profile')?['mag_region']",
+                "item/mag_website": "@outputs('DnB_profile')?['mag_website']",
+                "item/mag_businesscategory": "@outputs('DnB_profile')?['mag_businesscategory']",
+                "item/mag_manufacturingzone": "@outputs('DnB_profile')?['mag_manufacturingzone']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Set_supplier_id": {
+            "type": "SetVariable",
+            "runAfter": {
+              "Create_supplier_from_DnB": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "name": "SupplierId",
+              "value": "@outputs('Create_supplier_from_DnB')?['body/mag_supplierid']"
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Supplier_id": {
+        "type": "Compose",
+        "runAfter": {
+          "Supplier_missing_but_in_DnB": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@variables('SupplierId')"
+      },
+      "Can_submit": {
+        "type": "If",
+        "runAfter": {
+          "Supplier_id": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "and": [
+            {
+              "not": {
+                "equals": [
+                  "@outputs('Supplier_id')",
+                  ""
+                ]
+              }
+            },
+            {
+              "not": {
+                "equals": [
+                  "@trim(coalesce(triggerBody()?['buyername'], ''))",
+                  ""
+                ]
+              }
+            },
+            {
+              "contains": [
+                "@coalesce(triggerBody()?['buyeremail'], '')",
+                "@"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Create_review_request": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})",
+                "item/mag_dunsnumber": "@if(equals(triggerBody()?['noduns'], true), null, outputs('Normalized_DUNS'))",
+                "item/mag_noduns": "@equals(triggerBody()?['noduns'], true)",
+                "item/mag_dnbautofillconfirmed": "@equals(triggerBody()?['dnbconfirmed'], true)",
+                "item/mag_buyername": "@triggerBody()?['buyername']",
+                "item/mag_buyeremail": "@triggerBody()?['buyeremail']",
+                "item/mag_division": "@triggerBody()?['division']",
+                "item/mag_reviewstatus": 100000000
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Name_request": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Create_review_request": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Create_review_request')?['body/mag_financialreviewrequestid']",
+                "item/mag_name": "@outputs('Create_review_request')?['body/mag_requestref']"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Ledger_submitted": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Name_request": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Review request submitted via agent",
+                "item/mag_action": "Review request submitted via agent",
+                "item/mag_actor": "Intake & Pre-Check (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Dataverse",
+                "item/mag_details": "@{concat('Submitted for buyer ', triggerBody()?['buyername'], ' (', triggerBody()?['buyeremail'], '). D&B auto-fill confirmed: ', string(equals(triggerBody()?['dnbconfirmed'], true)), '. The GSA pre-check runs automatically.')}",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Create_review_request')?['body/mag_financialreviewrequestid']})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Respond_created": {
+            "type": "Response",
+            "kind": "Skills",
+            "runAfter": {
+              "Ledger_submitted": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "created": {
+                    "title": "Created",
+                    "description": "",
+                    "type": "boolean",
+                    "x-ms-content-hint": "BOOLEAN",
+                    "x-ms-dynamically-added": true
+                  },
+                  "requestref": {
+                    "title": "Request reference",
+                    "description": "",
+                    "type": "string",
+                    "x-ms-content-hint": "TEXT",
+                    "x-ms-dynamically-added": true
+                  },
+                  "requestid": {
+                    "title": "Request ID",
+                    "description": "",
+                    "type": "string",
+                    "x-ms-content-hint": "TEXT",
+                    "x-ms-dynamically-added": true
+                  },
+                  "recordurl": {
+                    "title": "Record URL",
+                    "description": "",
+                    "type": "string",
+                    "x-ms-content-hint": "TEXT",
+                    "x-ms-dynamically-added": true
+                  },
+                  "message": {
+                    "title": "Message",
+                    "description": "",
+                    "type": "string",
+                    "x-ms-content-hint": "TEXT",
+                    "x-ms-dynamically-added": true
+                  }
+                },
+                "additionalProperties": {}
+              },
+              "statusCode": 200,
+              "body": {
+                "created": true,
+                "requestref": "@{outputs('Create_review_request')?['body/mag_requestref']}",
+                "requestid": "@{outputs('Create_review_request')?['body/mag_financialreviewrequestid']}",
+                "recordurl": "@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Create_review_request')?['body/mag_financialreviewrequestid']}",
+                "message": "Request submitted. The GSA pre-check runs automatically within a minute."
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {
+            "Respond_not_created": {
+              "type": "Response",
+              "kind": "Skills",
+              "runAfter": {},
+              "inputs": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "created": {
+                      "title": "Created",
+                      "description": "",
+                      "type": "boolean",
+                      "x-ms-content-hint": "BOOLEAN",
+                      "x-ms-dynamically-added": true
+                    },
+                    "requestref": {
+                      "title": "Request reference",
+                      "description": "",
+                      "type": "string",
+                      "x-ms-content-hint": "TEXT",
+                      "x-ms-dynamically-added": true
+                    },
+                    "requestid": {
+                      "title": "Request ID",
+                      "description": "",
+                      "type": "string",
+                      "x-ms-content-hint": "TEXT",
+                      "x-ms-dynamically-added": true
+                    },
+                    "recordurl": {
+                      "title": "Record URL",
+                      "description": "",
+                      "type": "string",
+                      "x-ms-content-hint": "TEXT",
+                      "x-ms-dynamically-added": true
+                    },
+                    "message": {
+                      "title": "Message",
+                      "description": "",
+                      "type": "string",
+                      "x-ms-content-hint": "TEXT",
+                      "x-ms-dynamically-added": true
+                    }
+                  },
+                  "additionalProperties": {}
+                },
+                "statusCode": 200,
+                "body": {
+                  "created": false,
+                  "requestref": "",
+                  "requestid": "",
+                  "recordurl": "",
+                  "message": "@{if(equals(outputs('Supplier_id'), ''), if(equals(triggerBody()?['noduns'], true), 'No supplier matches that name. Suppliers without a DUNS number must exist in the supplier master first.', 'No supplier or D&B profile matches that DUNS number. Check the number or submit with No DUNS.'), 'Buyer name and a valid buyer email are required.')}"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

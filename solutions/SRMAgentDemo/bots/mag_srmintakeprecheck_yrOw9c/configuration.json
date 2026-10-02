@@ -1,0 +1,20 @@
+{
+  "$kind": "BotConfiguration",
+  "recognizer": {
+    "$kind": "CLICopilotRecognizer"
+  },
+  "agentSettings": {
+    "$kind": "AgentSettings",
+    "model": {
+      "$kind": "ModelConfig",
+      "series": "claude-opus-5"
+    },
+    "instructions": {
+      "$kind": "Instructions"
+    },
+    "web": {
+      "$kind": "WebSettings",
+      "enableWebSearch": true
+    }
+  }
+}

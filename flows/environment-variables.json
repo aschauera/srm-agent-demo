@@ -1,0 +1,16 @@
+[
+  {
+    "schemaName": "mag_SRMDemoMailbox",
+    "displayName": "SRM demo notification mailbox",
+    "type": "String",
+    "description": "Mailbox that receives every SRM demo notification; the intended recipient is named in the subject.",
+    "value": "Set at deployment: --demo-mailbox, or the deploying user's primary email."
+  },
+  {
+    "schemaName": "mag_SRMAppRecordUrl",
+    "displayName": "SRM app record URL",
+    "type": "String",
+    "description": "Review request URL prefix in the Supplier Financial Risk Review app; the record ID is appended.",
+    "value": "Set at deployment from the environment URL and the app ID."
+  }
+]

@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_SRMDemoMailbox">
+  <description default="Mailbox that receives every SRM demo notification; the intended recipient is named in the subject.">
+    <label description="Mailbox that receives every SRM demo notification; the intended recipient is named in the subject." languagecode="1033" />
+  </description>
+  <displayname default="SRM demo notification mailbox">
+    <label description="SRM demo notification mailbox" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>
