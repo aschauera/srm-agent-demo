@@ -99,7 +99,7 @@ CHOICES: dict[str, list[str]] = {
         "Other",
     ],
     "operator": ["Greater than", "Greater than or equal", "Less than", "Less than or equal", "Equals"],
-    "dimension": ["Liquidity", "Leverage", "Profitability", "Cash flow", "Non-financial"],
+    "dimension": ["Liquidity", "Leverage", "Profitability", "Cash flow", "Non-financial", "Overall"],
     "approval_status": ["Draft - demo only", "Approved"],
     "archive_item_type": ["Document", "Email", "Working paper", "Risk extract", "Rating", "Call transcript"],
 }

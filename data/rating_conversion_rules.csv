@@ -1,4 +1,4 @@
 ﻿DemoKey,Name,RuleName,MinimumScore,MaximumScore,MagnaRating,CreditLimitGuidance,ApprovalStatus,EffectiveFrom,EffectiveTo,DemoOnly
-RULE-COF-RED,RULE-COF-RED,RULE-COF-RED,1,3,Red,Illustrative: tighter short-term purchasing limit; reviewer approval required.,Draft - demo only,2026-09-28T00:00:00Z,,True
-RULE-COF-YELLOW,RULE-COF-YELLOW,RULE-COF-YELLOW,4,6,Yellow,Illustrative: standard monitoring; reviewer approval required.,Draft - demo only,2026-09-28T00:00:00Z,,True
-RULE-COF-GREEN,RULE-COF-GREEN,RULE-COF-GREEN,7,10,Green,Illustrative: normal monitoring; reviewer approval required.,Draft - demo only,2026-09-28T00:00:00Z,,True
+RULE-COF-RED,RULE-COF-RED,RULE-COF-RED,0,3,Red,Illustrative (Coface DRA 0-3: high to defaulted risk): tighter short-term purchasing limit; reviewer approval required.,Draft - demo only,2026-10-02T00:00:00Z,,True
+RULE-COF-YELLOW,RULE-COF-YELLOW,RULE-COF-YELLOW,4,7,Yellow,Illustrative (Coface DRA 4-7: elevated to above-average risk): enhanced monitoring; reviewer approval required.,Draft - demo only,2026-10-02T00:00:00Z,,True
+RULE-COF-GREEN,RULE-COF-GREEN,RULE-COF-GREEN,8,10,Green,Illustrative (Coface DRA 8-10: low risk): normal monitoring; reviewer approval required.,Draft - demo only,2026-10-02T00:00:00Z,,True

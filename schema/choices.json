@@ -351,14 +351,16 @@
       "Leverage",
       "Profitability",
       "Cash flow",
-      "Non-financial"
+      "Non-financial",
+      "Overall"
     ],
     "values": [
       100000000,
       100000001,
       100000002,
       100000003,
-      100000004
+      100000004,
+      100000005
     ]
   }
 }

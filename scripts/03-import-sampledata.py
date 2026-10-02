@@ -494,9 +494,9 @@ def demo_rows() -> dict[str, list[dict]]:
 
     # Illustrative mappings and thresholds are deliberately unapproved and demo-only.
     for key, low, high, rating, guidance in [
-        ("RULE-COF-RED", 1, 3, "Red", "Illustrative: tighter short-term purchasing limit; reviewer approval required."),
-        ("RULE-COF-YELLOW", 4, 6, "Yellow", "Illustrative: standard monitoring; reviewer approval required."),
-        ("RULE-COF-GREEN", 7, 10, "Green", "Illustrative: normal monitoring; reviewer approval required."),
+        ("RULE-COF-RED", 0, 3, "Red", "Illustrative (Coface DRA 0-3: high to defaulted risk): tighter short-term purchasing limit; reviewer approval required."),
+        ("RULE-COF-YELLOW", 4, 7, "Yellow", "Illustrative (Coface DRA 4-7: elevated to above-average risk): enhanced monitoring; reviewer approval required."),
+        ("RULE-COF-GREEN", 8, 10, "Green", "Illustrative (Coface DRA 8-10: low risk): normal monitoring; reviewer approval required."),
     ]:
         rows["mag_ratingconversionrule"].append({
             "DemoKey": key,
@@ -511,6 +511,12 @@ def demo_rows() -> dict[str, list[dict]]:
             "DemoOnly": True,
         })
     for key, metric, operator, threshold, points, dimension, signal in [
+        ("RULE-RISK-LEV-AMBER", "LeverageRatio", "Greater than", 0.6, 1, "Leverage", "Elevated leverage signal (debt to assets)"),
+        ("RULE-RISK-LIQ-AMBER", "LiquidityRatio", "Less than", 1.5, 1, "Liquidity", "Thin liquidity signal (current ratio below 1.5)"),
+        ("RULE-RISK-YOY", "YearOverYearDelta", "Less than", -0.1, 2, "Profitability", "Revenue decline of more than 10 percent"),
+        ("RULE-RISK-GM", "GrossMargin", "Less than", 0.15, 1, "Profitability", "Low gross margin signal"),
+        ("RULE-RISK-TOTAL-YELLOW", "TotalPoints", "Greater than or equal", 2, 0, "Overall", "Preliminary Yellow: total points of 2 to 4"),
+        ("RULE-RISK-TOTAL-RED", "TotalPoints", "Greater than or equal", 5, 0, "Overall", "Preliminary Red: total points of 5 or more"),
         ("RULE-RISK-LEV", "LeverageRatio", "Greater than", 0.75, 3, "Leverage", "High leverage signal"),
         ("RULE-RISK-LIQ", "LiquidityRatio", "Less than", 1.0, 3, "Liquidity", "Liquidity pressure signal"),
         ("RULE-RISK-CFO", "OperatingCashFlow", "Less than", 0, 2, "Cash flow", "Negative operating cash flow signal"),
@@ -617,7 +623,7 @@ def export_csv(rows_by_table: dict[str, list[dict]]) -> None:
         print(f"Wrote {filename}: {len(rows_by_table[table_name])} rows")
 
 
-def import_csv(rows_by_table: dict[str, list[dict]]) -> None:
+def import_csv(rows_by_table: dict[str, list[dict]], only: set[str] | None = None) -> None:
     from auth import get_client
     from PowerPlatform.Dataverse.models.upsert import UpsertItem
 
@@ -743,6 +749,8 @@ def import_csv(rows_by_table: dict[str, list[dict]]) -> None:
         ("mag_supplieronepagesummary", records_by_table["mag_supplieronepagesummary"]),
     ]
     for table, rows in order:
+        if only and table not in only:
+            continue
         load(table, rows)
 
     print("Demo data import complete.", flush=True)
@@ -751,11 +759,13 @@ def import_csv(rows_by_table: dict[str, list[dict]]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--export-only", action="store_true", help="Generate the CSV fixtures without connecting.")
+    parser.add_argument("--only", nargs="+", metavar="TABLE", help="Import only these logical table names (for example mag_riskscoringrule).")
     args = parser.parse_args()
     rows = demo_rows()
-    export_csv(rows)
+    if not args.only:
+        export_csv(rows)
     if not args.export_only:
-        import_csv(rows)
+        import_csv(rows, set(args.only) if args.only else None)
 
 
 if __name__ == "__main__":

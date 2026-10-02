@@ -1,4 +1,10 @@
 ﻿DemoKey,Name,Metric,Operator,Threshold,Points,Dimension,Signal,ApprovalStatus,DemoOnly
+RULE-RISK-LEV-AMBER,RULE-RISK-LEV-AMBER,LeverageRatio,Greater than,0.6,1,Leverage,Elevated leverage signal (debt to assets),Draft - demo only,True
+RULE-RISK-LIQ-AMBER,RULE-RISK-LIQ-AMBER,LiquidityRatio,Less than,1.5,1,Liquidity,Thin liquidity signal (current ratio below 1.5),Draft - demo only,True
+RULE-RISK-YOY,RULE-RISK-YOY,YearOverYearDelta,Less than,-0.1,2,Profitability,Revenue decline of more than 10 percent,Draft - demo only,True
+RULE-RISK-GM,RULE-RISK-GM,GrossMargin,Less than,0.15,1,Profitability,Low gross margin signal,Draft - demo only,True
+RULE-RISK-TOTAL-YELLOW,RULE-RISK-TOTAL-YELLOW,TotalPoints,Greater than or equal,2,0,Overall,Preliminary Yellow: total points of 2 to 4,Draft - demo only,True
+RULE-RISK-TOTAL-RED,RULE-RISK-TOTAL-RED,TotalPoints,Greater than or equal,5,0,Overall,Preliminary Red: total points of 5 or more,Draft - demo only,True
 RULE-RISK-LEV,RULE-RISK-LEV,LeverageRatio,Greater than,0.75,3,Leverage,High leverage signal,Draft - demo only,True
 RULE-RISK-LIQ,RULE-RISK-LIQ,LiquidityRatio,Less than,1.0,3,Liquidity,Liquidity pressure signal,Draft - demo only,True
 RULE-RISK-CFO,RULE-RISK-CFO,OperatingCashFlow,Less than,0,2,Cash flow,Negative operating cash flow signal,Draft - demo only,True
