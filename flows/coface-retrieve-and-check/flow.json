@@ -1,0 +1,28 @@
+{
+  "displayName": "SRM Data Collection - Retrieve Coface data",
+  "description": "Agent tool: retrieves the mock Coface record for a request (DUNS match, or a name and country shortlist without a DUNS), checks the data age against the configured window, writes the Coface columns to the request, logs the action and emails the reviewer. Skips requests that reuse a GSA rating.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e05",
+  "owningAgent": "data-collection",
+  "processStep": "Stage 2 - Data Collection (Coface)",
+  "requirements": [
+    "SRM-COF-002",
+    "SRM-COF-003",
+    "SRM-COF-004",
+    "SRM-COF-005",
+    "SRM-COF-006",
+    "SRM-COF-007",
+    "SRM-COF-008",
+    "SRM-COF-010",
+    "SRM-COF-012"
+  ],
+  "trigger": "When an agent calls the flow (inputs: requestref, optional selectedmatch).",
+  "connectionReferences": [
+    "mag_SRMDataverse",
+    "mag_SRMOutlook"
+  ],
+  "environmentVariables": [
+    "mag_CofaceMaxDataAgeMonths",
+    "mag_SRMAppRecordUrl",
+    "mag_SRMDemoMailbox"
+  ]
+}

@@ -12,5 +12,29 @@
     "type": "String",
     "description": "Review request URL prefix in the Supplier Financial Risk Review app; the record ID is appended.",
     "value": "Set at deployment from the environment URL and the app ID."
+  },
+  {
+    "schemaName": "mag_CofaceMaxDataAgeMonths",
+    "displayName": "SRM Coface maximum data age in months",
+    "type": "String",
+    "description": "Maximum age in months of the financial data behind a Coface rating for it to be usable (SRM-COF-008). Slide 6 states 18.",
+    "value": "Configurable constant.",
+    "defaultValue": "18"
+  },
+  {
+    "schemaName": "mag_ReminderDay",
+    "displayName": "SRM supplier reminder day",
+    "type": "String",
+    "description": "Days without a supplier response before the first reminder (SRM-COL-003). Source: day 3.",
+    "value": "Configurable constant.",
+    "defaultValue": "3"
+  },
+  {
+    "schemaName": "mag_EscalationDay",
+    "displayName": "SRM buyer escalation day",
+    "type": "String",
+    "description": "Days without a supplier response before escalation to the buyer (SRM-COL-003). Source: day 7.",
+    "value": "Configurable constant.",
+    "defaultValue": "7"
   }
 ]

@@ -1,0 +1,455 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "description": "Review request reference, for example REQ-2026-008",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "requestref"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Requested_ref": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@trim(coalesce(triggerBody()?['requestref'], ''))"
+      },
+      "List_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Requested_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_reviewpath,mag_cofaceretrieved,mag_cofacescore,mag_cofacewithin18months",
+            "$filter": "@{concat('mag_requestref eq ''', replace(outputs('Requested_ref'), '''', ''''''), ''' or mag_name eq ''', replace(outputs('Requested_ref'), '''', ''''''), '''')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request": {
+        "type": "Compose",
+        "runAfter": {
+          "List_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_request')?['body/value'])"
+      },
+      "Request_id": {
+        "type": "Compose",
+        "runAfter": {
+          "Request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_financialreviewrequestid'], '')"
+      },
+      "Request_ref": {
+        "type": "Compose",
+        "runAfter": {
+          "Request_id": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_requestref'], outputs('Request')?['mag_name'], outputs('Requested_ref'))"
+      },
+      "List_supplier": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_suppliers",
+            "$select": "mag_name,mag_country,mag_duns",
+            "$filter": "mag_supplierid eq @{coalesce(outputs('Request')?['_mag_supplierid_value'], '00000000-0000-0000-0000-000000000000')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Supplier": {
+        "type": "Compose",
+        "runAfter": {
+          "List_supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_supplier')?['body/value'])"
+      },
+      "Skip_reason": {
+        "type": "Compose",
+        "runAfter": {
+          "Supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Request'), null), 'notfound', if(equals(outputs('Request')?['mag_reviewpath'], 100000000), 'reuse', ''))"
+      },
+      "Eligible": {
+        "type": "Compose",
+        "runAfter": {
+          "Skip_reason": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@and(equals(outputs('Request')?['mag_cofaceretrieved'], true), equals(outputs('Request')?['mag_cofacewithin18months'], true), not(equals(outputs('Request')?['mag_cofacescore'], null)))"
+      },
+      "Score": {
+        "type": "Compose",
+        "runAfter": {
+          "Eligible": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(outputs('Eligible'), outputs('Request')?['mag_cofacescore'], -1)"
+      },
+      "List_rule": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Score": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_ratingconversionrules",
+            "$select": "mag_rulename,mag_minimumscore,mag_maximumscore,mag_magnarating,mag_creditlimitguidance,mag_approvalstatus",
+            "$filter": "mag_minimumscore le @{outputs('Score')} and mag_maximumscore ge @{outputs('Score')}",
+            "$orderby": "mag_effectivefrom desc",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Rule": {
+        "type": "Compose",
+        "runAfter": {
+          "List_rule": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_rule')?['body/value'])"
+      },
+      "Outcome": {
+        "type": "Compose",
+        "runAfter": {
+          "Rule": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(not(empty(outputs('Skip_reason'))), outputs('Skip_reason'), if(not(outputs('Eligible')), 'nocoface', if(equals(outputs('Rule'), null), 'norule', 'proposed')))"
+      },
+      "Rating_label": {
+        "type": "Compose",
+        "runAfter": {
+          "Outcome": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Outcome'), 'proposed'), if(equals(outputs('Rule')?['mag_magnarating'],100000000),'Green',if(equals(outputs('Rule')?['mag_magnarating'],100000001),'Yellow',if(equals(outputs('Rule')?['mag_magnarating'],100000002),'Red','Not rated'))), '')"
+      },
+      "Message": {
+        "type": "Compose",
+        "runAfter": {
+          "Rating_label": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Outcome'), 'notfound'), 'No review request matches that reference.', if(equals(outputs('Outcome'), 'reuse'), 'The request reuses a valid GSA rating; no conversion is needed.', if(equals(outputs('Outcome'), 'nocoface'), 'No valid Coface score within the allowed data age; the request goes to full review.', if(equals(outputs('Outcome'), 'norule'), 'No conversion rule covers this score; the request goes to full review.', concat('Proposed Magna rating: ', outputs('Rating_label'), '. This is an AI-prepared proposal; a reviewer must confirm the final rating.')))))"
+      },
+      "Apply_proposal": {
+        "type": "If",
+        "runAfter": {
+          "Message": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Outcome')",
+            "proposed"
+          ]
+        },
+        "actions": {
+          "Set_fast_track": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_preliminaryrating": "@outputs('Rule')?['mag_magnarating']",
+                "item/mag_reviewpath": 100000001
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Ledger_proposed": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Set_fast_track": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Coface Rating Conversion Proposed",
+                "item/mag_action": "Coface Rating Conversion Proposed",
+                "item/mag_actor": "Communication & Closure (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Dataverse (conversion rule table)",
+                "item/mag_details": "Coface score @{outputs('Score')} converted with rule @{outputs('Rule')?['mag_rulename']} (@{outputs('Rule')?['mag_approvalstatus@OData.Community.Display.V1.FormattedValue']}) to a proposed Magna rating of @{outputs('Rating_label')}. Written to the preliminary rating only; the final rating stays with the human reviewer. Review path set to Coface Fast-Track.",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Apply_full_review": {
+        "type": "If",
+        "runAfter": {
+          "Apply_proposal": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "or": [
+            {
+              "equals": [
+                "@outputs('Outcome')",
+                "nocoface"
+              ]
+            },
+            {
+              "equals": [
+                "@outputs('Outcome')",
+                "norule"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Set_full_review": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_reviewpath": 100000002
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Ledger_full": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Set_full_review": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Coface Fast-Track Not Available - Full Review",
+                "item/mag_action": "Coface Fast-Track Not Available - Full Review",
+                "item/mag_actor": "Communication & Closure (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Dataverse",
+                "item/mag_details": "@{outputs('Message')}",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Respond_to_the_agent": {
+        "type": "Response",
+        "kind": "Skills",
+        "runAfter": {
+          "Apply_full_review": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "Status",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "message": {
+                "title": "Message",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "requestref": {
+                "title": "Request reference",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "cofacescore": {
+                "title": "Coface score",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "proposedrating": {
+                "title": "Proposed Magna rating",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "rulename": {
+                "title": "Conversion rule",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "creditlimitguidance": {
+                "title": "Credit limit guidance",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "needsconfirmation": {
+                "title": "Needs reviewer confirmation",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "recordurl": {
+                "title": "Record URL",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "@{outputs('Outcome')}",
+            "message": "@{outputs('Message')}",
+            "requestref": "@{outputs('Request_ref')}",
+            "cofacescore": "@{outputs('Request')?['mag_cofacescore']}",
+            "proposedrating": "@{outputs('Rating_label')}",
+            "rulename": "@{outputs('Rule')?['mag_rulename']}",
+            "creditlimitguidance": "@{outputs('Rule')?['mag_creditlimitguidance']}",
+            "needsconfirmation": "@equals(outputs('Outcome'), 'proposed')",
+            "recordurl": "@{if(empty(outputs('Request_id')), '', concat(parameters('SRM app record URL (mag_SRMAppRecordUrl)'), outputs('Request_id')))}"
+          }
+        }
+      }
+    }
+  }
+}

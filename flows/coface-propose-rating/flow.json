@@ -1,0 +1,20 @@
+{
+  "displayName": "SRM Closure - Propose Magna rating from Coface score",
+  "description": "Agent tool: converts a valid Coface score (within the allowed data age) to a proposed Magna rating with the rating conversion rule table, writes only the preliminary rating, sets the review path, and logs the conversion. It never sets the final rating.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e06",
+  "owningAgent": "communication-and-closure",
+  "processStep": "Stage 2 - Coface fast-track",
+  "requirements": [
+    "SRM-COF-009",
+    "SRM-COF-010",
+    "SRM-COF-012",
+    "SRM-GOV-004"
+  ],
+  "trigger": "When an agent calls the flow (input: requestref).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": [
+    "mag_SRMAppRecordUrl"
+  ]
+}

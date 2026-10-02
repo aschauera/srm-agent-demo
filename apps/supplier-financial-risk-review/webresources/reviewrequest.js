@@ -21,10 +21,13 @@ SRM.ReviewRequest = (function () {
     var REVIEWER_SECTIONS = [["tab_precheck", "sec_frt"]];
     var REQUIRED_FIELDS = ["mag_supplierid", "mag_buyername", "mag_buyeremail"];
     var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    var COLOR_CHOICES = ["mag_gsaprecheckresult", "mag_reviewstatus", "mag_reviewpath", "mag_finalrating"];
+    var COLOR_CHOICES = ["mag_gsaprecheckresult", "mag_reviewstatus", "mag_reviewpath", "mag_finalrating",
+        "mag_cofacerisktier", "mag_preliminaryrating"];
     var REFRESH_FIELDS = ["mag_gsaprecheckresult", "mag_gsaratingexpiry", "mag_mandatoryrereview",
         "mag_gsarating", "mag_gsaratingdate", "mag_gsaremarks", "mag_reviewpath", "mag_reviewstatus",
-        "mag_finalrating"];
+        "mag_finalrating",
+        "mag_cofaceretrieved", "mag_cofacescore", "mag_cofacerisktier", "mag_cofacewithin18months",
+        "mag_cofacedataagemonths", "mag_preliminaryrating"];
     // Computed indicators that are not choice options use the same demo palette as indicator-colors.json.
     var COLOR = { green: "#107C10", amber: "#CA5010", red: "#D13438", grey: "#8A8886" };
     var LABEL = {
@@ -47,7 +50,9 @@ SRM.ReviewRequest = (function () {
         reReview: "srm_banner_rereview",
         noMatch: "srm_banner_nomatch",
         incompleteGsa: "srm_banner_incomplete_gsa",
-        saveBlocked: "srm_banner_save_blocked"
+        saveBlocked: "srm_banner_save_blocked",
+        cofaceStale: "srm_banner_coface_stale",
+        cofaceFast: "srm_banner_coface_fast"
     };
 
     var optionColors = null;
@@ -375,8 +380,37 @@ SRM.ReviewRequest = (function () {
         return { title: title, label: a.getText(), color: colors[v] || COLOR.grey };
     }
 
+    function cofaceIndicators(fc) {
+        if (!attr(fc, "mag_cofaceretrieved")) {
+            return [];
+        }
+        var out = [];
+        var retrieved = value(fc, "mag_cofaceretrieved") === true;
+        out.push(retrieved
+            ? { title: "Coface data", label: "Retrieved", color: COLOR.green }
+            : { title: "Coface data", label: "Not retrieved", color: COLOR.grey });
+        if (retrieved) {
+            var score = value(fc, "mag_cofacescore");
+            var tier = choiceIndicator(fc, "mag_cofacerisktier", "Coface score", "Unavailable");
+            tier.label = (score === null ? "n/a" : score + "/10") + " - " + tier.label;
+            out.push(tier);
+            var age = value(fc, "mag_cofacedataagemonths");
+            var fresh = value(fc, "mag_cofacewithin18months") === true;
+            out.push({ title: "Coface data age", label: fresh ? "Within 18 months" : "Older than 18 months",
+                color: fresh ? COLOR.green : COLOR.amber,
+                detail: age === null ? undefined : age + " months old" });
+        }
+        var prelim = choiceIndicator(fc, "mag_preliminaryrating", "Preliminary rating", "Not proposed");
+        if (prelim) {
+            prelim.detail = "AI proposal, reviewer decides";
+            out.push(prelim);
+        }
+        return out;
+    }
+
     function buildModel(fc, state) {
         var items = [];
+        var coface = cofaceIndicators(fc);
         var duns = {
             ok: { label: "DUNS " + state.duns, color: COLOR.green },
             noDuns: { label: "No DUNS / applying", color: COLOR.grey, detail: "GSA pre-check bypassed" },
@@ -413,6 +447,7 @@ SRM.ReviewRequest = (function () {
         }
         items.push(choiceIndicator(fc, "mag_reviewpath", "Review path", "Not determined"));
         items.push(choiceIndicator(fc, "mag_reviewstatus", "Review status", "Not set"));
+        coface.forEach(function (i) { items.push(i); });
         var rating = choiceIndicator(fc, "mag_finalrating", "Final rating", "Pending reviewer");
         if (rating) {
             rating.detail = "Human reviewer decision";
@@ -455,6 +490,18 @@ SRM.ReviewRequest = (function () {
             "The GSA result says the rating is active, but " + missingGsa.join(", ") +
             " " + (missingGsa.length === 1 ? "is" : "are") + " missing. Reuse is not confirmed; this request is routed to Full Review.",
             "WARNING", NOTE.incompleteGsa);
+    }
+
+    function updateCofaceBanners(fc) {
+        var retrieved = value(fc, "mag_cofaceretrieved") === true;
+        var fresh = value(fc, "mag_cofacewithin18months") === true;
+        var path = selectedLabel(fc, "mag_reviewpath");
+        setBanner(fc, retrieved && !fresh,
+            "The Coface data is older than 18 months and cannot support a fast-track. A full review is required.",
+            "WARNING", NOTE.cofaceStale);
+        setBanner(fc, retrieved && fresh && path === "Coface Fast-Track",
+            "Fresh Coface data supports the fast-track. The preliminary rating is an AI proposal; the reviewer confirms the final rating.",
+            "INFO", NOTE.cofaceFast);
     }
 
     // On form load the panel control and its iframe can register after onLoad has run, and the
@@ -507,6 +554,7 @@ SRM.ReviewRequest = (function () {
         var state = validate(fc, false);
         applyGsaRoutingRule(fc);
         updateBanners(fc, state);
+        updateCofaceBanners(fc);
         var seq = ++modelSeq;
         return loadOptionColors().then(function () {
             var model = buildModel(fc, state);

@@ -87,3 +87,15 @@ confirms the final rating (`SRM-GOV-004`).
 3. Stage 2 form sections, shortlist view and traffic-light indicators.
 4. Conversion proposal flow and Shortcut B stage move.
 5. Document request, reminder and reply-filing flows.
+
+### Build status
+
+| Step | Status |
+|---|---|
+| 1. Environment variables | Built and deployed |
+| 2. Retrieval flow (`coface-retrieve-and-check`) | Deployed; not yet run end to end |
+| 3. Form tab, banners, cards | Built and deployed (Coface tab, stale and fast-track banners, Coface and Preliminary rating cards, coface tier colors) |
+| 4. Conversion flow (`coface-propose-rating`) | Deployed; not yet run end to end. Shortcut B stage move not built |
+| 5. Document request, reminder, reply filing | Not built |
+
+Agent-callable flows cannot be invoked outside an agent, so test them from the Power Automate designer (Test) with a seeded request, or from Copilot Studio after adding them as tools.

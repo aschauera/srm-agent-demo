@@ -9,7 +9,7 @@
 | Reminders | Day 3 reminder, day 7 escalation copied to the buyer. Scheduled flow. |
 | File reply | Create a `mag_supplierdocument` for each attachment and link it to the request. |
 
-## Planned tools (not built)
+## Tools (retrieval and proposal flows deployed; others planned)
 
 | Tool | Type | Writes |
 |---|---|---|

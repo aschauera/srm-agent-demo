@@ -179,7 +179,8 @@ def ensure_environment_variables(web_api, variables: list[dict], values: dict[st
             print(f"Created environment variable {schema}")
         existing = rows[0]["environmentvariabledefinition_environmentvariablevalue"] if rows else []
         if existing:
-            if existing[0]["value"] != values[schema]:
+            # Configurable constants keep any value the user changed in the environment.
+            if "defaultValue" not in variable and existing[0]["value"] != values[schema]:
                 web_api("PATCH", f"environmentvariablevalues({existing[0]['environmentvariablevalueid']})",
                         {"value": values[schema]})
                 print(f"Updated value of {schema}")
@@ -327,8 +328,9 @@ def main() -> None:
         flows = [f for f in flows if f["folder"] in args.only]
 
     web_api, app_module_id = _load_web_api()
-    ensure_environment_variables(web_api, variables, default_values(web_api, app_module_id, args.demo_mailbox),
-                                 args.dry_run)
+    values = {**default_values(web_api, app_module_id, args.demo_mailbox),
+              **{v["schemaName"]: v["defaultValue"] for v in variables if "defaultValue" in v}}
+    ensure_environment_variables(web_api, variables, values, args.dry_run)
     bound = ensure_connection_references(web_api, references, args.dry_run)
     deployed = [(flow, *ensure_flow(web_api, flow, args.dry_run)) for flow in flows]
     if args.dry_run:

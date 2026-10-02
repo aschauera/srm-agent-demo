@@ -52,7 +52,23 @@ CUSTOM_CONTROL_HOST = "{F9A8A302-114E-466A-B582-6771B2AE0D92}"
 BOOLEAN_BASE_CONTROL = "{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}"
 TOGGLE_CONTROL = "MscrmControls.FieldControls.ToggleControl"
 TOGGLE_FIELDS = {"mag_noduns"}
-PANEL_ROWSPAN = 2
+PANEL_ROWSPAN = 3
+COFACE_TAB = "tab_coface"
+CLASS_TEXT, CLASS_CHOICE, CLASS_DATE = "{4273EDBD-AC1D-40D3-9FB2-095C621B552D}", "{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}", "{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}"
+CLASS_INT, CLASS_BOOL = "{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}", "{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}"
+# Stage 2 read-only sections: (section name, label, [(column, label, classid)]). Flows write these.
+COFACE_SECTIONS = [
+    ("sec_coface_result", "Coface Retrieval (flow-populated)", [
+        ("mag_cofaceretrieved", "Coface Retrieved", CLASS_BOOL),
+        ("mag_cofacescore", "Coface Score (0-10, higher is safer)", CLASS_INT),
+        ("mag_cofacerisktier", "Coface Risk Tier", CLASS_CHOICE),
+        ("mag_cofaceassessmentdate", "Coface Assessment Date", CLASS_DATE),
+        ("mag_cofacedataagemonths", "Data Age (months)", CLASS_INT),
+        ("mag_cofacewithin18months", "Within 18 Months", CLASS_BOOL)]),
+    ("sec_coface_proposal", "Rating Proposal (AI, reviewer decides)", [
+        ("mag_preliminaryrating", "Preliminary Rating", CLASS_CHOICE),
+        ("mag_reviewpath", "Review Path", CLASS_CHOICE)]),
+]
 WEB_RESOURCE_COMPONENT = 61
 WEB_RESOURCES = [
     # (name, display name, file, webresourcetype: 1 = HTML, 3 = JScript)
@@ -302,6 +318,31 @@ def converge_panel_height(section: ET.Element) -> bool:
     return True
 
 
+def ensure_coface_tab(form: ET.Element) -> bool:
+    tabs = form.find("tabs")
+    if any(t.get("name") == COFACE_TAB for t in tabs.findall("tab")):
+        return False
+    anchor = next(i for i, t in enumerate(tabs.findall("tab")) if t.get("name") == "tab_precheck")
+    tab = child(tabs, "tab", {"id": stable_id(COFACE_TAB), "name": COFACE_TAB, "expanded": "true", "visible": "true"},
+                index=anchor + 1)
+    labels(tab, "Coface")
+    sections = child(child(child(tab, "columns"), "column", {"width": "100%"}), "sections")
+    for name, title, fields in COFACE_SECTIONS:
+        section = child(sections, "section", {"id": stable_id(name), "name": name, "showlabel": "true",
+                                              "visible": "true", "columns": "2"})
+        labels(section, title)
+        rows = child(section, "rows")
+        for start in range(0, len(fields), 2):
+            row = child(rows, "row")
+            for column, label, classid in fields[start:start + 2]:
+                cell = child(row, "cell", {"id": stable_id(f"cell-{column}"), "showlabel": "true",
+                                           "visible": "true", "colspan": "1", "rowspan": "1"})
+                labels(cell, label)
+                child(cell, "control", {"id": stable_id(f"control-{column}"), "classid": classid,
+                                        "datafieldname": column, "disabled": "true", "isrequired": "false"})
+    return True
+
+
 def ensure_toggle_controls(form: ET.Element) -> bool:
     """Render Boolean check-offs such as No DUNS as a toggle instead of a True/False dropdown.
 
@@ -406,6 +447,7 @@ def ensure_form(form_id: str, panel_id: str | None, dry_run: bool) -> bool:
     changed = ensure_toggle_controls(form) or changed
     if panel_id:
         changed = ensure_status_panel(form, panel_id) or changed
+        changed = ensure_coface_tab(form) or changed
     else:
         changed = ensure_quickcreate_system_fields(form) or changed
     if not changed:
@@ -433,6 +475,10 @@ def verify_form(form_id: str, expect_panel: bool) -> None:
     if formxml.count(TOGGLE_CONTROL) < 3 * len(TOGGLE_FIELDS):
         raise RuntimeError(f"Form {form_id} is missing the toggle control description")
     if expect_panel:
+        coface = {c.get("datafieldname") for tab in form.iter("tab") if tab.get("name") == COFACE_TAB for c in tab.iter("control")}
+        needed = {c for _, _, fields in COFACE_SECTIONS for c, _, _ in fields}
+        if needed - coface:
+            raise RuntimeError(f"Form {form_id} Coface tab is missing {sorted(needed - coface)}")
         cell = next(c for c in form.iter("cell") if c.get("id") == stable_id(PANEL_CONTROL))
         if cell.get("rowspan") != str(PANEL_ROWSPAN):
             raise RuntimeError(f"Form {form_id} status panel rowspan is {cell.get('rowspan')}")

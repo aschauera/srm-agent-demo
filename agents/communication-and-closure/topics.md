@@ -9,7 +9,7 @@
 | Closing email | Draft from the final rating and narrative. Send after approval. |
 | System sync | After confirmation: update the request, tag the record, write the GSA record by DUNS, ledger every step. |
 
-## Planned tools (not built)
+## Tools (retrieval and proposal flows deployed; others planned)
 
 | Tool | Type | Writes |
 |---|---|---|

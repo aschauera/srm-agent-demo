@@ -1,0 +1,730 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    },
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMOutlook"
+      },
+      "api": {
+        "name": "shared_office365"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      },
+      "SRM demo notification mailbox (mag_SRMDemoMailbox)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMDemoMailbox",
+          "description": "Mailbox that receives every SRM demo notification"
+        }
+      },
+      "SRM Coface maximum data age in months (mag_CofaceMaxDataAgeMonths)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_CofaceMaxDataAgeMonths",
+          "description": "Maximum age in months of the data behind a Coface rating"
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "description": "Review request reference, for example REQ-2026-010",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "selectedmatch": {
+                "title": "Selected match",
+                "type": "string",
+                "description": "Optional demo key of the Coface record the reviewer chose from the shortlist",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "requestref"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Requested_ref": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@trim(coalesce(triggerBody()?['requestref'], ''))"
+      },
+      "List_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Requested_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_dunsnumber,mag_noduns,mag_reviewpath,mag_buyername,mag_buyeremail",
+            "$filter": "@{concat('mag_requestref eq ''', replace(outputs('Requested_ref'), '''', ''''''), ''' or mag_name eq ''', replace(outputs('Requested_ref'), '''', ''''''), '''')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request": {
+        "type": "Compose",
+        "runAfter": {
+          "List_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_request')?['body/value'])"
+      },
+      "Request_id": {
+        "type": "Compose",
+        "runAfter": {
+          "Request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_financialreviewrequestid'], '')"
+      },
+      "Request_ref": {
+        "type": "Compose",
+        "runAfter": {
+          "Request_id": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_requestref'], outputs('Request')?['mag_name'], outputs('Requested_ref'))"
+      },
+      "List_supplier": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_suppliers",
+            "$select": "mag_name,mag_country,mag_duns",
+            "$filter": "mag_supplierid eq @{coalesce(outputs('Request')?['_mag_supplierid_value'], '00000000-0000-0000-0000-000000000000')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Supplier": {
+        "type": "Compose",
+        "runAfter": {
+          "List_supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_supplier')?['body/value'])"
+      },
+      "Skip_reason": {
+        "type": "Compose",
+        "runAfter": {
+          "Supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Request'), null), 'notfound', if(equals(outputs('Request')?['mag_reviewpath'], 100000000), 'reuse', ''))"
+      },
+      "Normalized_DUNS": {
+        "type": "Compose",
+        "runAfter": {
+          "Skip_reason": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@replace(replace(replace(trim(coalesce(outputs('Request')?['mag_dunsnumber'], '')), '-', ''), ' ', ''), '.', '')"
+      },
+      "Has_DUNS": {
+        "type": "Compose",
+        "runAfter": {
+          "Normalized_DUNS": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@and(not(equals(outputs('Request')?['mag_noduns'], true)), not(empty(outputs('Normalized_DUNS'))))"
+      },
+      "Safe_country": {
+        "type": "Compose",
+        "runAfter": {
+          "Has_DUNS": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@replace(coalesce(outputs('Supplier')?['mag_country'], ''), '''', '''''')"
+      },
+      "Safe_first_word": {
+        "type": "Compose",
+        "runAfter": {
+          "Safe_country": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@replace(first(split(trim(coalesce(outputs('Supplier')?['mag_name'], 'x')), ' ')), '''', '''''')"
+      },
+      "Candidate_filter": {
+        "type": "Compose",
+        "runAfter": {
+          "Safe_first_word": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(not(empty(outputs('Skip_reason'))), 'mag_duns eq ''__none__''', if(outputs('Has_DUNS'), concat('mag_duns eq ''', outputs('Normalized_DUNS'), ''''), concat('mag_country eq ''', outputs('Safe_country'), ''' and contains(mag_suppliername, ''', outputs('Safe_first_word'), ''')')))"
+      },
+      "List_coface": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Candidate_filter": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_cofacecreditrecords",
+            "$select": "mag_demokey,mag_duns,mag_suppliername,mag_country,mag_score,mag_risktier,mag_paymenttrackrecord,mag_negativealerts,mag_recommendedcreditlimit,mag_assessmentdate,mag_financialdatathrough,mag_reportlink,mag_matchconfidence",
+            "$filter": "@{outputs('Candidate_filter')}",
+            "$orderby": "mag_matchconfidence desc,mag_assessmentdate desc",
+            "$top": 5
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Candidates": {
+        "type": "Compose",
+        "runAfter": {
+          "List_coface": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@outputs('List_coface')?['body/value']"
+      },
+      "Candidate_count": {
+        "type": "Compose",
+        "runAfter": {
+          "Candidates": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@length(outputs('Candidates'))"
+      },
+      "Selected_candidates": {
+        "type": "Query",
+        "runAfter": {
+          "Candidate_count": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "from": "@outputs('Candidates')",
+          "where": "@equals(item()?['mag_demokey'], coalesce(triggerBody()?['selectedmatch'], '__none__'))"
+        }
+      },
+      "Chosen": {
+        "type": "Compose",
+        "runAfter": {
+          "Selected_candidates": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Candidate_count'), 0), null, if(greater(length(body('Selected_candidates')), 0), first(body('Selected_candidates')), if(or(outputs('Has_DUNS'), equals(outputs('Candidate_count'), 1)), first(outputs('Candidates')), null)))"
+      },
+      "Status": {
+        "type": "Compose",
+        "runAfter": {
+          "Chosen": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(not(empty(outputs('Skip_reason'))), outputs('Skip_reason'), if(equals(outputs('Candidate_count'), 0), 'nomatch', if(equals(outputs('Chosen'), null), 'shortlist', 'retrieved')))"
+      },
+      "Data_through": {
+        "type": "Compose",
+        "runAfter": {
+          "Status": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Chosen')?['mag_financialdatathrough'], outputs('Chosen')?['mag_assessmentdate'])"
+      },
+      "Max_age_months": {
+        "type": "Compose",
+        "runAfter": {
+          "Data_through": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@int(if(empty(parameters('SRM Coface maximum data age in months (mag_CofaceMaxDataAgeMonths)')), '18', parameters('SRM Coface maximum data age in months (mag_CofaceMaxDataAgeMonths)')))"
+      },
+      "Age_months": {
+        "type": "Compose",
+        "runAfter": {
+          "Max_age_months": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Data_through'), null), null, div(sub(ticks(utcNow()), ticks(outputs('Data_through'))), 26298000000000))"
+      },
+      "Within_window": {
+        "type": "Compose",
+        "runAfter": {
+          "Age_months": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@and(not(equals(outputs('Data_through'), null)), lessOrEquals(coalesce(outputs('Age_months'), 9999), outputs('Max_age_months')))"
+      },
+      "Tier_label": {
+        "type": "Compose",
+        "runAfter": {
+          "Within_window": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Chosen')?['mag_risktier@OData.Community.Display.V1.FormattedValue'], 'Unavailable')"
+      },
+      "Tier_color": {
+        "type": "Compose",
+        "runAfter": {
+          "Tier_label": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Chosen')?['mag_risktier'], 100000000), '#2e7d32', if(equals(outputs('Chosen')?['mag_risktier'], 100000001), '#f9a825', if(equals(outputs('Chosen')?['mag_risktier'], 100000002), '#c62828', '#757575')))"
+      },
+      "Interpretation": {
+        "type": "Compose",
+        "runAfter": {
+          "Tier_color": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Chosen')?['mag_risktier'], 100000002), 'High financial vulnerability: full financial document collection is prioritised.', if(equals(outputs('Chosen')?['mag_risktier'], 100000001), 'Elevated to average risk: the reviewer should corroborate the score with the supplier financial statements.', if(equals(outputs('Chosen')?['mag_risktier'], 100000000), 'Low financial risk indicator: the supplier may qualify for the Coface fast-track when the data is recent.', '')))"
+      },
+      "Disclaimer": {
+        "type": "Compose",
+        "runAfter": {
+          "Interpretation": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(outputs('Has_DUNS'), '', 'No DUNS number provided; full Coface credit score unavailable. Risk assessment will be based solely on self-submitted financial statements and supporting credentials.')"
+      },
+      "Shortlist_lines": {
+        "type": "Select",
+        "runAfter": {
+          "Disclaimer": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "from": "@outputs('Candidates')",
+          "select": "@concat(item()?['mag_demokey'], ' | ', item()?['mag_suppliername'], ' | ', item()?['mag_country'], ' | score ', string(item()?['mag_score']), ' | match ', string(item()?['mag_matchconfidence']))"
+        }
+      },
+      "Message": {
+        "type": "Compose",
+        "runAfter": {
+          "Shortlist_lines": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Status'), 'notfound'), 'No review request matches that reference.', if(equals(outputs('Status'), 'reuse'), 'The request reuses a valid GSA rating, so no Coface lookup is run.', if(equals(outputs('Status'), 'nomatch'), 'No Coface record matches; a full manual review is required.', if(equals(outputs('Status'), 'shortlist'), 'Several Coface records match; ask the reviewer to choose one and call this tool again with selectedmatch.', if(outputs('Within_window'), 'Coface data retrieved and within the allowed data age.', 'Coface data retrieved but older than the allowed data age, so it cannot be used for the fast-track; a full review is required.')))))"
+      },
+      "Notice_retrieved": {
+        "type": "Compose",
+        "runAfter": {
+          "Message": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "<p>Coface score <b style=\"color:@{outputs('Tier_color')}\">@{outputs('Chosen')?['mag_score']} / 10 (@{outputs('Tier_label')} risk)</b>. Data through @{formatDateTime(outputs('Data_through'), 'yyyy-MM-dd')} (@{outputs('Age_months')} months old; allowed @{outputs('Max_age_months')}). Within the allowed age: <b>@{if(outputs('Within_window'), 'Yes', 'No')}</b>.<br/>Payment track record: @{outputs('Chosen')?['mag_paymenttrackrecord']}<br/>Negative alerts: @{outputs('Chosen')?['mag_negativealerts']}<br/>Recommended credit limit: @{outputs('Chosen')?['mag_recommendedcreditlimit']}</p><p><i>@{outputs('Interpretation')}</i></p>"
+      },
+      "Notice_nomatch": {
+        "type": "Compose",
+        "runAfter": {
+          "Notice_retrieved": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "<p>No Coface record matches this supplier. A full manual financial review is required.</p>"
+      },
+      "Notice_shortlist": {
+        "type": "Compose",
+        "runAfter": {
+          "Notice_nomatch": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "<p>Several Coface records match this supplier by name and country. Choose the correct entity:</p><p>@{join(body('Shortlist_lines'), '<br/>')}</p>"
+      },
+      "Write_retrieved": {
+        "type": "If",
+        "runAfter": {
+          "Notice_shortlist": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Status')",
+            "retrieved"
+          ]
+        },
+        "actions": {
+          "Update_request_Coface": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_cofacescore": "@outputs('Chosen')?['mag_score']",
+                "item/mag_cofacerisktier": "@outputs('Chosen')?['mag_risktier']",
+                "item/mag_cofaceassessmentdate": "@outputs('Chosen')?['mag_assessmentdate']",
+                "item/mag_cofacedataagemonths": "@outputs('Age_months')",
+                "item/mag_cofacewithin18months": "@outputs('Within_window')",
+                "item/mag_cofaceretrieved": true
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Notify_reviewer": {
+        "type": "If",
+        "runAfter": {
+          "Write_retrieved": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "or": [
+            {
+              "equals": [
+                "@outputs('Status')",
+                "retrieved"
+              ]
+            },
+            {
+              "equals": [
+                "@outputs('Status')",
+                "nomatch"
+              ]
+            },
+            {
+              "equals": [
+                "@outputs('Status')",
+                "shortlist"
+              ]
+            }
+          ]
+        },
+        "actions": {
+          "Ledger_coface": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "@if(equals(outputs('Status'), 'retrieved'), 'Coface Data Retrieved', if(equals(outputs('Status'), 'shortlist'), 'Coface Shortlist Presented', 'Coface No Match - Full Review'))",
+                "item/mag_action": "@if(equals(outputs('Status'), 'retrieved'), 'Coface Data Retrieved', if(equals(outputs('Status'), 'shortlist'), 'Coface Shortlist Presented', 'Coface No Match - Full Review'))",
+                "item/mag_actor": "Data Collection (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Coface (mock); Dataverse",
+                "item/mag_details": "@{outputs('Message')} @{if(equals(outputs('Status'), 'retrieved'), concat('Score ', string(outputs('Chosen')?['mag_score']), ' (', outputs('Tier_label'), '), record ', outputs('Chosen')?['mag_demokey'], ', data through ', formatDateTime(outputs('Data_through'), 'yyyy-MM-dd'), ', ', string(outputs('Age_months')), ' months old, limit ', string(outputs('Max_age_months')), '.'), '')} @{outputs('Disclaimer')} Source: Coface (mock); no external call was made.",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Log_notice": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Ledger_coface": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_communicationlogs",
+                "item/mag_name": "[SRM demo, to reviewer] Coface data - @{outputs('Request_ref')}",
+                "item/mag_subject": "[SRM demo, to reviewer] Coface data - @{outputs('Request_ref')}",
+                "item/mag_body": "<p>Coface result for request @{outputs('Request_ref')} (supplier @{outputs('Supplier')?['mag_name']}, DUNS @{coalesce(outputs('Request')?['mag_dunsnumber'], 'none')}).</p>@{if(equals(outputs('Status'), 'retrieved'), outputs('Notice_retrieved'), if(equals(outputs('Status'), 'shortlist'), outputs('Notice_shortlist'), outputs('Notice_nomatch')))}<p><b>@{outputs('Disclaimer')}</b></p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p><p><i>Demo notification from the Data Collection agent flow. Fictional data only.</i></p>",
+                "item/mag_direction": 100000001,
+                "item/mag_channel": 100000000,
+                "item/mag_language": 100000000,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_actorname": "Data Collection (agent flow)",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Email_reviewer": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Log_notice": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                "emailMessage/Subject": "[SRM demo, to reviewer] Coface data - @{outputs('Request_ref')}",
+                "emailMessage/Body": "<p>Coface result for request @{outputs('Request_ref')} (supplier @{outputs('Supplier')?['mag_name']}, DUNS @{coalesce(outputs('Request')?['mag_dunsnumber'], 'none')}).</p>@{if(equals(outputs('Status'), 'retrieved'), outputs('Notice_retrieved'), if(equals(outputs('Status'), 'shortlist'), outputs('Notice_shortlist'), outputs('Notice_nomatch')))}<p><b>@{outputs('Disclaimer')}</b></p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the request</a></p><p><i>Demo notification from the Data Collection agent flow. Fictional data only.</i></p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "operationId": "SendEmailV2",
+                "connectionName": "shared_office365"
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Respond_to_the_agent": {
+        "type": "Response",
+        "kind": "Skills",
+        "runAfter": {
+          "Notify_reviewer": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "Status",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "message": {
+                "title": "Message",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "requestref": {
+                "title": "Request reference",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "hasduns": {
+                "title": "Has DUNS",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "score": {
+                "title": "Coface score",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "risktier": {
+                "title": "Risk tier",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "paymenttrackrecord": {
+                "title": "Payment track record",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "negativealerts": {
+                "title": "Negative alerts",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "recommendedcreditlimit": {
+                "title": "Recommended credit limit",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "datathrough": {
+                "title": "Financial data through",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "agemonths": {
+                "title": "Data age in months",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "maxagemonths": {
+                "title": "Allowed data age in months",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "withinwindow": {
+                "title": "Within allowed data age",
+                "description": "",
+                "type": "boolean",
+                "x-ms-content-hint": "BOOLEAN",
+                "x-ms-dynamically-added": true
+              },
+              "interpretation": {
+                "title": "Risk interpretation",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "disclaimer": {
+                "title": "No-DUNS disclaimer",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "shortlistcount": {
+                "title": "Shortlist count",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "shortlist": {
+                "title": "Shortlist",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "recordurl": {
+                "title": "Record URL",
+                "description": "",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "@{outputs('Status')}",
+            "message": "@{outputs('Message')}",
+            "requestref": "@{outputs('Request_ref')}",
+            "hasduns": "@outputs('Has_DUNS')",
+            "score": "@{outputs('Chosen')?['mag_score']}",
+            "risktier": "@{outputs('Tier_label')}",
+            "paymenttrackrecord": "@{outputs('Chosen')?['mag_paymenttrackrecord']}",
+            "negativealerts": "@{outputs('Chosen')?['mag_negativealerts']}",
+            "recommendedcreditlimit": "@{outputs('Chosen')?['mag_recommendedcreditlimit']}",
+            "datathrough": "@{outputs('Data_through')}",
+            "agemonths": "@{outputs('Age_months')}",
+            "maxagemonths": "@{outputs('Max_age_months')}",
+            "withinwindow": "@outputs('Within_window')",
+            "interpretation": "@{outputs('Interpretation')}",
+            "disclaimer": "@{outputs('Disclaimer')}",
+            "shortlistcount": "@{outputs('Candidate_count')}",
+            "shortlist": "@{join(body('Shortlist_lines'), ' ; ')}",
+            "recordurl": "@{if(empty(outputs('Request_id')), '', concat(parameters('SRM app record URL (mag_SRMAppRecordUrl)'), outputs('Request_id')))}"
+          }
+        }
+      }
+    }
+  }
+}
