@@ -1,0 +1,44 @@
+mcs.metadata:
+  componentName: SRM - Save review analysis draft
+  description: "Agent tool: saves a source-evidenced analysis revision as a draft, verifies Dataverse readback, and never sets or confirms a financial rating."
+kind: WorkflowTool
+workflowId: f9150906-1e0e-4bd0-9213-0f8bb53646fb
+toolInputs:
+  - name: requestref
+    displayName: Exact request reference
+    description: Exact existing Financial Review Request reference; no supplier name, prefix, or partial match.
+
+  - name: revisionkey
+    displayName: Stable revision key
+    description: A unique UUID for this draft revision. Reuse the identical UUID and exact JSON payload only when retrying this same revision.
+
+  - name: analysisjson
+    displayName: Analysis draft JSON
+    description: A compact JSON string of at most 3,000 characters conforming to flows/save-review-analysis-draft/contract.json. Include every required nullable financial fact and metric, page/source evidence, unverified collateral claims, and uncertainties. Preserve missing values as null.
+
+toolOutputs:
+  - name: saved
+    displayName: Saved
+
+  - name: status
+    displayName: Save status
+
+  - name: requestref
+    displayName: Request reference
+
+  - name: revisionkey
+    displayName: Revision key
+
+  - name: periodcount
+    displayName: Working-paper period count
+
+  - name: riskcount
+    displayName: Unverified risk-claim count
+
+  - name: message
+    displayName: Readback result
+
+connectionProperties:
+  $kind: ConnectionProperties
+  diagnostics:
+  mode: Invoker

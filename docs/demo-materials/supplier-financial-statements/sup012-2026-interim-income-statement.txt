@@ -1,0 +1,13 @@
+FICTIONAL DEMO DOCUMENT - NOT A SOURCE FINANCIAL STATEMENT
+Supplier: Lumen Forge Industrial Systems Ltd (SUP-012)
+Period: FY2026 interim
+Currency: USD
+Prepared solely for the SRM DemoPRE file-upload test.
+
+INTERIM INCOME STATEMENT SUMMARY
+Revenue: 35,000,000
+Cost of goods sold: 27,300,000
+Gross profit: 7,700,000
+Net income: -5,000,000
+
+All values are invented demo values. No audit opinion is represented.

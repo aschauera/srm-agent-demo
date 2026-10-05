@@ -55,6 +55,28 @@ is bound to a column; the 18 step flag columns are defined in
 
 ## App
 
+### Agent analysis draft surface
+
+The additive **Agent Analysis Draft** tab is provisioned by
+[14-configure-analysis-surface.py](../scripts/14-configure-analysis-surface.py) from
+[analysis-surface.json](../apps/supplier-financial-risk-review/analysis-surface.json).
+It realizes `SRM-FIN-001`, `SRM-NFR-001`, and `SRM-GOV-001` (slides 8-9, 11-12).
+The base app spec retains `prune: false`; rerun the additive script after an app rebuild.
+It introduces no columns and does not replace the existing request, pre-check, or Coface tabs.
+
+The tab shows `mag_narrativedraft` as a read-only memo plus request-filtered working-paper,
+non-financial-risk, and audit subgrids. The three dedicated views are included in the app.
+Draft labels do not certify every historical row as a new agent output: identify the analysis
+revision in the saved rows/audit. Standard grid navigation and table permissions still apply;
+this surface is not role-enforced audit security or an authenticated approval experience.
+Final-rating controls and BPF approval/completion flags are unchanged.
+
+Offline checks validate schema columns, form/view XML, unique control IDs, and idempotent tab
+mutation. DemoPRE deployment readback verified the tab, views, and app components. After a
+browser reload, `REQ-2026-012` displayed the locked narrative control and all three result grids
+(four seeded working papers, four seeded risks, one seeded audit row). This proves the surface
+loads; those existing rows are not evidence of a new save-flow run.
+
 | Area | Group | Subareas |
 |---|---|---|
 | Supplier Risk | Review Desk | Financial Review Requests |

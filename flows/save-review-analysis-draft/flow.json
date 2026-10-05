@@ -1,0 +1,18 @@
+{
+  "displayName": "SRM - Save review analysis draft",
+  "description": "Saves source-evidenced financial analysis and unverified collateral claims as a revisioned draft. It does not approve analysis or set any financial rating.",
+  "workflowId": "f9150906-1e0e-4bd0-9213-0f8bb53646fb",
+  "owningAgent": "srm-orchestrator",
+  "processStep": "Stage 3 - Financial analysis draft",
+  "requirements": [
+    "SRM-FIN-001",
+    "SRM-NFR-001",
+    "SRM-GOV-001",
+    "SRM-GOV-004"
+  ],
+  "trigger": "When an agent calls the flow (exact requestref, stable revisionkey, and analysisjson matching contract.json; serialized analysisjson is limited to 3,000 characters).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": []
+}

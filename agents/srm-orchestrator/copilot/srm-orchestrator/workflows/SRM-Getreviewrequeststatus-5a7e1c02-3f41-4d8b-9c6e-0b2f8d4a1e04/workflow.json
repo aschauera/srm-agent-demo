@@ -1,0 +1,259 @@
+﻿{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "mag_SRMDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "SRM app record URL (mag_SRMAppRecordUrl)": {
+          "defaultValue": "",
+          "type": "String",
+          "metadata": {
+            "schemaName": "mag_SRMAppRecordUrl",
+            "description": "Review request URL prefix; the record ID is appended"
+          }
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "requestref": {
+                  "title": "Request reference",
+                  "type": "string",
+                  "description": "Review request reference, for example REQ-2026-004",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "required": [
+                "requestref"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "List_request": {
+          "type": "OpenApiConnection",
+          "runAfter": {},
+          "inputs": {
+            "parameters": {
+              "entityName": "mag_financialreviewrequests",
+              "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_dunsnumber,mag_buyername,mag_reviewername,mag_reviewstatus,mag_reviewpath,mag_gsaprecheckresult,mag_mandatoryrereview,mag_preliminaryrating,mag_finalrating,mag_finalratingconfirmed,modifiedon",
+              "$filter": "@{concat(\u0027mag_requestref eq \u0027\u0027\u0027, replace(trim(coalesce(triggerBody()?[\u0027requestref\u0027], \u0027\u0027)), \u0027\u0027\u0027\u0027, \u0027\u0027\u0027\u0027\u0027\u0027), \u0027\u0027\u0027 or mag_name eq \u0027\u0027\u0027, replace(trim(coalesce(triggerBody()?[\u0027requestref\u0027], \u0027\u0027)), \u0027\u0027\u0027\u0027, \u0027\u0027\u0027\u0027\u0027\u0027), \u0027\u0027\u0027\u0027)}",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "Request": {
+          "type": "Compose",
+          "runAfter": {
+            "List_request": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@first(outputs(\u0027List_request\u0027)?[\u0027body/value\u0027])"
+        },
+        "List_BPF_instance": {
+          "type": "OpenApiConnection",
+          "runAfter": {
+            "Request": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "parameters": {
+              "entityName": "new_supplierfinancialreviews",
+              "$select": "businessprocessflowinstanceid",
+              "$expand": "activestageid($select=stagename)",
+              "$filter": "_bpf_mag_financialreviewrequestid_value eq @{coalesce(outputs(\u0027Request\u0027)?[\u0027mag_financialreviewrequestid\u0027], \u002700000000-0000-0000-0000-000000000000\u0027)}",
+              "$top": 1
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "Respond_to_the_agent": {
+          "type": "Response",
+          "kind": "Skills",
+          "runAfter": {
+            "List_BPF_instance": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "found": {
+                  "title": "Found",
+                  "description": "",
+                  "type": "boolean",
+                  "x-ms-content-hint": "BOOLEAN",
+                  "x-ms-dynamically-added": true
+                },
+                "requestref": {
+                  "title": "Request reference",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "supplier": {
+                  "title": "Supplier",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "duns": {
+                  "title": "DUNS",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "buyer": {
+                  "title": "Buyer",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "reviewer": {
+                  "title": "Reviewer",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "reviewstatus": {
+                  "title": "Review status",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "reviewpath": {
+                  "title": "Review path",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "gsaprecheck": {
+                  "title": "GSA pre-check result",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "mandatoryrereview": {
+                  "title": "Mandatory re-review",
+                  "description": "",
+                  "type": "boolean",
+                  "x-ms-content-hint": "BOOLEAN",
+                  "x-ms-dynamically-added": true
+                },
+                "stage": {
+                  "title": "Process stage",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "preliminaryrating": {
+                  "title": "AI preliminary rating",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "finalrating": {
+                  "title": "Final rating",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "finalratingconfirmed": {
+                  "title": "Final rating confirmed by reviewer",
+                  "description": "",
+                  "type": "boolean",
+                  "x-ms-content-hint": "BOOLEAN",
+                  "x-ms-dynamically-added": true
+                },
+                "lastupdated": {
+                  "title": "Last updated",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "recordurl": {
+                  "title": "Record URL",
+                  "description": "",
+                  "type": "string",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "additionalProperties": {}
+            },
+            "statusCode": 200,
+            "body": {
+              "found": "@not(equals(outputs(\u0027Request\u0027), null))",
+              "requestref": "@{coalesce(outputs(\u0027Request\u0027)?[\u0027mag_requestref\u0027], outputs(\u0027Request\u0027)?[\u0027mag_name\u0027])}",
+              "supplier": "@{outputs(\u0027Request\u0027)?[\u0027_mag_supplierid_value@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "duns": "@{outputs(\u0027Request\u0027)?[\u0027mag_dunsnumber\u0027]}",
+              "buyer": "@{outputs(\u0027Request\u0027)?[\u0027mag_buyername\u0027]}",
+              "reviewer": "@{outputs(\u0027Request\u0027)?[\u0027mag_reviewername\u0027]}",
+              "reviewstatus": "@{outputs(\u0027Request\u0027)?[\u0027mag_reviewstatus@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "reviewpath": "@{outputs(\u0027Request\u0027)?[\u0027mag_reviewpath@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "gsaprecheck": "@{outputs(\u0027Request\u0027)?[\u0027mag_gsaprecheckresult@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "mandatoryrereview": "@equals(outputs(\u0027Request\u0027)?[\u0027mag_mandatoryrereview\u0027], true)",
+              "stage": "@{first(outputs(\u0027List_BPF_instance\u0027)?[\u0027body/value\u0027])?[\u0027activestageid\u0027]?[\u0027stagename\u0027]}",
+              "preliminaryrating": "@{outputs(\u0027Request\u0027)?[\u0027mag_preliminaryrating@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "finalrating": "@{outputs(\u0027Request\u0027)?[\u0027mag_finalrating@OData.Community.Display.V1.FormattedValue\u0027]}",
+              "finalratingconfirmed": "@equals(outputs(\u0027Request\u0027)?[\u0027mag_finalratingconfirmed\u0027], true)",
+              "lastupdated": "@{outputs(\u0027Request\u0027)?[\u0027modifiedon\u0027]}",
+              "recordurl": "@{if(equals(outputs(\u0027Request\u0027), null), \u0027\u0027, concat(parameters(\u0027SRM app record URL (mag_SRMAppRecordUrl)\u0027), outputs(\u0027Request\u0027)?[\u0027mag_financialreviewrequestid\u0027]))}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}

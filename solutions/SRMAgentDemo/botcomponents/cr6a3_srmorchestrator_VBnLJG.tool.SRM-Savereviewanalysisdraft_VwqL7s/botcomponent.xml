@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr6a3_srmorchestrator_VBnLJG.tool.SRM-Savereviewanalysisdraft_VwqL7s">
+  <componenttype>9</componenttype>
+  <description>Agent tool: saves a source-evidenced analysis revision as a draft, verifies Dataverse readback, and never sets or confirms a financial rating.</description>
+  <iscustomizable>0</iscustomizable>
+  <name>SRM - Save review analysis draft</name>
+  <parentbotid>
+    <schemaname>cr6a3_srmorchestrator_VBnLJG</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

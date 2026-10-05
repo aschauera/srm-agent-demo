@@ -23,15 +23,19 @@ Requirements: SRM-INT-008..012, SRM-PLT-002, SRM-GOV-004 (docs/06-agent-flows-an
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
 import re
+import shutil
+import subprocess
+import tempfile
+import urllib.parse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FLOWS = ROOT / "flows"
 SCHEMA = ROOT / "schema" / "tables"
+ENVIRONMENT = "https://org5b55c88b.crm.dynamics.com"
 SOLUTION = "SRMAgentDemo"
 SOLUTION_HEADER = {"MSCRM.SolutionUniqueName": SOLUTION}
 WORKFLOW_COMPONENT = 29
@@ -49,11 +53,86 @@ WRITTEN: set[str] = set()
 
 
 def _load_web_api():
-    spec = importlib.util.spec_from_file_location(
-        "configure_form", Path(__file__).with_name("06-configure-review-request-form.py"))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.web_api, module.app_module_id
+    def run_cli(arguments: list[str]) -> subprocess.CompletedProcess[str]:
+        shim = shutil.which("dataverse.cmd")
+        node = shutil.which("node.exe")
+        if not shim or not node:
+            raise RuntimeError("Dataverse CLI and node.exe are required to deploy SRM flows.")
+        entrypoint = Path(shim).parent / "node_modules" / "@microsoft" / "dataverse" / "bin" / "dataverse.js"
+        if not entrypoint.is_file():
+            raise RuntimeError(f"Dataverse CLI installation is incomplete under {entrypoint.parent.parent}.")
+        return subprocess.run(
+            [node, str(entrypoint), *arguments],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+
+    pac_shim = shutil.which("pac.cmd")
+    if not pac_shim:
+        raise RuntimeError("Power Platform CLI is required to deploy SRM flows.")
+    pac_command = subprocess.list2cmdline([pac_shim, "auth", "list"])
+    pac = subprocess.run(
+        [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/s", "/c", pac_command],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if pac.returncode or not any(
+        re.search(r"\*\s+UNIVERSAL\s+DemoPRE\b", line) and ENVIRONMENT in line
+        for line in pac.stdout.splitlines()
+    ):
+        raise RuntimeError(f"Select the approved PAC DemoPRE profile for {ENVIRONMENT} before deploying flows.")
+    dataverse_profiles = run_cli(["auth", "list"])
+    if dataverse_profiles.returncode or not any(
+        re.search(r"\*\s+UNIVERSAL\b", line) and ENVIRONMENT in line
+        for line in dataverse_profiles.stdout.splitlines()
+    ):
+        raise RuntimeError(f"Select the approved Dataverse CLI profile for {ENVIRONMENT} before deploying flows.")
+
+    configured_url = os.environ.get("DATAVERSE_URL")
+    if configured_url and configured_url.rstrip("/") != ENVIRONMENT:
+        raise RuntimeError(f"DATAVERSE_URL points to {configured_url!r}; refusing non-DemoPRE access.")
+    os.environ["DATAVERSE_URL"] = ENVIRONMENT
+
+    def web_api(method: str, path: str, body: dict | None = None, headers: dict | None = None) -> dict | None:
+        arguments = [
+            "api", "request", "--target", "dataverse", "--method", method,
+            "--path", urllib.parse.quote(f"/api/data/v9.2/{path}", safe="/?=&(),;:'"),
+            "--environment", ENVIRONMENT,
+        ]
+        temporary_body = None
+        if body is not None:
+            with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", suffix=".json",
+                                             delete=False, newline="\n") as handle:
+                json.dump(body, handle, ensure_ascii=False, separators=(",", ":"))
+                temporary_body = Path(handle.name)
+            arguments.extend(["--body-file", str(temporary_body)])
+        for name, value in (headers or {}).items():
+            arguments.extend(["--header", f"{name}:{value}"])
+        try:
+            result = run_cli(arguments)
+        finally:
+            if temporary_body is not None:
+                temporary_body.unlink(missing_ok=True)
+        if result.returncode:
+            message = (result.stderr or result.stdout).strip()[:1000]
+            raise RuntimeError(f"Dataverse {method} {path} failed: {message}")
+        output = result.stdout.strip()
+        if not output:
+            return None
+        try:
+            return json.loads(output)
+        except json.JSONDecodeError as error:
+            raise RuntimeError(f"Dataverse {method} {path} returned a non-JSON response.") from error
+
+    def app_module_id() -> str:
+        rows = web_api("GET", "appmodules?$select=appmoduleid&$filter=uniquename eq 'mag_supplierfinancialriskreview'")["value"]
+        if len(rows) != 1:
+            raise RuntimeError(f"Expected one SRM app module in DemoPRE; found {len(rows)}.")
+        return rows[0]["appmoduleid"]
+
+    return web_api, app_module_id
 
 
 # ---- source loading and validation -----------------------------------------------------------
@@ -65,7 +144,9 @@ def load_sources() -> tuple[list[dict], list[dict], list[dict]]:
     for folder in sorted(p for p in FLOWS.iterdir() if p.is_dir()):
         meta = json.loads((folder / "flow.json").read_text(encoding="utf-8"))
         source = json.loads((folder / "definition.json").read_text(encoding="utf-8"))
-        flows.append({"folder": folder.name, "meta": meta, **source})
+        contract_path = folder / "contract.json"
+        contract = json.loads(contract_path.read_text(encoding="utf-8")) if contract_path.exists() else None
+        flows.append({"folder": folder.name, "meta": meta, "contract": contract, **source})
     return references, variables, flows
 
 
@@ -142,6 +223,84 @@ def validate(references: list[dict], variables: list[dict], flows: list[dict]) -
                     columns |= {c.strip() for c in value.split(",")}
             unknown = {c for c in columns if c not in tables[entity_set] and c.lower() not in tables[entity_set]}
             errors += [f"{label}.{name}: unknown column {entity}.{c}" for c in sorted(unknown)]
+        if label == "save-review-analysis-draft":
+            errors.extend(validate_analysis_draft(flow))
+    return errors
+
+
+def validate_analysis_draft(flow: dict) -> list[str]:
+    """Keep the save tool's write surface and embedded JSON schema aligned to its contract."""
+    errors = []
+    label = flow["folder"]
+    contract = flow["contract"]
+    definition = flow["definition"]
+    embedded_schema = (definition.get("actions", {}).get("Parse_analysis", {})
+                       .get("inputs", {}).get("schema"))
+    if not isinstance(contract, dict) or embedded_schema != contract:
+        errors.append(f"{label}: Parse_analysis schema must exactly match contract.json")
+        return errors
+
+    trigger_schema = (definition.get("triggers", {}).get("manual", {})
+                      .get("inputs", {}).get("schema", {}))
+    analysis_input = trigger_schema.get("properties", {}).get("analysisjson", {})
+    if analysis_input.get("maxLength") != 3000:
+        errors.append(f"{label}: analysisjson trigger must enforce the 3,000-character memo-field limit")
+    # Request triggers do not enforce schema maxLength, so the pre-write gate must check it explicitly.
+    gate = (definition.get("actions", {}).get("Validate_payload_and_call", {})
+            .get("expression", {}).get("and", []))
+    required_guards = [
+        {"lessOrEquals": ["@length(triggerBody()?['analysisjson'])", 3000]},
+        {"lessOrEquals": ["@length(string(body('Parse_analysis')))", 3000]},
+    ]
+    if any(guard not in gate for guard in required_guards):
+        errors.append(f"{label}: Validate_payload_and_call must check analysisjson length before writes")
+
+    allowed_writes = {
+        "mag_financialreviewrequests": {"mag_narrativedraft"},
+        "mag_financialworkingpapers": {
+            "mag_name", "mag_demokey", "mag_fiscalyear", "mag_period", "mag_currency",
+            "mag_revenue", "mag_costofgoodssold", "mag_grossprofit", "mag_netincome",
+            "mag_operatingcashflow", "mag_currentassets", "mag_currentliabilities",
+            "mag_totalassets", "mag_totaldebt", "mag_accountsreceivable", "mag_inventory",
+            "mag_leverageratio", "mag_liquidityratio", "mag_grossmargin", "mag_assetturnover",
+            "mag_yearoveryeardelta", "mag_anomalyflags", "mag_reviewrequestid", "mag_supplierid",
+        },
+        "mag_nonfinancialriskitems": {
+            "mag_name", "mag_demokey", "mag_risktype", "mag_details", "mag_verified",
+            "mag_reviewrequestid", "mag_supplierid",
+        },
+        "mag_reviewaudittrails": {
+            "mag_name", "mag_demokey", "mag_action", "mag_actor", "mag_actortype",
+            "mag_occurredon", "mag_systemtouched", "mag_details", "mag_reviewrequestid",
+            "mag_supplierid",
+        },
+    }
+    write_operations = {"CreateRecord", "UpdateRecord", "DeleteRecord"}
+    update_operations = {"UpdateRecord", "DeleteRecord"}
+    for name, action in walk_actions(definition.get("actions", {})):
+        inputs = action.get("inputs")
+        if not isinstance(inputs, dict):
+            continue
+        operation = inputs.get("host", {}).get("operationId")
+        if operation not in write_operations:
+            continue
+        entity = inputs.get("parameters", {}).get("entityName", "")
+        entity = entity.lower()
+        written = {
+            key[5:].split("@", 1)[0].lower()
+            for key in inputs.get("parameters", {})
+            if key.startswith("item/")
+        }
+        unexpected = written - allowed_writes.get(entity, set())
+        errors += [f"{label}.{name}: prohibited write to {entity}.{column}" for column in sorted(unexpected)]
+        if operation in update_operations and entity != "mag_financialreviewrequests":
+            errors.append(f"{label}.{name}: child and audit records must not be updated or deleted")
+
+    text = json.dumps(definition).lower()
+    for protected in ("mag_finalrating", "mag_finalratingconfirmed", "mag_preliminaryrating",
+                      "mag_reviewstatus", "mag_currentstage", "sourcedocumentid"):
+        if protected in text:
+            errors.append(f"{label}: definition references protected field {protected}")
     return errors
 
 
@@ -295,7 +454,7 @@ def activate(web_api, workflow_id: str, name: str) -> str | None:
         web_api("PATCH", f"workflows({workflow_id})", {"statecode": 1, "statuscode": 2})
         return None
     except RuntimeError as error:
-        return f"{name}: {str(error)[:300]}"
+        return f"{name}: {str(error)[:3000]}"
 
 
 def default_values(web_api, app_module_id, mailbox: str | None) -> dict[str, str]:
@@ -328,10 +487,19 @@ def main() -> None:
         return
     if args.only:
         flows = [f for f in flows if f["folder"] in args.only]
+        unknown = set(args.only) - {f["folder"] for f in flows}
+        if unknown:
+            raise SystemExit(f"Unknown flow folder(s): {', '.join(sorted(unknown))}")
+    required_references = {name for flow in flows for name in flow["meta"]["connectionReferences"]}
+    required_variables = {name for flow in flows for name in flow["meta"]["environmentVariables"]}
+    references = [reference for reference in references if reference["logicalName"] in required_references]
+    variables = [variable for variable in variables if variable["schemaName"] in required_variables]
 
     web_api, app_module_id = _load_web_api()
-    values = {**default_values(web_api, app_module_id, args.demo_mailbox),
-              **{v["schemaName"]: v["defaultValue"] for v in variables if "defaultValue" in v}}
+    values = {}
+    if variables:
+        values = {**default_values(web_api, app_module_id, args.demo_mailbox),
+                  **{v["schemaName"]: v["defaultValue"] for v in variables if "defaultValue" in v}}
     ensure_environment_variables(web_api, variables, values, args.dry_run)
     bound = ensure_connection_references(web_api, references, args.dry_run)
     deployed = [(flow, *ensure_flow(web_api, flow, args.dry_run)) for flow in flows]

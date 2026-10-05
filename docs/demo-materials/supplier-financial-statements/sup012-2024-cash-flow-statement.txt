@@ -1,0 +1,13 @@
+FICTIONAL DEMO DOCUMENT - NOT A SOURCE FINANCIAL STATEMENT
+Supplier: Lumen Forge Industrial Systems Ltd (SUP-012)
+Period: FY2024, full year
+Currency: USD
+Prepared solely for the SRM DemoPRE file-upload test.
+
+CASH FLOW STATEMENT SUMMARY
+Net cash from operating activities: -2,000,000
+Net cash from investing activities: -3,000,000
+Net cash from financing activities: 1,000,000
+Net change in cash: -4,000,000
+
+All values are invented demo values. No audit opinion is represented.

@@ -1,0 +1,31 @@
+{
+  "fictional": true,
+  "purpose": "Actual PDF-input proof, not proof of live extraction",
+  "files": [
+    {
+      "filename": "sup012-financial-package-digital.pdf",
+      "bytes": 13938,
+      "sha256": "1b689ef0ab27e63f736e176a81a12a4c8d987f1e31584412862687ed2ccc4a3f"
+    },
+    {
+      "filename": "sup012-fy2025-image-only.pdf",
+      "bytes": 148085,
+      "sha256": "9c7fe5fdfe54d38b3b5dddfd3b4aefe1d7c0da1d66dbedf051289d0065dba205"
+    },
+    {
+      "filename": "sup012-fy2025-unreadable-income.pdf",
+      "bytes": 50673,
+      "sha256": "cb86dcfc990e84ee7316dcddc6f2072ac50f0527c0cbf10d55cbe2e981a5fc35"
+    },
+    {
+      "filename": "sup012-supplier-questionnaire.pdf",
+      "bytes": 2110,
+      "sha256": "fb463e99a97b1d620118db749f86f8404127de0a914f46cae99d255d82f7d971"
+    },
+    {
+      "filename": "sup012-reviewer-collateral-note.pdf",
+      "bytes": 2231,
+      "sha256": "e45fd49dcd6d83d82796c218df0cb0dd34f29f3e45a22377e1174e34c9b60f0b"
+    }
+  ]
+}

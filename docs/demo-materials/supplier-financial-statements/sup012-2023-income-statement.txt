@@ -1,0 +1,13 @@
+FICTIONAL DEMO DOCUMENT - NOT A SOURCE FINANCIAL STATEMENT
+Supplier: Lumen Forge Industrial Systems Ltd (SUP-012)
+Period: FY2023, full year
+Currency: USD
+Prepared solely for the SRM DemoPRE file-upload test.
+
+INCOME STATEMENT SUMMARY
+Revenue: 100,000,000
+Cost of goods sold: 78,000,000
+Gross profit: 22,000,000
+Net income: 3,000,000
+
+All values are invented demo values. No audit opinion is represented.

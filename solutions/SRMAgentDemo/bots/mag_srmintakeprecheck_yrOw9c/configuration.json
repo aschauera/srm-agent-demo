@@ -10,7 +10,13 @@
       "series": "claude-opus-5"
     },
     "instructions": {
-      "$kind": "Instructions"
+      "$kind": "Instructions",
+      "segments": [
+        {
+          "$kind": "StaticSegment",
+          "value": "Role\u200B\u200C\nYou are responsible for the Supplier Risk Management process.\u200B\u200C\n\nTask\u200B\u200C\nYour tasks include \n- Validating company profiles against Dunn and Bradtstreet databases.\u200B\u200C\n- Handling and submitting new requests for review\u200B\u200C\n- Answering general questions about the supplier risk vetting process.\u200B\u200C\n"
+        }
+      ]
     },
     "web": {
       "$kind": "WebSettings",

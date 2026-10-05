@@ -356,6 +356,135 @@
             </column>
           </columns>
         </tab>
+        <tab id="ac5d477f-62eb-5a04-869f-a14e6abb374f" expanded="true" visible="true" name="tab_analysis_draft">
+          <labels>
+            <label description="Agent Analysis Draft" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section id="47629c7e-0e0c-5ebd-a543-b0445e9ccb30" showlabel="true" visible="true" columns="1" name="sec_agent_narrative">
+                  <labels>
+                    <label description="AI Narrative Draft - Not Approved" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="41209ff1-d486-571b-874f-3fe8e6606254" showlabel="true" visible="true" rowspan="8" colspan="1">
+                        <labels>
+                          <label description="Narrative Draft" languagecode="1033" />
+                        </labels>
+                        <control id="47d2e961-fce1-5d59-99a9-165ba44e5440" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="mag_narrativedraft" disabled="true" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                  </rows>
+                </section>
+                <section id="76a7b28b-16a0-5edd-9f87-c3f2912ee3a6" showlabel="true" visible="true" columns="1" name="sec_analysis_mag_financialworkingpaper">
+                  <labels>
+                    <label description="Financial Working Papers - Draft Evidence" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="d76b7171-77b9-5658-8db0-6fbb9ef2e670" showlabel="false" visible="true" rowspan="8" colspan="1">
+                        <labels>
+                          <label description="Financial Working Papers - Draft Evidence" languagecode="1033" />
+                        </labels>
+                        <control id="4351e8ca-756a-551c-90b5-7d6bbda7a913" classid="{E7A81278-8635-4D9E-8D4D-59480B391C5B}" disabled="false" isrequired="false">
+                          <parameters>
+                            <TargetEntityType>mag_financialworkingpaper</TargetEntityType>
+                            <ViewId>ffad43be-206c-5ef8-817c-96e5d58bcaaa</ViewId>
+                            <IsUserView>false</IsUserView>
+                            <RelationshipName>mag_financialreviewrequest_mag_financialworkingpaper_mag_ReviewRequestId</RelationshipName>
+                            <ChartGridMode>Grid</ChartGridMode>
+                            <RecordsPerPage>5</RecordsPerPage>
+                            <EnableViewPicker>false</EnableViewPicker>
+                          </parameters>
+                        </control>
+                      </cell>
+                    </row>
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                  </rows>
+                </section>
+                <section id="fb761fa2-7380-586c-ba21-399ef58f8bfd" showlabel="true" visible="true" columns="1" name="sec_analysis_mag_nonfinancialriskitem">
+                  <labels>
+                    <label description="Collateral Observations - Check Verification" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="24594e2d-ef52-5086-b0cb-504802249ce7" showlabel="false" visible="true" rowspan="8" colspan="1">
+                        <labels>
+                          <label description="Collateral Observations - Check Verification" languagecode="1033" />
+                        </labels>
+                        <control id="781a08c0-8c3d-5ad9-bf91-e28437978403" classid="{E7A81278-8635-4D9E-8D4D-59480B391C5B}" disabled="false" isrequired="false">
+                          <parameters>
+                            <TargetEntityType>mag_nonfinancialriskitem</TargetEntityType>
+                            <ViewId>29a0174b-b177-5c21-abff-af90a45e1496</ViewId>
+                            <IsUserView>false</IsUserView>
+                            <RelationshipName>mag_financialreviewrequest_mag_nonfinancialriskitem_mag_ReviewRequestId</RelationshipName>
+                            <ChartGridMode>Grid</ChartGridMode>
+                            <RecordsPerPage>5</RecordsPerPage>
+                            <EnableViewPicker>false</EnableViewPicker>
+                          </parameters>
+                        </control>
+                      </cell>
+                    </row>
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                  </rows>
+                </section>
+                <section id="34933977-8d78-5f79-9a25-306f2f2b7054" showlabel="true" visible="true" columns="1" name="sec_analysis_mag_reviewaudittrail">
+                  <labels>
+                    <label description="Analysis Activity - Not Rating Approval" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="0be85483-d389-549d-8406-783a39d7a095" showlabel="false" visible="true" rowspan="8" colspan="1">
+                        <labels>
+                          <label description="Analysis Activity - Not Rating Approval" languagecode="1033" />
+                        </labels>
+                        <control id="906f8828-14b1-5d3c-92d8-d58a98ad05c9" classid="{E7A81278-8635-4D9E-8D4D-59480B391C5B}" disabled="false" isrequired="false">
+                          <parameters>
+                            <TargetEntityType>mag_reviewaudittrail</TargetEntityType>
+                            <ViewId>e01f8b85-7c24-53fa-827e-3603bd71ac45</ViewId>
+                            <IsUserView>false</IsUserView>
+                            <RelationshipName>mag_financialreviewrequest_mag_reviewaudittrail_mag_ReviewRequestId</RelationshipName>
+                            <ChartGridMode>Grid</ChartGridMode>
+                            <RecordsPerPage>5</RecordsPerPage>
+                            <EnableViewPicker>false</EnableViewPicker>
+                          </parameters>
+                        </control>
+                      </cell>
+                    </row>
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                    <row />
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
       </tabs>
       <formLibraries>
         <Library name="mag_/srm/reviewrequest.js" libraryUniqueId="{17e9fa4f-bb02-540b-96ff-076e071925a0}" />

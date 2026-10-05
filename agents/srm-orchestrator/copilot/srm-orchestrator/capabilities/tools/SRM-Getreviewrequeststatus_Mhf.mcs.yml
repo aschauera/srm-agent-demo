@@ -1,0 +1,63 @@
+mcs.metadata:
+  componentName: SRM - Get review request status
+  description: "Agent tool: returns the status, review path, GSA pre-check outcome, process stage and rating state of a review request by its reference. Read-only"
+kind: WorkflowTool
+workflowId: 5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e04
+toolInputs:
+  - name: requestref
+    displayName: Request reference
+    description: Review request reference, for example REQ-2026-004
+
+toolOutputs:
+  - name: found
+    displayName: Found
+
+  - name: requestref
+    displayName: Request reference
+
+  - name: supplier
+    displayName: Supplier
+
+  - name: duns
+    displayName: DUNS
+
+  - name: buyer
+    displayName: Buyer
+
+  - name: reviewer
+    displayName: Reviewer
+
+  - name: reviewstatus
+    displayName: Review status
+
+  - name: reviewpath
+    displayName: Review path
+
+  - name: gsaprecheck
+    displayName: GSA pre-check result
+
+  - name: mandatoryrereview
+    displayName: Mandatory re-review
+
+  - name: stage
+    displayName: Process stage
+
+  - name: preliminaryrating
+    displayName: AI preliminary rating
+
+  - name: finalrating
+    displayName: Final rating
+
+  - name: finalratingconfirmed
+    displayName: Final rating confirmed by reviewer
+
+  - name: lastupdated
+    displayName: Last updated
+
+  - name: recordurl
+    displayName: Record URL
+
+connectionProperties:
+  $kind: ConnectionProperties
+  diagnostics:
+  mode: Invoker

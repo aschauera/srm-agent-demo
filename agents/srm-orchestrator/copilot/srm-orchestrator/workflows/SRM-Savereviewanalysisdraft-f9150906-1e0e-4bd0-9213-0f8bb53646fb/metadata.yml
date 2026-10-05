@@ -1,0 +1,32 @@
+jsonFileName: workflows/SRM-Savereviewanalysisdraft-f9150906-1e0e-4bd0-9213-0f8bb53646fb/workflow.json
+workflowId: f9150906-1e0e-4bd0-9213-0f8bb53646fb
+name: SRM - Save review analysis draft
+type: 1
+description: Save a source-evidenced analysis revision as a draft, verify Dataverse readback, and never set or confirm a financial rating.
+subprocess: false
+category: 5
+mode: 0
+scope: 4
+onDemand: false
+triggerOnCreate: false
+triggerOnDelete: false
+asyncAutodelete: false
+syncWorkflowLogOnFailure: false
+stateCode: 1
+statusCode: 2
+runAs: 1
+isTransacted: true
+introducedVersion: 1.0.0.0
+isCustomizable:
+  value: true
+  canBeChanged: true
+  managedPropertyLogicalName: iscustomizableanddeletable
+businessProcessType: 0
+isCustomProcessingStepAllowedForOtherPublishers:
+  value: true
+  canBeChanged: true
+  managedPropertyLogicalName: canbedeleted
+modernFlowType: 1
+primaryEntity: none
+connectionReferences:
+- mag_SRMDataverse

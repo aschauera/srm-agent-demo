@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Workflow WorkflowId="{f9150906-1e0e-4bd0-9213-0f8bb53646fb}" Name="SRM - Save review analysis draft" Description="Saves source-evidenced financial analysis and unverified collateral claims as a revisioned draft. It does not approve analysis or set any financial rating." xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <JsonFileName>/Workflows/SRM-Savereviewanalysisdraft-F9150906-1E0E-4BD0-9213-0F8BB53646FB.json</JsonFileName>
+  <Type>1</Type>
+  <Subprocess>0</Subprocess>
+  <Category>5</Category>
+  <Mode>0</Mode>
+  <Scope>4</Scope>
+  <OnDemand>0</OnDemand>
+  <TriggerOnCreate>0</TriggerOnCreate>
+  <TriggerOnDelete>0</TriggerOnDelete>
+  <AsyncAutodelete>0</AsyncAutodelete>
+  <SyncWorkflowLogOnFailure>0</SyncWorkflowLogOnFailure>
+  <StateCode>1</StateCode>
+  <StatusCode>2</StatusCode>
+  <RunAs>1</RunAs>
+  <IsTransacted>1</IsTransacted>
+  <IntroducedVersion>1.0.0.0</IntroducedVersion>
+  <IsCustomizable>1</IsCustomizable>
+  <BusinessProcessType>0</BusinessProcessType>
+  <IsCustomProcessingStepAllowedForOtherPublishers>1</IsCustomProcessingStepAllowedForOtherPublishers>
+  <ModernFlowType>1</ModernFlowType>
+  <PrimaryEntity>none</PrimaryEntity>
+  <LocalizedNames>
+    <LocalizedName languagecode="1033" description="SRM - Save review analysis draft" />
+  </LocalizedNames>
+  <Descriptions>
+    <Description languagecode="1033" description="Saves source-evidenced financial analysis and unverified collateral claims as a revisioned draft. It does not approve analysis or set any financial rating." />
+  </Descriptions>
+</Workflow>

@@ -1,0 +1,1881 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "mag_SRMDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Skills",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "requestref": {
+                  "title": "Exact review request reference",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100,
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "revisionkey": {
+                  "title": "Stable analysis revision key",
+                  "type": "string",
+                  "minLength": 36,
+                  "maxLength": 36,
+                  "description": "Create once for this draft revision and reuse unchanged for retries.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                },
+                "analysisjson": {
+                  "title": "Analysis draft JSON",
+                  "type": "string",
+                  "maxLength": 3000,
+                  "description": "JSON string conforming exactly to the flow contract; maximum 3,000 characters so it and the provenance wrappers fit DemoPRE's 4,000-character memo columns.",
+                  "x-ms-content-hint": "TEXT",
+                  "x-ms-dynamically-added": true
+                }
+              },
+              "required": [
+                "requestref",
+                "revisionkey",
+                "analysisjson"
+              ]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Requested_ref": {
+          "type": "Compose",
+          "runAfter": {},
+          "inputs": "@trim(coalesce(triggerBody()?['requestref'], ''))"
+        },
+        "Revision_key": {
+          "type": "Compose",
+          "runAfter": {
+            "Requested_ref": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@trim(coalesce(triggerBody()?['revisionkey'], ''))"
+        },
+        "Parse_analysis": {
+          "type": "ParseJson",
+          "runAfter": {
+            "Revision_key": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "content": "@json(coalesce(triggerBody()?['analysisjson'], ''))",
+            "schema": {
+              "$schema": "http://json-schema.org/draft-04/schema#",
+              "title": "SRM analysis draft payload",
+              "description": "The serialized JSON passed to the flow as analysisjson must be at most 3,000 characters. The trigger enforces this before writes to reserve space for provenance wrappers in DemoPRE memo fields capped at 4,000 characters.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "schemaVersion",
+                "narrative",
+                "periods",
+                "riskClaims",
+                "uncertainties"
+              ],
+              "properties": {
+                "schemaVersion": {
+                  "type": "string",
+                  "enum": [
+                    "1.0"
+                  ]
+                },
+                "narrative": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                },
+                "periods": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 12,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "periodKey",
+                      "fiscalYear",
+                      "period",
+                      "currency",
+                      "unit",
+                      "facts",
+                      "metrics",
+                      "evidence",
+                      "metricNotes",
+                      "anomalies"
+                    ],
+                    "properties": {
+                      "periodKey": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32
+                      },
+                      "fiscalYear": {
+                        "type": "integer",
+                        "minimum": 1900,
+                        "maximum": 2200
+                      },
+                      "period": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 80
+                      },
+                      "currency": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 3
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      },
+                      "facts": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "revenue",
+                          "costOfGoodsSold",
+                          "grossProfit",
+                          "netIncome",
+                          "operatingCashFlow",
+                          "currentAssets",
+                          "currentLiabilities",
+                          "totalAssets",
+                          "totalDebt",
+                          "accountsReceivable",
+                          "inventory"
+                        ],
+                        "properties": {
+                          "revenue": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "costOfGoodsSold": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "grossProfit": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "netIncome": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "operatingCashFlow": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "currentAssets": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "currentLiabilities": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "totalAssets": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "totalDebt": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "accountsReceivable": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "inventory": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "metrics": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "leverageRatio",
+                          "liquidityRatio",
+                          "grossMargin",
+                          "assetTurnover",
+                          "yearOverYearDelta"
+                        ],
+                        "properties": {
+                          "leverageRatio": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "liquidityRatio": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "grossMargin": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "assetTurnover": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "yearOverYearDelta": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "evidence": {
+                        "type": "array",
+                        "maxItems": 120,
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "required": [
+                            "field",
+                            "sourceFilename",
+                            "page",
+                            "excerpt"
+                          ],
+                          "properties": {
+                            "field": {
+                              "type": "string",
+                              "enum": [
+                                "revenue",
+                                "costOfGoodsSold",
+                                "grossProfit",
+                                "netIncome",
+                                "operatingCashFlow",
+                                "currentAssets",
+                                "currentLiabilities",
+                                "totalAssets",
+                                "totalDebt",
+                                "accountsReceivable",
+                                "inventory",
+                                "leverageRatio",
+                                "liquidityRatio",
+                                "grossMargin",
+                                "assetTurnover",
+                                "yearOverYearDelta"
+                              ]
+                            },
+                            "sourceFilename": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 255
+                            },
+                            "page": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ],
+                              "minimum": 1
+                            },
+                            "excerpt": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 2000
+                            }
+                          }
+                        }
+                      },
+                      "metricNotes": {
+                        "type": "array",
+                        "maxItems": 40,
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      },
+                      "anomalies": {
+                        "type": "array",
+                        "maxItems": 40,
+                        "items": {
+                          "type": "string",
+                          "maxLength": 2000
+                        }
+                      }
+                    }
+                  }
+                },
+                "riskClaims": {
+                  "type": "array",
+                  "maxItems": 30,
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "claimKey",
+                      "riskType",
+                      "claim",
+                      "sourceFilename",
+                      "page"
+                    ],
+                    "properties": {
+                      "claimKey": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32
+                      },
+                      "riskType": {
+                        "type": "string",
+                        "enum": [
+                          "Litigation",
+                          "Arbitration",
+                          "Off-balance-sheet guarantee",
+                          "Customer concentration",
+                          "Owned vs leased assets",
+                          "Management turnover",
+                          "Regulatory penalty",
+                          "Other"
+                        ]
+                      },
+                      "claim": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 5000
+                      },
+                      "sourceFilename": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 255
+                      },
+                      "page": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "minimum": 1
+                      }
+                    }
+                  }
+                },
+                "uncertainties": {
+                  "type": "array",
+                  "maxItems": 80,
+                  "items": {
+                    "type": "string",
+                    "maxLength": 2000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "Select_period_keys": {
+          "type": "Select",
+          "runAfter": {
+            "Parse_analysis": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Parse_analysis')?['periods']",
+            "select": {
+              "key": "@item()?['periodKey']"
+            }
+          }
+        },
+        "Distinct_period_keys": {
+          "type": "Compose",
+          "runAfter": {
+            "Select_period_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@union(body('Select_period_keys'), body('Select_period_keys'))"
+        },
+        "Select_risk_keys": {
+          "type": "Select",
+          "runAfter": {
+            "Distinct_period_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Parse_analysis')?['riskClaims']",
+            "select": {
+              "key": "@item()?['claimKey']"
+            }
+          }
+        },
+        "Distinct_risk_keys": {
+          "type": "Compose",
+          "runAfter": {
+            "Select_risk_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@union(body('Select_risk_keys'), body('Select_risk_keys'))"
+        },
+        "Select_currency_validation": {
+          "type": "Select",
+          "runAfter": {
+            "Distinct_risk_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Parse_analysis')?['periods']",
+            "select": {
+              "currency": "@item()?['currency']",
+              "nonLetters": "@replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(toUpper(item()?['currency']), 'A', ''), 'B', ''), 'C', ''), 'D', ''), 'E', ''), 'F', ''), 'G', ''), 'H', ''), 'I', ''), 'J', ''), 'K', ''), 'L', ''), 'M', ''), 'N', ''), 'O', ''), 'P', ''), 'Q', ''), 'R', ''), 'S', ''), 'T', ''), 'U', ''), 'V', ''), 'W', ''), 'X', ''), 'Y', ''), 'Z', '')"
+            }
+          }
+        },
+        "Filter_invalid_currencies": {
+          "type": "Query",
+          "runAfter": {
+            "Select_currency_validation": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Select_currency_validation')",
+            "where": "@or(not(equals(item()?['currency'], toUpper(item()?['currency']))), not(equals(length(item()?['currency']), 3)), not(equals(item()?['nonLetters'], '')))"
+          }
+        },
+        "Filter_invalid_period_keys": {
+          "type": "Query",
+          "runAfter": {
+            "Filter_invalid_currencies": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Parse_analysis')?['periods']",
+            "where": "@or(not(equals(encodeUriComponent(item()?['periodKey']), item()?['periodKey'])), contains(item()?['periodKey'], '!'), contains(item()?['periodKey'], '~'), contains(item()?['periodKey'], '*'), contains(item()?['periodKey'], ''''), contains(item()?['periodKey'], '('), contains(item()?['periodKey'], ')'))"
+          }
+        },
+        "Filter_invalid_risk_keys": {
+          "type": "Query",
+          "runAfter": {
+            "Filter_invalid_period_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "from": "@body('Parse_analysis')?['riskClaims']",
+            "where": "@or(not(equals(encodeUriComponent(item()?['claimKey']), item()?['claimKey'])), contains(item()?['claimKey'], '!'), contains(item()?['claimKey'], '~'), contains(item()?['claimKey'], '*'), contains(item()?['claimKey'], ''''), contains(item()?['claimKey'], '('), contains(item()?['claimKey'], ')'))"
+          }
+        },
+        "Revision_key_padded": {
+          "type": "Compose",
+          "runAfter": {
+            "Filter_invalid_risk_keys": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@substring(concat(outputs('Revision_key'), '000000000000000000000000000000000000'), 0, 36)"
+        },
+        "Revision_key_hex_candidate": {
+          "type": "Compose",
+          "runAfter": {
+            "Revision_key_padded": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@replace(replace(replace(replace(toUpper(outputs('Revision_key_padded')), '-', ''), '-', ''), '-', ''), '-', '')"
+        },
+        "Revision_key_nonhex": {
+          "type": "Compose",
+          "runAfter": {
+            "Revision_key_hex_candidate": [
+              "Succeeded"
+            ]
+          },
+          "inputs": "@replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(outputs('Revision_key_hex_candidate'), '0', ''), '1', ''), '2', ''), '3', ''), '4', ''), '5', ''), '6', ''), '7', ''), '8', ''), '9', ''), 'A', ''), 'B', ''), 'C', ''), 'D', ''), 'E', ''), 'F', '')"
+        },
+        "Initialize_readback_failures": {
+          "type": "InitializeVariable",
+          "runAfter": {
+            "Revision_key_nonhex": [
+              "Succeeded"
+            ]
+          },
+          "inputs": {
+            "variables": [
+              {
+                "name": "ReadbackFailures",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Validate_payload_and_call": {
+          "type": "If",
+          "runAfter": {
+            "Initialize_readback_failures": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "and": [
+              {
+                "lessOrEquals": [
+                  "@length(triggerBody()?['analysisjson'])",
+                  3000
+                ]
+              },
+              {
+                "lessOrEquals": [
+                  "@length(string(body('Parse_analysis')))",
+                  3000
+                ]
+              },
+              {
+                "equals": [
+                  "@outputs('Requested_ref')",
+                  "@triggerBody()?['requestref']"
+                ]
+              },
+              {
+                "greater": [
+                  "@length(outputs('Requested_ref'))",
+                  0
+                ]
+              },
+              {
+                "equals": [
+                  "@outputs('Revision_key')",
+                  "@triggerBody()?['revisionkey']"
+                ]
+              },
+              {
+                "equals": [
+                  "@length(outputs('Revision_key'))",
+                  36
+                ]
+              },
+              {
+                "equals": [
+                  "@length(outputs('Revision_key_hex_candidate'))",
+                  32
+                ]
+              },
+              {
+                "equals": [
+                  "@substring(outputs('Revision_key_padded'), 8, 1)",
+                  "-"
+                ]
+              },
+              {
+                "equals": [
+                  "@substring(outputs('Revision_key_padded'), 13, 1)",
+                  "-"
+                ]
+              },
+              {
+                "equals": [
+                  "@substring(outputs('Revision_key_padded'), 18, 1)",
+                  "-"
+                ]
+              },
+              {
+                "equals": [
+                  "@substring(outputs('Revision_key_padded'), 23, 1)",
+                  "-"
+                ]
+              },
+              {
+                "equals": [
+                  "@outputs('Revision_key_nonhex')",
+                  ""
+                ]
+              },
+              {
+                "equals": [
+                  "@length(outputs('Distinct_period_keys'))",
+                  "@length(body('Parse_analysis')?['periods'])"
+                ]
+              },
+              {
+                "equals": [
+                  "@length(body('Filter_invalid_period_keys'))",
+                  0
+                ]
+              },
+              {
+                "equals": [
+                  "@length(body('Filter_invalid_currencies'))",
+                  0
+                ]
+              },
+              {
+                "equals": [
+                  "@length(outputs('Distinct_risk_keys'))",
+                  "@length(body('Parse_analysis')?['riskClaims'])"
+                ]
+              },
+              {
+                "equals": [
+                  "@length(body('Filter_invalid_risk_keys'))",
+                  0
+                ]
+              }
+            ]
+          },
+          "actions": {
+            "List_request": {
+              "type": "OpenApiConnection",
+              "runAfter": {},
+              "inputs": {
+                "parameters": {
+                  "entityName": "mag_financialreviewrequests",
+                  "$select": "mag_financialreviewrequestid,mag_requestref,_mag_supplierid_value,mag_narrativedraft",
+                  "$filter": "@{concat('mag_requestref eq ''', replace(outputs('Requested_ref'), '''', ''''''), '''')}",
+                  "$top": 2
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Condition_request_unique": {
+              "type": "If",
+              "runAfter": {
+                "List_request": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "equals": [
+                  "@length(outputs('List_request')?['body/value'])",
+                  1
+                ]
+              },
+              "actions": {
+                "Request": {
+                  "type": "Compose",
+                  "runAfter": {},
+                  "inputs": "@first(outputs('List_request')?['body/value'])"
+                },
+                "Request_id": {
+                  "type": "Compose",
+                  "runAfter": {
+                    "Request": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": "@outputs('Request')?['mag_financialreviewrequestid']"
+                },
+                "Supplier_id": {
+                  "type": "Compose",
+                  "runAfter": {
+                    "Request_id": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": "@coalesce(outputs('Request')?['_mag_supplierid_value'], '')"
+                },
+                "List_supplier": {
+                  "type": "OpenApiConnection",
+                  "runAfter": {
+                    "Supplier_id": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "mag_suppliers",
+                      "$select": "mag_supplierid,mag_name",
+                      "$filter": "mag_supplierid eq @{outputs('Supplier_id')}",
+                      "$top": 2
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "ListRecords",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                },
+                "Condition_supplier_unique": {
+                  "type": "If",
+                  "runAfter": {
+                    "List_supplier": [
+                      "Succeeded"
+                    ]
+                  },
+                  "expression": {
+                    "equals": [
+                      "@length(outputs('List_supplier')?['body/value'])",
+                      1
+                    ]
+                  },
+                  "actions": {
+                    "Supplier": {
+                      "type": "Compose",
+                      "runAfter": {},
+                      "inputs": "@first(outputs('List_supplier')?['body/value'])"
+                    },
+                    "Started_key": {
+                      "type": "Compose",
+                      "runAfter": {
+                        "Supplier": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": "@concat('analysis|', outputs('Request_id'), '|', outputs('Revision_key'), '|started')"
+                    },
+                    "Completed_key": {
+                      "type": "Compose",
+                      "runAfter": {
+                        "Started_key": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": "@concat('analysis|', outputs('Request_id'), '|', outputs('Revision_key'), '|completed')"
+                    },
+                    "Revision_marker": {
+                      "type": "Compose",
+                      "runAfter": {
+                        "Completed_key": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": "@concat('Draft analysis revision: ', outputs('Revision_key'))"
+                    },
+                    "Draft_narrative": {
+                      "type": "Compose",
+                      "runAfter": {
+                        "Revision_marker": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": "@concat(outputs('Revision_marker'), decodeUriComponent('%0A'), body('Parse_analysis')?['narrative'])"
+                    },
+                    "List_started_audit": {
+                      "type": "OpenApiConnection",
+                      "runAfter": {
+                        "Draft_narrative": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": {
+                        "parameters": {
+                          "entityName": "mag_reviewaudittrails",
+                          "$select": "mag_reviewaudittrailid,mag_demokey,mag_details",
+                          "$filter": "@{concat('mag_demokey eq ''', outputs('Started_key'), '''')}",
+                          "$top": 2
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                          "operationId": "ListRecords",
+                          "connectionName": "shared_commondataserviceforapps"
+                        }
+                      }
+                    },
+                    "List_completed_audit": {
+                      "type": "OpenApiConnection",
+                      "runAfter": {
+                        "List_started_audit": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": {
+                        "parameters": {
+                          "entityName": "mag_reviewaudittrails",
+                          "$select": "mag_reviewaudittrailid,mag_demokey,mag_details",
+                          "$filter": "@{concat('mag_demokey eq ''', outputs('Completed_key'), '''')}",
+                          "$top": 2
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                          "operationId": "ListRecords",
+                          "connectionName": "shared_commondataserviceforapps"
+                        }
+                      }
+                    },
+                    "Condition_revision_already_completed": {
+                      "type": "If",
+                      "runAfter": {
+                        "List_completed_audit": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "greater": [
+                          "@length(outputs('List_completed_audit')?['body/value'])",
+                          0
+                        ]
+                      },
+                      "actions": {
+                        "Condition_completed_payload_matches": {
+                          "type": "If",
+                          "runAfter": {},
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@length(outputs('List_completed_audit')?['body/value'])",
+                                  1
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@length(outputs('List_started_audit')?['body/value'])",
+                                  1
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('List_started_audit')?['body/value'])?['mag_details']",
+                                  "@triggerBody()?['analysisjson']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('List_completed_audit')?['body/value'])?['mag_details']",
+                                  "@triggerBody()?['analysisjson']"
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Return_already_saved": {
+                              "type": "Response",
+                              "kind": "Skills",
+                              "runAfter": {},
+                              "inputs": {
+                                "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                    "saved": {
+                                      "title": "Saved",
+                                      "type": "boolean",
+                                      "x-ms-content-hint": "BOOLEAN"
+                                    },
+                                    "status": {
+                                      "title": "Status",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "requestref": {
+                                      "title": "Request reference",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "revisionkey": {
+                                      "title": "Revision key",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "periodcount": {
+                                      "title": "Period count",
+                                      "type": "integer",
+                                      "x-ms-content-hint": "NUMBER"
+                                    },
+                                    "riskcount": {
+                                      "title": "Risk claim count",
+                                      "type": "integer",
+                                      "x-ms-content-hint": "NUMBER"
+                                    },
+                                    "message": {
+                                      "title": "Message",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    }
+                                  }
+                                },
+                                "statusCode": 200,
+                                "body": {
+                                  "saved": true,
+                                  "status": "already_saved",
+                                  "requestref": "@outputs('Requested_ref')",
+                                  "revisionkey": "@outputs('Revision_key')",
+                                  "periodcount": "@length(body('Parse_analysis')?['periods'])",
+                                  "riskcount": "@length(body('Parse_analysis')?['riskClaims'])",
+                                  "message": "This exact revision and payload already has a completed audit entry."
+                                }
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Terminate_completed_revision_conflict_else": {
+                                "type": "Terminate",
+                                "runAfter": {},
+                                "inputs": {
+                                  "runStatus": "Failed",
+                                  "code": "RevisionPayloadConflict",
+                                  "message": "The revision key is already completed with different payload content."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Condition_started_revision_exists": {
+                            "type": "If",
+                            "runAfter": {},
+                            "expression": {
+                              "greater": [
+                                "@length(outputs('List_started_audit')?['body/value'])",
+                                0
+                              ]
+                            },
+                            "actions": {
+                              "Condition_started_payload_and_current_revision_match": {
+                                "type": "If",
+                                "runAfter": {},
+                                "expression": {
+                                  "and": [
+                                    {
+                                      "equals": [
+                                        "@length(outputs('List_started_audit')?['body/value'])",
+                                        1
+                                      ]
+                                    },
+                                    {
+                                      "equals": [
+                                        "@first(outputs('List_started_audit')?['body/value'])?['mag_details']",
+                                        "@triggerBody()?['analysisjson']"
+                                      ]
+                                    },
+                                    {
+                                      "startsWith": [
+                                        "@coalesce(outputs('Request')?['mag_narrativedraft'], '')",
+                                        "@concat(outputs('Revision_marker'), decodeUriComponent('%0A'))"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "actions": {
+                                  "Resume_started_revision": {
+                                    "type": "Compose",
+                                    "runAfter": {},
+                                    "inputs": "Resume only this exact, already-started revision."
+                                  }
+                                },
+                                "else": {
+                                  "actions": {
+                                    "Terminate_started_revision_conflict": {
+                                      "type": "Terminate",
+                                      "runAfter": {},
+                                      "inputs": {
+                                        "runStatus": "Failed",
+                                        "code": "RevisionPayloadConflict",
+                                        "message": "The revision key has a different payload, an inconsistent draft marker, or a non-unique audit row; no additional records were written."
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "else": {
+                              "actions": {
+                                "Update_request_narrative_draft": {
+                                  "type": "OpenApiConnection",
+                                  "runAfter": {
+                                    "Create_started_audit": [
+                                      "Succeeded"
+                                    ]
+                                  },
+                                  "inputs": {
+                                    "parameters": {
+                                      "entityName": "mag_financialreviewrequests",
+                                      "recordId": "@outputs('Request_id')",
+                                      "item/mag_narrativedraft": "@outputs('Draft_narrative')"
+                                    },
+                                    "host": {
+                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                      "operationId": "UpdateRecord",
+                                      "connectionName": "shared_commondataserviceforapps"
+                                    }
+                                  }
+                                },
+                                "Create_started_audit": {
+                                  "type": "OpenApiConnection",
+                                  "runAfter": {},
+                                  "inputs": {
+                                    "parameters": {
+                                      "entityName": "mag_reviewaudittrails",
+                                      "item/mag_name": "@concat('Analysis draft started ', outputs('Revision_key'))",
+                                      "item/mag_demokey": "@outputs('Started_key')",
+                                      "item/mag_action": "Started analysis draft save",
+                                      "item/mag_actor": "SRM Orchestrator (agent flow)",
+                                      "item/mag_actortype": 100000001,
+                                      "item/mag_occurredon": "@utcNow()",
+                                      "item/mag_systemtouched": "Copilot Studio agent flow; Dataverse",
+                                      "item/mag_details": "@triggerBody()?['analysisjson']",
+                                      "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                                      "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})"
+                                    },
+                                    "host": {
+                                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                      "operationId": "CreateRecord",
+                                      "connectionName": "shared_commondataserviceforapps"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "For_each_period": {
+                      "type": "Foreach",
+                      "runAfter": {
+                        "Condition_revision_already_completed": [
+                          "Succeeded"
+                        ]
+                      },
+                      "foreach": "@body('Parse_analysis')?['periods']",
+                      "actions": {
+                        "Period_key": {
+                          "type": "Compose",
+                          "runAfter": {},
+                          "inputs": "@concat('analysis|', outputs('Request_id'), '|', outputs('Revision_key'), '|period|', items('For_each_period')?['periodKey'])"
+                        },
+                        "Period_evidence_bundle": {
+                          "type": "Compose",
+                          "runAfter": {
+                            "Period_key": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": "@concat('Analysis draft provenance bundle; this field is used for source evidence and uncertainty, not as an anomaly verdict. Revision=', outputs('Revision_key'), '; period=', string(items('For_each_period')),'; global uncertainties=', string(body('Parse_analysis')?['uncertainties']))"
+                        },
+                        "List_period_row": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {
+                            "Period_evidence_bundle": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_financialworkingpapers",
+                              "$select": "mag_financialworkingpaperid,mag_demokey,mag_name,mag_fiscalyear,mag_period,mag_currency,mag_revenue,mag_costofgoodssold,mag_grossprofit,mag_netincome,mag_operatingcashflow,mag_currentassets,mag_currentliabilities,mag_totalassets,mag_totaldebt,mag_accountsreceivable,mag_inventory,mag_leverageratio,mag_liquidityratio,mag_grossmargin,mag_assetturnover,mag_yearoveryeardelta,mag_anomalyflags",
+                              "$filter": "@{concat('mag_demokey eq ''', outputs('Period_key'), '''')}",
+                              "$top": 2
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "ListRecords",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Condition_create_period_row": {
+                          "type": "If",
+                          "runAfter": {
+                            "List_period_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "equals": [
+                              "@length(outputs('List_period_row')?['body/value'])",
+                              0
+                            ]
+                          },
+                          "actions": {
+                            "Create_period_row": {
+                              "type": "OpenApiConnection",
+                              "runAfter": {},
+                              "inputs": {
+                                "parameters": {
+                                  "entityName": "mag_financialworkingpapers",
+                                  "item/mag_name": "@concat('Analysis draft ', outputs('Revision_key'), ' - ', items('For_each_period')?['periodKey'])",
+                                  "item/mag_demokey": "@outputs('Period_key')",
+                                  "item/mag_fiscalyear": "@items('For_each_period')?['fiscalYear']",
+                                  "item/mag_period": "@items('For_each_period')?['period']",
+                                  "item/mag_currency": "@items('For_each_period')?['currency']",
+                                  "item/mag_revenue": "@items('For_each_period')?['facts']?['revenue']",
+                                  "item/mag_costofgoodssold": "@items('For_each_period')?['facts']?['costOfGoodsSold']",
+                                  "item/mag_grossprofit": "@items('For_each_period')?['facts']?['grossProfit']",
+                                  "item/mag_netincome": "@items('For_each_period')?['facts']?['netIncome']",
+                                  "item/mag_operatingcashflow": "@items('For_each_period')?['facts']?['operatingCashFlow']",
+                                  "item/mag_currentassets": "@items('For_each_period')?['facts']?['currentAssets']",
+                                  "item/mag_currentliabilities": "@items('For_each_period')?['facts']?['currentLiabilities']",
+                                  "item/mag_totalassets": "@items('For_each_period')?['facts']?['totalAssets']",
+                                  "item/mag_totaldebt": "@items('For_each_period')?['facts']?['totalDebt']",
+                                  "item/mag_accountsreceivable": "@items('For_each_period')?['facts']?['accountsReceivable']",
+                                  "item/mag_inventory": "@items('For_each_period')?['facts']?['inventory']",
+                                  "item/mag_leverageratio": "@items('For_each_period')?['metrics']?['leverageRatio']",
+                                  "item/mag_liquidityratio": "@items('For_each_period')?['metrics']?['liquidityRatio']",
+                                  "item/mag_grossmargin": "@items('For_each_period')?['metrics']?['grossMargin']",
+                                  "item/mag_assetturnover": "@items('For_each_period')?['metrics']?['assetTurnover']",
+                                  "item/mag_yearoveryeardelta": "@items('For_each_period')?['metrics']?['yearOverYearDelta']",
+                                  "item/mag_anomalyflags": "@outputs('Period_evidence_bundle')",
+                                  "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                                  "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                  "operationId": "CreateRecord",
+                                  "connectionName": "shared_commondataserviceforapps"
+                                }
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Keep_existing_period_row": {
+                                "type": "Compose",
+                                "runAfter": {},
+                                "inputs": "Do not overwrite an existing draft row; verify it below."
+                              }
+                            }
+                          }
+                        },
+                        "Readback_period_row": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {
+                            "Condition_create_period_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_financialworkingpapers",
+                              "$select": "mag_financialworkingpaperid,mag_demokey,mag_name,mag_fiscalyear,mag_period,mag_currency,mag_revenue,mag_costofgoodssold,mag_grossprofit,mag_netincome,mag_operatingcashflow,mag_currentassets,mag_currentliabilities,mag_totalassets,mag_totaldebt,mag_accountsreceivable,mag_inventory,mag_leverageratio,mag_liquidityratio,mag_grossmargin,mag_assetturnover,mag_yearoveryeardelta,mag_anomalyflags",
+                              "$filter": "@{concat('mag_demokey eq ''', outputs('Period_key'), '''')}",
+                              "$top": 2
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "ListRecords",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Condition_verify_period_readback": {
+                          "type": "If",
+                          "runAfter": {
+                            "Readback_period_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@length(outputs('Readback_period_row')?['body/value'])",
+                                  1
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_fiscalyear']",
+                                  "@items('For_each_period')?['fiscalYear']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_period']",
+                                  "@items('For_each_period')?['period']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_currency']",
+                                  "@items('For_each_period')?['currency']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_revenue']",
+                                  "@items('For_each_period')?['facts']?['revenue']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_costofgoodssold']",
+                                  "@items('For_each_period')?['facts']?['costOfGoodsSold']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_grossprofit']",
+                                  "@items('For_each_period')?['facts']?['grossProfit']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_netincome']",
+                                  "@items('For_each_period')?['facts']?['netIncome']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_operatingcashflow']",
+                                  "@items('For_each_period')?['facts']?['operatingCashFlow']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_currentassets']",
+                                  "@items('For_each_period')?['facts']?['currentAssets']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_currentliabilities']",
+                                  "@items('For_each_period')?['facts']?['currentLiabilities']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_totalassets']",
+                                  "@items('For_each_period')?['facts']?['totalAssets']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_totaldebt']",
+                                  "@items('For_each_period')?['facts']?['totalDebt']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_accountsreceivable']",
+                                  "@items('For_each_period')?['facts']?['accountsReceivable']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_inventory']",
+                                  "@items('For_each_period')?['facts']?['inventory']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_leverageratio']",
+                                  "@items('For_each_period')?['metrics']?['leverageRatio']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_liquidityratio']",
+                                  "@items('For_each_period')?['metrics']?['liquidityRatio']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_grossmargin']",
+                                  "@items('For_each_period')?['metrics']?['grossMargin']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_assetturnover']",
+                                  "@items('For_each_period')?['metrics']?['assetTurnover']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_yearoveryeardelta']",
+                                  "@items('For_each_period')?['metrics']?['yearOverYearDelta']"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_period_row')?['body/value'])?['mag_anomalyflags']",
+                                  "@outputs('Period_evidence_bundle')"
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Period_readback_verified": {
+                              "type": "Compose",
+                              "runAfter": {},
+                              "inputs": "Financial values and evidence bundle read back as submitted."
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Record_period_readback_failure": {
+                                "type": "AppendToArrayVariable",
+                                "runAfter": {},
+                                "inputs": {
+                                  "name": "ReadbackFailures",
+                                  "value": "@concat('period:', items('For_each_period')?['periodKey'])"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "runtimeConfiguration": {
+                        "concurrency": {
+                          "repetitions": 1
+                        }
+                      }
+                    },
+                    "Condition_period_readbacks_passed": {
+                      "type": "If",
+                      "runAfter": {
+                        "For_each_period": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "equals": [
+                          "@length(variables('ReadbackFailures'))",
+                          0
+                        ]
+                      },
+                      "actions": {
+                        "Period_readbacks_passed": {
+                          "type": "Compose",
+                          "runAfter": {},
+                          "inputs": "All financial period rows passed readback."
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Terminate_period_readback_failure": {
+                            "type": "Terminate",
+                            "runAfter": {},
+                            "inputs": {
+                              "runStatus": "Failed",
+                              "code": "PeriodReadbackMismatch",
+                              "message": "@concat('One or more financial period rows did not match the submitted revision: ', string(variables('ReadbackFailures')), '. The save is partial and must not be reported as complete.')"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "For_each_risk_claim": {
+                      "type": "Foreach",
+                      "runAfter": {
+                        "Condition_period_readbacks_passed": [
+                          "Succeeded"
+                        ]
+                      },
+                      "foreach": "@body('Parse_analysis')?['riskClaims']",
+                      "actions": {
+                        "Risk_key": {
+                          "type": "Compose",
+                          "runAfter": {},
+                          "inputs": "@concat('analysis|', outputs('Request_id'), '|', outputs('Revision_key'), '|risk|', items('For_each_risk_claim')?['claimKey'])"
+                        },
+                        "Risk_details": {
+                          "type": "Compose",
+                          "runAfter": {
+                            "Risk_key": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": "@concat('Unverified source assertion; Verified=false; revision=', outputs('Revision_key'), '; claim=', string(items('For_each_risk_claim')))"
+                        },
+                        "Risk_type_value": {
+                          "type": "Compose",
+                          "runAfter": {
+                            "Risk_details": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": "@if(equals(items('For_each_risk_claim')?['riskType'], 'Litigation'), 100000000, if(equals(items('For_each_risk_claim')?['riskType'], 'Arbitration'), 100000001, if(equals(items('For_each_risk_claim')?['riskType'], 'Off-balance-sheet guarantee'), 100000002, if(equals(items('For_each_risk_claim')?['riskType'], 'Customer concentration'), 100000003, if(equals(items('For_each_risk_claim')?['riskType'], 'Owned vs leased assets'), 100000004, if(equals(items('For_each_risk_claim')?['riskType'], 'Management turnover'), 100000005, if(equals(items('For_each_risk_claim')?['riskType'], 'Regulatory penalty'), 100000006, 100000007)))))))"
+                        },
+                        "List_risk_row": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {
+                            "Risk_type_value": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_nonfinancialriskitems",
+                              "$select": "mag_nonfinancialriskitemid,mag_demokey,mag_name,mag_risktype,mag_details,mag_verified",
+                              "$filter": "@{concat('mag_demokey eq ''', outputs('Risk_key'), '''')}",
+                              "$top": 2
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "ListRecords",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Condition_create_risk_row": {
+                          "type": "If",
+                          "runAfter": {
+                            "List_risk_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "equals": [
+                              "@length(outputs('List_risk_row')?['body/value'])",
+                              0
+                            ]
+                          },
+                          "actions": {
+                            "Create_risk_row": {
+                              "type": "OpenApiConnection",
+                              "runAfter": {},
+                              "inputs": {
+                                "parameters": {
+                                  "entityName": "mag_nonfinancialriskitems",
+                                  "item/mag_name": "@concat('Analysis draft ', outputs('Revision_key'), ' - ', items('For_each_risk_claim')?['claimKey'])",
+                                  "item/mag_demokey": "@outputs('Risk_key')",
+                                  "item/mag_risktype": "@outputs('Risk_type_value')",
+                                  "item/mag_details": "@outputs('Risk_details')",
+                                  "item/mag_verified": false,
+                                  "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                                  "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})"
+                                },
+                                "host": {
+                                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                                  "operationId": "CreateRecord",
+                                  "connectionName": "shared_commondataserviceforapps"
+                                }
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Keep_existing_risk_row": {
+                                "type": "Compose",
+                                "runAfter": {},
+                                "inputs": "Do not overwrite an existing draft claim; verify it below."
+                              }
+                            }
+                          }
+                        },
+                        "Readback_risk_row": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {
+                            "Condition_create_risk_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_nonfinancialriskitems",
+                              "$select": "mag_nonfinancialriskitemid,mag_demokey,mag_risktype,mag_details,mag_verified",
+                              "$filter": "@{concat('mag_demokey eq ''', outputs('Risk_key'), '''')}",
+                              "$top": 2
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "ListRecords",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Condition_verify_risk_readback": {
+                          "type": "If",
+                          "runAfter": {
+                            "Readback_risk_row": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@length(outputs('Readback_risk_row')?['body/value'])",
+                                  1
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_risk_row')?['body/value'])?['mag_risktype']",
+                                  "@outputs('Risk_type_value')"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_risk_row')?['body/value'])?['mag_details']",
+                                  "@outputs('Risk_details')"
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_risk_row')?['body/value'])?['mag_verified']",
+                                  false
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Risk_readback_verified": {
+                              "type": "Compose",
+                              "runAfter": {},
+                              "inputs": "Unverified risk assertion and source citation read back as submitted."
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Record_risk_readback_failure": {
+                                "type": "AppendToArrayVariable",
+                                "runAfter": {},
+                                "inputs": {
+                                  "name": "ReadbackFailures",
+                                  "value": "@concat('risk:', items('For_each_risk_claim')?['claimKey'])"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "runtimeConfiguration": {
+                        "concurrency": {
+                          "repetitions": 1
+                        }
+                      }
+                    },
+                    "Condition_risk_readbacks_passed": {
+                      "type": "If",
+                      "runAfter": {
+                        "For_each_risk_claim": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "equals": [
+                          "@length(variables('ReadbackFailures'))",
+                          0
+                        ]
+                      },
+                      "actions": {
+                        "Risk_readbacks_passed": {
+                          "type": "Compose",
+                          "runAfter": {},
+                          "inputs": "All unverified risk claims passed readback."
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Terminate_risk_readback_failure": {
+                            "type": "Terminate",
+                            "runAfter": {},
+                            "inputs": {
+                              "runStatus": "Failed",
+                              "code": "RiskReadbackMismatch",
+                              "message": "@concat('One or more non-financial draft claims did not match the submitted revision: ', string(variables('ReadbackFailures')), '. The save is partial and must not be reported as complete.')"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "Readback_request_narrative": {
+                      "type": "OpenApiConnection",
+                      "runAfter": {
+                        "Condition_risk_readbacks_passed": [
+                          "Succeeded"
+                        ]
+                      },
+                      "inputs": {
+                        "parameters": {
+                          "entityName": "mag_financialreviewrequests",
+                          "$select": "mag_financialreviewrequestid,mag_requestref,mag_narrativedraft",
+                          "$filter": "@{concat('mag_financialreviewrequestid eq ', outputs('Request_id'))}",
+                          "$top": 2
+                        },
+                        "host": {
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                          "operationId": "ListRecords",
+                          "connectionName": "shared_commondataserviceforapps"
+                        }
+                      }
+                    },
+                    "Condition_verify_request_narrative": {
+                      "type": "If",
+                      "runAfter": {
+                        "Readback_request_narrative": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@length(outputs('Readback_request_narrative')?['body/value'])",
+                              1
+                            ]
+                          },
+                          {
+                            "equals": [
+                              "@first(outputs('Readback_request_narrative')?['body/value'])?['mag_narrativedraft']",
+                              "@outputs('Draft_narrative')"
+                            ]
+                          }
+                        ]
+                      },
+                      "actions": {
+                        "Create_completed_audit": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {},
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_reviewaudittrails",
+                              "item/mag_name": "@concat('Analysis draft saved ', outputs('Revision_key'))",
+                              "item/mag_demokey": "@outputs('Completed_key')",
+                              "item/mag_action": "Saved analysis draft after readback",
+                              "item/mag_actor": "SRM Orchestrator (agent flow)",
+                              "item/mag_actortype": 100000001,
+                              "item/mag_occurredon": "@utcNow()",
+                              "item/mag_systemtouched": "Copilot Studio agent flow; Dataverse",
+                              "item/mag_details": "@triggerBody()?['analysisjson']",
+                              "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                              "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Supplier_id')})"
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "CreateRecord",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Readback_completed_audit": {
+                          "type": "OpenApiConnection",
+                          "runAfter": {
+                            "Create_completed_audit": [
+                              "Succeeded"
+                            ]
+                          },
+                          "inputs": {
+                            "parameters": {
+                              "entityName": "mag_reviewaudittrails",
+                              "$select": "mag_reviewaudittrailid,mag_demokey,mag_details",
+                              "$filter": "@{concat('mag_demokey eq ''', outputs('Completed_key'), '''')}",
+                              "$top": 2
+                            },
+                            "host": {
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                              "operationId": "ListRecords",
+                              "connectionName": "shared_commondataserviceforapps"
+                            }
+                          }
+                        },
+                        "Condition_verify_completed_audit": {
+                          "type": "If",
+                          "runAfter": {
+                            "Readback_completed_audit": [
+                              "Succeeded"
+                            ]
+                          },
+                          "expression": {
+                            "and": [
+                              {
+                                "equals": [
+                                  "@length(outputs('Readback_completed_audit')?['body/value'])",
+                                  1
+                                ]
+                              },
+                              {
+                                "equals": [
+                                  "@first(outputs('Readback_completed_audit')?['body/value'])?['mag_details']",
+                                  "@triggerBody()?['analysisjson']"
+                                ]
+                              }
+                            ]
+                          },
+                          "actions": {
+                            "Respond_to_the_agent": {
+                              "type": "Response",
+                              "kind": "Skills",
+                              "runAfter": {},
+                              "inputs": {
+                                "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                    "saved": {
+                                      "title": "Saved",
+                                      "type": "boolean",
+                                      "x-ms-content-hint": "BOOLEAN"
+                                    },
+                                    "status": {
+                                      "title": "Status",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "requestref": {
+                                      "title": "Request reference",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "revisionkey": {
+                                      "title": "Revision key",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    },
+                                    "periodcount": {
+                                      "title": "Period count",
+                                      "type": "integer",
+                                      "x-ms-content-hint": "NUMBER"
+                                    },
+                                    "riskcount": {
+                                      "title": "Risk claim count",
+                                      "type": "integer",
+                                      "x-ms-content-hint": "NUMBER"
+                                    },
+                                    "message": {
+                                      "title": "Message",
+                                      "type": "string",
+                                      "x-ms-content-hint": "TEXT"
+                                    }
+                                  }
+                                },
+                                "statusCode": 200,
+                                "body": {
+                                  "saved": true,
+                                  "status": "saved",
+                                  "requestref": "@outputs('Requested_ref')",
+                                  "revisionkey": "@outputs('Revision_key')",
+                                  "periodcount": "@length(body('Parse_analysis')?['periods'])",
+                                  "riskcount": "@length(body('Parse_analysis')?['riskClaims'])",
+                                  "message": "Working papers, unverified risk claims, narrative, and completed audit record passed readback."
+                                }
+                              }
+                            }
+                          },
+                          "else": {
+                            "actions": {
+                              "Terminate_completed_audit_readback_failure": {
+                                "type": "Terminate",
+                                "runAfter": {},
+                                "inputs": {
+                                  "runStatus": "Failed",
+                                  "code": "AuditReadbackMismatch",
+                                  "message": "The final audit record did not read back exactly; do not report the draft as persisted."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "else": {
+                        "actions": {
+                          "Terminate_request_narrative_readback_failure": {
+                            "type": "Terminate",
+                            "runAfter": {},
+                            "inputs": {
+                              "runStatus": "Failed",
+                              "code": "NarrativeReadbackMismatch",
+                              "message": "The request narrative did not read back exactly; the draft save is partial."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Terminate_supplier_resolution_failure": {
+                        "type": "Terminate",
+                        "runAfter": {},
+                        "inputs": {
+                          "runStatus": "Failed",
+                          "code": "SupplierResolutionFailed",
+                          "message": "The exact request did not resolve to exactly one existing supplier; no analysis rows were written."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Terminate_request_resolution_failure": {
+                    "type": "Terminate",
+                    "runAfter": {},
+                    "inputs": {
+                      "runStatus": "Failed",
+                      "code": "RequestResolutionFailed",
+                      "message": "The exact request reference did not resolve to exactly one existing request; no analysis rows were written."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "actions": {
+              "Terminate_invalid_payload": {
+                "type": "Terminate",
+                "runAfter": {},
+                "inputs": {
+                  "runStatus": "Failed",
+                  "code": "InvalidDraftPayload",
+                  "message": "Request reference must be exact, and revisionkey must be an untrimmed UUID; period and risk claim keys must be unique. JSON schema validation occurs before any writes."
+                }
+              }
+            }
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,15 @@
+FICTIONAL DEMO DOCUMENT - NOT A SOURCE FINANCIAL STATEMENT
+Supplier: Lumen Forge Industrial Systems Ltd (SUP-012)
+Period: FY2026 interim
+Currency: USD
+Prepared solely for the SRM DemoPRE file-upload test.
+
+INTERIM BALANCE SHEET SUMMARY
+Total assets: 63,000,000
+Total debt: 52,290,000
+Current assets: 5,862,500
+Current liabilities: 8,750,000
+Accounts receivable: 7,350,000
+Inventory: 6,650,000
+
+All values are invented demo values. No audit opinion is represented.

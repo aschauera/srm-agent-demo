@@ -1,0 +1,49 @@
+{
+  "fictional": true,
+  "status": "Manually specified fixture expectations; not LLM output",
+  "supplier": "SUP-012",
+  "digitalDocument": "sup012-financial-package-digital.pdf",
+  "currency": "USD",
+  "unit": "whole dollars",
+  "criticalFinancialFacts": [
+    {"year": 2023, "period": "Annual", "page": 1, "label": "Total assets", "value": 180000000},
+    {"year": 2023, "period": "Annual", "page": 1, "label": "Total debt", "value": 90000000},
+    {"year": 2023, "period": "Annual", "page": 2, "label": "Revenue", "value": 100000000},
+    {"year": 2023, "period": "Annual", "page": 2, "label": "Net income", "value": 3000000},
+    {"year": 2023, "period": "Annual", "page": 3, "label": "Net cash from operating activities", "value": 8000000},
+    {"year": 2024, "period": "Annual", "page": 4, "label": "Total debt", "value": 117989999},
+    {"year": 2024, "period": "Annual", "page": 5, "label": "Revenue", "value": 95000000},
+    {"year": 2024, "period": "Annual", "page": 5, "label": "Net income", "value": -2000000},
+    {"year": 2024, "period": "Annual", "page": 6, "label": "Net cash from operating activities", "value": -2000000},
+    {"year": 2025, "period": "Annual", "page": 7, "label": "Total debt", "value": 123552000},
+    {"year": 2025, "period": "Annual", "page": 7, "label": "Current assets", "value": 18040000},
+    {"year": 2025, "period": "Annual", "page": 7, "label": "Current liabilities", "value": 22000000},
+    {"year": 2025, "period": "Annual", "page": 8, "label": "Revenue", "value": 88000000},
+    {"year": 2025, "period": "Annual", "page": 8, "label": "Net income", "value": -8000000},
+    {"year": 2025, "period": "Annual", "page": 9, "label": "Net cash from operating activities", "value": -12000000},
+    {"year": 2026, "period": "Interim", "page": 10, "label": "Total debt", "value": 52290000},
+    {"year": 2026, "period": "Interim", "page": 11, "label": "Revenue", "value": 35000000},
+    {"year": 2026, "period": "Interim", "page": 11, "label": "Net income", "value": -5000000},
+    {"year": 2026, "period": "Interim", "page": 12, "label": "Net cash from operating activities", "value": -8000000}
+  ],
+  "scannedDocument": {
+    "filename": "sup012-fy2025-image-only.pdf",
+    "pages": 3,
+    "expectation": "Same FY2025 figures as digital pages 7-9; scanned page numbers are 1-3"
+  },
+  "unreadableDocument": {
+    "filename": "sup012-fy2025-unreadable-income.pdf",
+    "page": 1,
+    "field": "NetIncome",
+    "expectedValue": null,
+    "expectedState": "needs-review",
+    "expectation": "Do not infer the missing value from another fixture unless that separate source is explicitly cited"
+  },
+  "collateralExpectations": [
+    {"questionnairePage": 1, "reviewerNotePage": 1, "issue": "Largest customer concentration conflicts: supplier asserts 62%; reviewer schedule states 68%; neither is verified"},
+    {"questionnairePage": 1, "issue": "Leased production sites are a supplier assertion, not independently verified"},
+    {"questionnairePage": 1, "issue": "Pending arbitration outcome and amount are unconfirmed"},
+    {"reviewerNotePage": 1, "issue": "No guarantee register supplied; do not equate absent evidence with no guarantees"},
+    {"reviewerNotePage": 1, "issue": "Flag financial reconciliation questions; do not silently repair input balances"}
+  ]
+}

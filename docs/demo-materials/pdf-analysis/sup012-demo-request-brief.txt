@@ -1,0 +1,29 @@
+FICTIONAL DEMO ONLY - PRESENTER REQUEST BRIEF
+Not a financial statement, independent assurance report, or agent extraction input.
+
+Supplier: Lumen Forge Industrial Systems Ltd
+Supplier demo key: SUP-012
+Purpose: Review financial and collateral evidence before a human final-rating decision.
+Request label: PDF DEMO - Lumen Forge - 2026-10-05
+Use the actual platform-generated request reference after saving.
+Use only prepared fictional buyer/reviewer identities; leave notification routing unchanged.
+
+Create a separate request. Do not overwrite or resubmit seeded REQ-2026-012.
+If live creation is not rehearsed, show the prepared isolated request instead.
+
+Evidence supplied:
+- Annual 2023, 2024, and 2025 financial excerpts plus interim 2026 excerpts.
+- A FY2025 image-only copy for recognition testing.
+- An unreadable income-statement copy for missing-evidence testing.
+- Supplier questionnaire and reviewer collateral note for contradiction analysis.
+
+Reviewer tasks:
+- Check extracted values, signs, currency, units, periods, and source pages.
+- Ask for clarification on missing, inconsistent, or conflicting evidence.
+- Review calculations and preliminary analysis.
+- Retain responsibility for the final financial rating.
+
+Current boundary:
+Preview attachments are not automatically linked to this request in Dataverse.
+Chat review does not persist working papers or record authenticated approvals.
+No final rating should be changed during this document-analysis demonstration.

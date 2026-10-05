@@ -11,3 +11,9 @@ The first implementation slice is the [Dataverse data model](docs/02-dataverse-d
 fictional seed records for all planned mock connector tables. The intended Power Platform target is
 DemoPRE, using the unmanaged `SRMAgentDemo` solution and the dedicated `mag` publisher.
 
+For a candid walk-through of the current DemoPRE status, scenario records, and optional attachment
+test, use the [live demo guide](docs/09-demo-script.md).
+
+The next proposed demo slice is described in the
+[agent-led PDF analysis plan](docs/planning/agent-led-pdf-demo-plan.md): document-input LLM
+extraction, evidence-backed analysis, and human review gates. This is a plan, not deployed behavior.

@@ -1,0 +1,3 @@
+connectionReferences:
+  - connectionReferenceLogicalName: mag_SRMDataverse
+    connectorId: /providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps

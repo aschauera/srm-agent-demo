@@ -1,0 +1,24 @@
+{
+  "requirements": ["SRM-FIN-001", "SRM-NFR-001", "SRM-GOV-001"],
+  "sourceSlides": [8, 9, 11, 12],
+  "tabName": "tab_analysis_draft",
+  "tabLabel": "Agent Analysis Draft",
+  "description": "Read-only draft results. Saving is not approval; final rating remains human-owned.",
+  "views": [
+    {
+      "table": "mag_financialworkingpaper",
+      "label": "Financial Working Papers - Draft Evidence",
+      "columns": ["mag_name", "mag_fiscalyear", "mag_period", "mag_currency", "mag_revenue", "mag_netincome", "mag_liquidityratio", "mag_yearoveryeardelta", "mag_anomalyflags"]
+    },
+    {
+      "table": "mag_nonfinancialriskitem",
+      "label": "Collateral Observations - Check Verification",
+      "columns": ["mag_name", "mag_risktype", "mag_verified", "mag_customerconcentration", "mag_details"]
+    },
+    {
+      "table": "mag_reviewaudittrail",
+      "label": "Analysis Activity - Not Rating Approval",
+      "columns": ["mag_name", "mag_action", "mag_actor", "mag_occurredon", "mag_details"]
+    }
+  ]
+}

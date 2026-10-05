@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SRM analysis draft payload",
+  "description": "The serialized JSON passed to the flow as analysisjson must be at most 3,000 characters. The trigger enforces this before writes to reserve space for provenance wrappers in DemoPRE memo fields capped at 4,000 characters.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "narrative",
+    "periods",
+    "riskClaims",
+    "uncertainties"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "narrative": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    },
+    "periods": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "periodKey",
+          "fiscalYear",
+          "period",
+          "currency",
+          "unit",
+          "facts",
+          "metrics",
+          "evidence",
+          "metricNotes",
+          "anomalies"
+        ],
+        "properties": {
+          "periodKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "fiscalYear": {
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2200
+          },
+          "period": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "facts": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "revenue",
+              "costOfGoodsSold",
+              "grossProfit",
+              "netIncome",
+              "operatingCashFlow",
+              "currentAssets",
+              "currentLiabilities",
+              "totalAssets",
+              "totalDebt",
+              "accountsReceivable",
+              "inventory"
+            ],
+            "properties": {
+              "revenue": { "type": ["number", "null"] },
+              "costOfGoodsSold": { "type": ["number", "null"] },
+              "grossProfit": { "type": ["number", "null"] },
+              "netIncome": { "type": ["number", "null"] },
+              "operatingCashFlow": { "type": ["number", "null"] },
+              "currentAssets": { "type": ["number", "null"] },
+              "currentLiabilities": { "type": ["number", "null"] },
+              "totalAssets": { "type": ["number", "null"] },
+              "totalDebt": { "type": ["number", "null"] },
+              "accountsReceivable": { "type": ["number", "null"] },
+              "inventory": { "type": ["number", "null"] }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "leverageRatio",
+              "liquidityRatio",
+              "grossMargin",
+              "assetTurnover",
+              "yearOverYearDelta"
+            ],
+            "properties": {
+              "leverageRatio": { "type": ["number", "null"] },
+              "liquidityRatio": { "type": ["number", "null"] },
+              "grossMargin": { "type": ["number", "null"] },
+              "assetTurnover": { "type": ["number", "null"] },
+              "yearOverYearDelta": { "type": ["number", "null"] }
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "maxItems": 120,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field",
+                "sourceFilename",
+                "page",
+                "excerpt"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "enum": [
+                    "revenue",
+                    "costOfGoodsSold",
+                    "grossProfit",
+                    "netIncome",
+                    "operatingCashFlow",
+                    "currentAssets",
+                    "currentLiabilities",
+                    "totalAssets",
+                    "totalDebt",
+                    "accountsReceivable",
+                    "inventory",
+                    "leverageRatio",
+                    "liquidityRatio",
+                    "grossMargin",
+                    "assetTurnover",
+                    "yearOverYearDelta"
+                  ]
+                },
+                "sourceFilename": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 255
+                },
+                "page": {
+                  "type": ["integer", "null"],
+                  "minimum": 1
+                },
+                "excerpt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 2000
+                }
+              }
+            }
+          },
+          "metricNotes": {
+            "type": "array",
+            "maxItems": 40,
+            "items": {
+              "type": "string",
+              "maxLength": 2000
+            }
+          },
+          "anomalies": {
+            "type": "array",
+            "maxItems": 40,
+            "items": {
+              "type": "string",
+              "maxLength": 2000
+            }
+          }
+        }
+      }
+    },
+    "riskClaims": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claimKey",
+          "riskType",
+          "claim",
+          "sourceFilename",
+          "page"
+        ],
+        "properties": {
+          "claimKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "riskType": {
+            "type": "string",
+            "enum": [
+              "Litigation",
+              "Arbitration",
+              "Off-balance-sheet guarantee",
+              "Customer concentration",
+              "Owned vs leased assets",
+              "Management turnover",
+              "Regulatory penalty",
+              "Other"
+            ]
+          },
+          "claim": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          },
+          "sourceFilename": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "page": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "uncertainties": {
+      "type": "array",
+      "maxItems": 80,
+      "items": {
+        "type": "string",
+        "maxLength": 2000
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+<botcomponent schemaname="cr6a3_srmorchestrator_VBnLJG.tool.SRM-Getreviewrequeststatus_Mhf">
+  <componenttype>9</componenttype>
+  <description>Agent tool: returns the status, review path, GSA pre-check outcome, process stage and rating state of a review request by its reference. Read-only</description>
+  <iscustomizable>0</iscustomizable>
+  <name>SRM - Get review request status</name>
+  <parentbotid>
+    <schemaname>cr6a3_srmorchestrator_VBnLJG</schemaname>
+  </parentbotid>
+  <statecode>0</statecode>
+  <statuscode>1</statuscode>
+</botcomponent>

@@ -1,0 +1,8 @@
+<botcomponent_workflowset>
+  <botcomponent_workflow botcomponentid.schemaname="cr6a3_srmorchestrator_VBnLJG.tool.SRM-Getreviewrequeststatus_Mhf" workflowid.workflowid="5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e04">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+  <botcomponent_workflow botcomponentid.schemaname="cr6a3_srmorchestrator_VBnLJG.tool.SRM-Savereviewanalysisdraft_VwqL7s" workflowid.workflowid="f9150906-1e0e-4bd0-9213-0f8bb53646fb">
+    <iscustomizable>1</iscustomizable>
+  </botcomponent_workflow>
+</botcomponent_workflowset>

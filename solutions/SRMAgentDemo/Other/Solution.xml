@@ -110,6 +110,7 @@
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e07}" behavior="0" />
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e08}" behavior="0" />
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e09}" behavior="0" />
+      <RootComponent type="29" id="{f9150906-1e0e-4bd0-9213-0f8bb53646fb}" behavior="0" />
       <RootComponent type="61" schemaName="mag_/srm/reviewrequest.js" behavior="0" />
       <RootComponent type="61" schemaName="mag_/srm/reviewrequest-status.html" behavior="0" />
       <RootComponent type="61" schemaName="mag_supplierfinancialriskreview_icon" behavior="0" />
@@ -186,6 +187,18 @@
         <Dependent type="26" schemaName="New Requests - Not Started" displayName="New Requests - Not Started" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
       </MissingDependency>
       <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" solution="Active" />
+        <Dependent type="26" schemaName="Financial Working Papers - Draft Evidence" displayName="Financial Working Papers - Draft Evidence" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" id="{ffad43be-206c-5ef8-817c-96e5d58bcaaa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" solution="Active" />
+        <Dependent type="26" schemaName="Collateral Observations - Check Verification" displayName="Collateral Observations - Check Verification" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" id="{29a0174b-b177-5c21-abff-af90a45e1496}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="createdon" displayName="Created On" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" solution="Active" />
+        <Dependent type="26" schemaName="Analysis Activity - Not Rating Approval" displayName="Analysis Activity - Not Rating Approval" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" id="{e01f8b85-7c24-53fa-827e-3603bd71ac45}" />
+      </MissingDependency>
+      <MissingDependency>
         <Required type="2" schemaName="mag_financialreviewrequestid" displayName="Financial Review Request" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
         <Dependent type="26" schemaName="Inactive Supplier Financial Review on my Financial Review Requests" displayName="Inactive Supplier Financial Review on my Financial Review Requests" parentSchemaName="new_supplierfinancialreview" parentDisplayName="Supplier Financial Review" id="{318d6ba5-33df-467d-8865-d8125755f863}" />
       </MissingDependency>
@@ -196,6 +209,10 @@
       <MissingDependency>
         <Required type="2" schemaName="mag_financialreviewrequestid" displayName="Financial Review Request" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
         <Dependent type="29" displayName="Supplier Financial Review" id="{33953086-244a-47da-943c-35a7b2bf1613}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_financialworkingpaperid" displayName="Financial Working Paper" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" solution="Active" />
+        <Dependent type="26" schemaName="Financial Working Papers - Draft Evidence" displayName="Financial Working Papers - Draft Evidence" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" id="{ffad43be-206c-5ef8-817c-96e5d58bcaaa}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_dnbprofile" parentDisplayName="D&amp;B Profile" solution="Active" />
@@ -270,12 +287,32 @@
         <Dependent type="60" displayName="Financial Review Request" parentDisplayName="Financial Review Request" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
       </MissingDependency>
       <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" solution="Active" />
+        <Dependent type="26" schemaName="Financial Working Papers - Draft Evidence" displayName="Financial Working Papers - Draft Evidence" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" id="{ffad43be-206c-5ef8-817c-96e5d58bcaaa}" />
+      </MissingDependency>
+      <MissingDependency>
         <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_gsaratingrecord" parentDisplayName="GSA Rating Record" solution="Active" />
         <Dependent type="60" displayName="GSA Rating Record" parentDisplayName="GSA Rating Record" id="{578a2aac-f673-4bed-85bb-eb058d094c2f}" />
       </MissingDependency>
       <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" solution="Active" />
+        <Dependent type="26" schemaName="Collateral Observations - Check Verification" displayName="Collateral Observations - Check Verification" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" id="{29a0174b-b177-5c21-abff-af90a45e1496}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" solution="Active" />
+        <Dependent type="26" schemaName="Analysis Activity - Not Rating Approval" displayName="Analysis Activity - Not Rating Approval" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" id="{e01f8b85-7c24-53fa-827e-3603bd71ac45}" />
+      </MissingDependency>
+      <MissingDependency>
         <Required type="2" schemaName="mag_name" displayName="Name" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" solution="Active" />
         <Dependent type="10" schemaName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" displayName="mag_supplierdocument_mag_financialworkingpaper_mag_SourceDocumentId" parentSchemaName="mag_supplierdocument" parentDisplayName="Supplier Document" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_nonfinancialriskitemid" displayName="Non-Financial Risk Item" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" solution="Active" />
+        <Dependent type="26" schemaName="Collateral Observations - Check Verification" displayName="Collateral Observations - Check Verification" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" id="{29a0174b-b177-5c21-abff-af90a45e1496}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="mag_reviewaudittrailid" displayName="Review Audit Trail" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" solution="Active" />
+        <Dependent type="26" schemaName="Analysis Activity - Not Rating Approval" displayName="Analysis Activity - Not Rating Approval" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" id="{e01f8b85-7c24-53fa-827e-3603bd71ac45}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="2" schemaName="ownerid" displayName="Owner" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
@@ -304,6 +341,18 @@
       <MissingDependency>
         <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" solution="Active" />
         <Dependent type="26" schemaName="New Requests - Not Started" displayName="New Requests - Not Started" parentSchemaName="mag_financialreviewrequest" parentDisplayName="Financial Review Request" id="{f62c3dd0-02c0-47d0-a5ae-de6df818f262}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" solution="Active" />
+        <Dependent type="26" schemaName="Financial Working Papers - Draft Evidence" displayName="Financial Working Papers - Draft Evidence" parentSchemaName="mag_financialworkingpaper" parentDisplayName="Financial Working Paper" id="{ffad43be-206c-5ef8-817c-96e5d58bcaaa}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" solution="Active" />
+        <Dependent type="26" schemaName="Collateral Observations - Check Verification" displayName="Collateral Observations - Check Verification" parentSchemaName="mag_nonfinancialriskitem" parentDisplayName="Non-Financial Risk Item" id="{29a0174b-b177-5c21-abff-af90a45e1496}" />
+      </MissingDependency>
+      <MissingDependency>
+        <Required type="2" schemaName="statecode" displayName="Status" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" solution="Active" />
+        <Dependent type="26" schemaName="Analysis Activity - Not Rating Approval" displayName="Analysis Activity - Not Rating Approval" parentSchemaName="mag_reviewaudittrail" parentDisplayName="Review Audit Trail" id="{e01f8b85-7c24-53fa-827e-3603bd71ac45}" />
       </MissingDependency>
       <MissingDependency>
         <Required type="26" schemaName="Active D&amp;B Profiles" displayName="Active D&amp;B Profiles" parentSchemaName="mag_dnbprofile" parentDisplayName="D&amp;B Profile" solution="Active" id="{cccfc2c1-3427-4ac8-9ec8-8ab7f69ccbba}" />

@@ -1014,5 +1014,6 @@
       <HasRelatedNotes>True</HasRelatedNotes>
     </entity>
   </EntityInfo>
+  <SavedQueries />
   <RibbonDiffXml />
 </Entity>

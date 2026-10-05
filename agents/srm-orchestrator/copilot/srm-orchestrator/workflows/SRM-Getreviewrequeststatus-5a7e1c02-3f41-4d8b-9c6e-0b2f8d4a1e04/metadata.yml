@@ -1,0 +1,32 @@
+﻿jsonFileName: workflows/SRM-Getreviewrequeststatus-5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e04/workflow.json
+workflowId: 5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e04
+name: SRM - Get review request status
+type: 1
+description: 'Agent tool: returns the status, review path, GSA pre-check outcome, process stage and rating state of a review request by its reference. Read-only.'
+subprocess: false
+category: 5
+mode: 0
+scope: 4
+onDemand: false
+triggerOnCreate: false
+triggerOnDelete: false
+asyncAutodelete: false
+syncWorkflowLogOnFailure: false
+stateCode: 1
+statusCode: 2
+runAs: 1
+isTransacted: true
+introducedVersion: 1.0.0.0
+isCustomizable:
+  value: true
+  canBeChanged: true
+  managedPropertyLogicalName: iscustomizableanddeletable
+businessProcessType: 0
+isCustomProcessingStepAllowedForOtherPublishers:
+  value: true
+  canBeChanged: true
+  managedPropertyLogicalName: canbedeleted
+modernFlowType: 1
+primaryEntity: none
+connectionReferences:
+- mag_SRMDataverse
