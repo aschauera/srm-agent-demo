@@ -1,0 +1,397 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "mag_SRMDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      },
+      "shared_office365": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "mag_SRMOutlook"
+        },
+        "api": {
+          "name": "shared_office365"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "SRM demo notification mailbox (mag_SRMDemoMailbox)": {
+          "defaultValue": "",
+          "type": "String",
+          "metadata": {
+            "schemaName": "mag_SRMDemoMailbox",
+            "description": "Mailbox for simulated SRM messages"
+          }
+        },
+        "SRM supplier reminder day (mag_ReminderDay)": {
+          "defaultValue": "",
+          "type": "String",
+          "metadata": {
+            "schemaName": "mag_ReminderDay",
+            "description": "Days before the supplier reminder is sent"
+          }
+        },
+        "SRM buyer escalation day (mag_EscalationDay)": {
+          "defaultValue": "",
+          "type": "String",
+          "metadata": {
+            "schemaName": "mag_EscalationDay",
+            "description": "Days before the buyer escalation is sent"
+          }
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1
+          }
+        }
+      },
+      "actions": {
+        "List_due_requests": {
+          "type": "OpenApiConnection",
+          "runAfter": {},
+          "inputs": {
+            "parameters": {
+              "entityName": "mag_documentrequests",
+              "$select": "mag_documentrequestid,mag_name,mag_senton,mag_day3remindersenton,mag_day7escalationsenton,mag_responsereceived,mag_requeststatus,mag_recipientemail,_mag_reviewrequestid_value",
+              "$filter": "(mag_requeststatus eq 100000001 or mag_requeststatus eq 100000002) and mag_responsereceived eq false",
+              "$top": 5000
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+              "operationId": "ListRecords",
+              "connectionName": "shared_commondataserviceforapps"
+            }
+          }
+        },
+        "For_each_request": {
+          "type": "Foreach",
+          "runAfter": {
+            "List_due_requests": [
+              "Succeeded"
+            ]
+          },
+          "foreach": "@outputs('List_due_requests')?['body/value']",
+          "actions": {
+            "Get_parent_request": {
+              "type": "OpenApiConnection",
+              "runAfter": {},
+              "inputs": {
+                "parameters": {
+                  "entityName": "mag_financialreviewrequests",
+                  "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,mag_buyername,mag_buyeremail,_mag_supplierid_value",
+                  "$filter": "mag_financialreviewrequestid eq @{items('For_each_request')?['_mag_reviewrequestid_value']}",
+                  "$top": 1
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Parent_request": {
+              "type": "Compose",
+              "runAfter": {
+                "Get_parent_request": [
+                  "Succeeded"
+                ]
+              },
+              "inputs": "@first(outputs('Get_parent_request')?['body/value'])"
+            },
+            "Request": {
+              "type": "Compose",
+              "runAfter": {
+                "Parent_request": [
+                  "Succeeded"
+                ]
+              },
+              "inputs": "@outputs('Parent_request')"
+            },
+            "Request_id": {
+              "type": "Compose",
+              "runAfter": {
+                "Request": [
+                  "Succeeded"
+                ]
+              },
+              "inputs": "@coalesce(outputs('Request')?['mag_financialreviewrequestid'], '')"
+            },
+            "Days_waiting": {
+              "type": "Compose",
+              "runAfter": {
+                "Request_id": [
+                  "Succeeded"
+                ]
+              },
+              "inputs": "@div(sub(ticks(utcNow()), ticks(items('For_each_request')?['mag_senton'])), 864000000000)"
+            },
+            "Escalation_due": {
+              "type": "If",
+              "runAfter": {
+                "Days_waiting": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "and": [
+                  {
+                    "greaterOrEquals": [
+                      "@outputs('Days_waiting')",
+                      "@int(parameters('SRM buyer escalation day (mag_EscalationDay)'))"
+                    ]
+                  },
+                  {
+                    "equals": [
+                      "@items('For_each_request')?['mag_day7escalationsenton']",
+                      null
+                    ]
+                  }
+                ]
+              },
+              "actions": {
+                "Email_buyer_demo": {
+                  "type": "OpenApiConnection",
+                  "runAfter": {},
+                  "inputs": {
+                    "parameters": {
+                      "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                      "emailMessage/Subject": "[SRM demo, buyer escalation] Supplier response overdue - @{outputs('Parent_request')?['mag_requestref']}",
+                      "emailMessage/Body": "<p>Escalation due for supplier request @{outputs('Parent_request')?['mag_requestref']}.</p><p>Buyer: @{outputs('Parent_request')?['mag_buyername']} (@{outputs('Parent_request')?['mag_buyeremail']}). No response is recorded.</p><p>Simulated notice: delivered only to the SRM demo mailbox.</p>",
+                      "emailMessage/Importance": "Normal"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                      "operationId": "SendEmailV2",
+                      "connectionName": "shared_office365"
+                    }
+                  }
+                },
+                "Log_escalation": {
+                  "type": "OpenApiConnection",
+                  "runAfter": {
+                    "Email_buyer_demo": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "mag_communicationlogs",
+                      "item/mag_name": "[SRM demo, buyer escalation] Supplier response overdue - @{outputs('Parent_request')?['mag_requestref']}",
+                      "item/mag_subject": "[SRM demo, buyer escalation] Supplier response overdue - @{outputs('Parent_request')?['mag_requestref']}",
+                      "item/mag_body": "<p>Escalation due for supplier request @{outputs('Parent_request')?['mag_requestref']}.</p><p>Intended supplier contact: @{items('For_each_request')?['mag_recipientemail']}. Buyer: @{outputs('Parent_request')?['mag_buyername']} (@{outputs('Parent_request')?['mag_buyeremail']}).</p><p>This simulated escalation was sent only to the SRM demo mailbox.</p>",
+                      "item/mag_direction": 100000001,
+                      "item/mag_channel": 100000000,
+                      "item/mag_language": 100000000,
+                      "item/mag_occurredon": "@utcNow()",
+                      "item/mag_actorname": "Data Collection (agent flow)",
+                      "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                      "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                },
+                "Audit_escalation": {
+                  "type": "OpenApiConnection",
+                  "runAfter": {
+                    "Log_escalation": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "mag_reviewaudittrails",
+                      "item/mag_name": "Supplier Response Escalated",
+                      "item/mag_action": "Supplier Response Escalated",
+                      "item/mag_actor": "Data Collection (agent flow)",
+                      "item/mag_actortype": 100000001,
+                      "item/mag_occurredon": "@utcNow()",
+                      "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                      "item/mag_details": "@{concat('Day-7 escalation sent for ', outputs('Parent_request')?['mag_requestref'], '; no response had been recorded. Delivered only to demo mailbox.')}",
+                      "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                      "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                },
+                "Mark_escalated": {
+                  "type": "OpenApiConnection",
+                  "runAfter": {
+                    "Email_buyer_demo": [
+                      "Succeeded"
+                    ]
+                  },
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "mag_documentrequests",
+                      "recordId": "@items('For_each_request')?['mag_documentrequestid']",
+                      "item/mag_day7escalationsenton": "@utcNow()",
+                      "item/mag_requeststatus": 100000003
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Reminder_due": {
+                    "type": "If",
+                    "runAfter": {},
+                    "expression": {
+                      "and": [
+                        {
+                          "greaterOrEquals": [
+                            "@outputs('Days_waiting')",
+                            "@int(parameters('SRM supplier reminder day (mag_ReminderDay)'))"
+                          ]
+                        },
+                        {
+                          "equals": [
+                            "@items('For_each_request')?['mag_day3remindersenton']",
+                            null
+                          ]
+                        }
+                      ]
+                    },
+                    "actions": {
+                      "Email_supplier_demo": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {},
+                        "inputs": {
+                          "parameters": {
+                            "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                            "emailMessage/Subject": "[SRM demo, supplier reminder] Documents requested - @{outputs('Parent_request')?['mag_requestref']}",
+                            "emailMessage/Body": "<p>Gentle reminder for request @{outputs('Parent_request')?['mag_requestref']}.</p><p>Intended supplier contact: @{items('For_each_request')?['mag_recipientemail']}.</p><p>Simulated notice: delivered only to the SRM demo mailbox.</p>",
+                            "emailMessage/Importance": "Normal"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                            "operationId": "SendEmailV2",
+                            "connectionName": "shared_office365"
+                          }
+                        }
+                      },
+                      "Log_reminder": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Email_supplier_demo": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "mag_communicationlogs",
+                            "item/mag_name": "[SRM demo, supplier reminder] Documents requested - @{outputs('Parent_request')?['mag_requestref']}",
+                            "item/mag_subject": "[SRM demo, supplier reminder] Documents requested - @{outputs('Parent_request')?['mag_requestref']}",
+                            "item/mag_body": "<p>Gentle reminder for request @{outputs('Parent_request')?['mag_requestref']}.</p><p>Intended supplier contact: @{items('For_each_request')?['mag_recipientemail']}.</p><p>This simulated reminder was sent only to the SRM demo mailbox.</p>",
+                            "item/mag_direction": 100000001,
+                            "item/mag_channel": 100000000,
+                            "item/mag_language": 100000000,
+                            "item/mag_occurredon": "@utcNow()",
+                            "item/mag_actorname": "Data Collection (agent flow)",
+                            "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                            "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        }
+                      },
+                      "Audit_reminder": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Log_reminder": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "mag_reviewaudittrails",
+                            "item/mag_name": "Supplier Document Reminder Sent",
+                            "item/mag_action": "Supplier Document Reminder Sent",
+                            "item/mag_actor": "Data Collection (agent flow)",
+                            "item/mag_actortype": 100000001,
+                            "item/mag_occurredon": "@utcNow()",
+                            "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                            "item/mag_details": "@{concat('Day-3 reminder sent for ', outputs('Parent_request')?['mag_requestref'], '; no response had been recorded. Delivered only to demo mailbox.')}",
+                            "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                            "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "CreateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        }
+                      },
+                      "Mark_reminded": {
+                        "type": "OpenApiConnection",
+                        "runAfter": {
+                          "Audit_reminder": [
+                            "Succeeded"
+                          ]
+                        },
+                        "inputs": {
+                          "parameters": {
+                            "entityName": "mag_documentrequests",
+                            "recordId": "@items('For_each_request')?['mag_documentrequestid']",
+                            "item/mag_day3remindersenton": "@utcNow()",
+                            "item/mag_requeststatus": 100000002
+                          },
+                          "host": {
+                            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                            "operationId": "UpdateRecord",
+                            "connectionName": "shared_commondataserviceforapps"
+                          }
+                        }
+                      }
+                    },
+                    "else": {
+                      "actions": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

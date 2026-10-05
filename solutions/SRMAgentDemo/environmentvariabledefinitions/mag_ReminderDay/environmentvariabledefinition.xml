@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_ReminderDay">
+  <description default="Days without a supplier response before the first reminder (SRM-COL-003). Source: day 3.">
+    <label description="Days without a supplier response before the first reminder (SRM-COL-003). Source: day 3." languagecode="1033" />
+  </description>
+  <displayname default="SRM supplier reminder day">
+    <label description="SRM supplier reminder day" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

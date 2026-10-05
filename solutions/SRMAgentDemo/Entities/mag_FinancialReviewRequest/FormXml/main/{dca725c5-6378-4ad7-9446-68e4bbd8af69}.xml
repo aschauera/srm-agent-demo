@@ -20,7 +20,7 @@
                   </labels>
                   <rows>
                     <row>
-                      <cell id="17e4f73b-71c2-5629-9175-b5ab64e3d562" showlabel="false" visible="true" colspan="1" rowspan="2" auto="false">
+                      <cell id="17e4f73b-71c2-5629-9175-b5ab64e3d562" showlabel="false" visible="true" colspan="1" rowspan="3" auto="false">
                         <labels>
                           <label description="Review status indicators" languagecode="1033" />
                         </labels>
@@ -37,6 +37,7 @@
                         </control>
                       </cell>
                     </row>
+                    <row />
                     <row />
                   </rows>
                 </section>
@@ -266,6 +267,87 @@
                           <label description="Remarks" languagecode="1033" />
                         </labels>
                         <control id="6a449004-20a5-4c37-b884-c9f3bfb142b7" classid="{E0DECE4B-6FC8-4A8F-A065-082708572369}" datafieldname="mag_remarks" disabled="false" isrequired="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+        <tab id="6144bef2-ccca-561b-8ebc-962476ee0d57" name="tab_coface" expanded="true" visible="true">
+          <labels>
+            <label description="Coface" languagecode="1033" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section id="30cc8371-eb90-5e76-88ba-01087546d999" name="sec_coface_result" showlabel="true" visible="true" columns="2">
+                  <labels>
+                    <label description="Coface Retrieval (flow-populated)" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="e50a1d4c-b212-54c5-b13b-8ca90fc308be" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Coface Retrieved" languagecode="1033" />
+                        </labels>
+                        <control id="2fcbda05-0810-5226-ac9b-7d56391ad951" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="mag_cofaceretrieved" disabled="true" isrequired="false" />
+                      </cell>
+                      <cell id="097ff17c-1a73-5413-b82b-693e135162c7" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Coface Score (0-10, higher is safer)" languagecode="1033" />
+                        </labels>
+                        <control id="760525d7-53eb-5e56-9e01-8f05e06f7988" classid="{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}" datafieldname="mag_cofacescore" disabled="true" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="ab8d30e8-db5d-5265-9aeb-3d0613723047" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Coface Risk Tier" languagecode="1033" />
+                        </labels>
+                        <control id="137c4b46-e0b9-5beb-b73e-98d0dc13a0f4" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="mag_cofacerisktier" disabled="true" isrequired="false" />
+                      </cell>
+                      <cell id="9ff7ad73-176a-57e6-ba40-13e1e4fdec63" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Coface Assessment Date" languagecode="1033" />
+                        </labels>
+                        <control id="0ac4f4ef-20a0-534f-ad06-5667ae60fd7e" classid="{5B773807-9FB2-42DB-97C3-7A91EFF8ADFF}" datafieldname="mag_cofaceassessmentdate" disabled="true" isrequired="false" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="56803212-b45b-5f96-8f7d-2c96f433fd19" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Data Age (months)" languagecode="1033" />
+                        </labels>
+                        <control id="2e001172-c52d-5c5b-81c0-6ad3d2b782b2" classid="{C6D124CA-7EDA-4A60-AEA9-7FB8D318B68F}" datafieldname="mag_cofacedataagemonths" disabled="true" isrequired="false" />
+                      </cell>
+                      <cell id="e1d82a2d-f25c-5cad-9ef2-5e77bb6b3233" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Within 18 Months" languagecode="1033" />
+                        </labels>
+                        <control id="dacfd760-fec2-5e67-b7f5-24d1a114ee24" classid="{67FAC785-CD58-4F9F-ABB3-4B7DDC6ED5ED}" datafieldname="mag_cofacewithin18months" disabled="true" isrequired="false" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+                <section id="9042388e-1eca-586f-aa66-1da82147c0e1" name="sec_coface_proposal" showlabel="true" visible="true" columns="2">
+                  <labels>
+                    <label description="Rating Proposal (AI, reviewer decides)" languagecode="1033" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="810ce28a-4d16-55c7-b1bf-6847e4bea726" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Preliminary Rating" languagecode="1033" />
+                        </labels>
+                        <control id="6f9b3597-5564-54ab-8094-4894a52d3bdf" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="mag_preliminaryrating" disabled="true" isrequired="false" />
+                      </cell>
+                      <cell id="c85a3e11-e72e-5f78-97eb-0e616b81e423" showlabel="true" visible="true" colspan="1" rowspan="1">
+                        <labels>
+                          <label description="Review Path" languagecode="1033" />
+                        </labels>
+                        <control id="f3164a69-cdcb-518a-9a62-73df17f5c109" classid="{3EF39988-22BB-4F0B-BBBE-64B5A3748AEE}" datafieldname="mag_reviewpath" disabled="true" isrequired="false" />
                       </cell>
                     </row>
                   </rows>

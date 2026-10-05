@@ -1,6 +1,8 @@
 # 07 - Stage 2: Coface Fast-Track and Document Collection
 
-Status: requirements and rule seed complete; flows, forms and Coface agent tools not built yet.
+Status: Coface and document-request/reminder flows are deployed and active in DemoPRE; end-to-end
+tests and the reply-file byte upload remain open. The Data Collection Copilot agent is still a
+specification.
 Source: slides 4-7 of [the extracted deck](./requirements/source/fy27-magna-srm-use-case-extracted.txt).
 Plan items: Stage 2 of the BPF, agents *Data Collection* and *Communication & Closure*
 ([topology](./05-agent-topology.md)).
@@ -13,22 +15,23 @@ Plan items: Stage 2 of the BPF, agents *Data Collection* and *Communication & Cl
 | ID | Requirement | Slide | Artifact | Verification | Status |
 |---|---|---|---|---|---|
 | `SRM-COF-001` | Keep Coface response data, data age and configurable conversion rules. | 4-6 | `mag_cofacecreditrecord`, `mag_ratingconversionrule` | Data-model verification | Built |
-| `SRM-COF-002` | Run the Coface retrieval only when the pre-check did not close the request (full review path). | 4-5 | Coface retrieval flow | Smoke test: reuse path writes no Coface data | Planned |
-| `SRM-COF-003` | Retrieve by DUNS: score, risk tier, payment record, negative alerts, recommended credit limit. | 4 | Retrieval flow, request Coface columns | Smoke test with `900000001` | Planned |
-| `SRM-COF-004` | Without a DUNS, match on legal name and country; with several matches show a shortlist the reviewer chooses from. Never auto-pick. | 4 | Shortlist view and form, Data Collection agent | Smoke test with SUP-010 and SUP-011 | Planned |
-| `SRM-COF-005` | Write all Coface data back to the request for permanent retention. | 4-5 | Request Coface columns | Field comparison | Planned |
-| `SRM-COF-006` | Show the score with colour-coded traffic-light labels and an AI risk interpretation. | 4-5 | Form indicators, notification email | Visual check | Planned |
-| `SRM-COF-007` | Without a DUNS, the reviewer notice carries the disclaimer "No DUNS number provided; full Coface credit score unavailable." | 5 | Notice template | Smoke test | Planned |
-| `SRM-COF-008` | Check whether the Coface data is no older than 18 months. | 6 | Environment variable `mag_CofaceMaxDataAgeMonths`, retrieval flow | Seeded stale rows SUP-004 to SUP-007, SUP-012 | Planned |
-| `SRM-COF-009` | Convert a valid Coface score to a Magna rating with the rule table. The result is a proposal; a human confirms it. | 6 | `mag_ratingconversionrule`, conversion flow | Boundary scores 0, 3, 4, 7, 8, 10 | Rules seeded; flow planned |
-| `SRM-COF-010` | If no valid Coface score exists (no match, no DUNS, stale data), route to full review. | 6-7 | Retrieval flow, BPF | Smoke test | Planned |
+| `SRM-COF-002` | Run the Coface retrieval only when the pre-check did not close the request (full review path). | 4-5 | Coface retrieval flow | Smoke test: reuse path writes no Coface data | Deployed; test pending |
+| `SRM-COF-003` | Retrieve by DUNS: score, risk tier, payment record, negative alerts, recommended credit limit. | 4 | Retrieval flow, request Coface columns | Smoke test with `900000001` | Deployed; test pending |
+| `SRM-COF-004` | Without a DUNS, match on legal name and country; with several matches show a shortlist the reviewer chooses from. Never auto-pick. | 4 | Shortlist view and form, Data Collection agent | Smoke test with SUP-010 and SUP-011 | Deployed; test pending |
+| `SRM-COF-005` | Write all Coface data back to the request for permanent retention. | 4-5 | Request Coface columns | Field comparison | Deployed; test pending |
+| `SRM-COF-006` | Show the score with colour-coded traffic-light labels and an AI risk interpretation. | 4-5 | Form indicators, notification email | Visual check | Form built; flow deployed; test pending |
+| `SRM-COF-007` | Without a DUNS, the reviewer notice carries the disclaimer "No DUNS number provided; full Coface credit score unavailable." | 5 | Notice template | Smoke test | Deployed; test pending |
+| `SRM-COF-008` | Check whether the Coface data is no older than 18 months. | 6 | Environment variable `mag_CofaceMaxDataAgeMonths`, retrieval flow | Seeded stale rows SUP-004 to SUP-007, SUP-012 | Deployed; test pending |
+| `SRM-COF-009` | Convert a valid Coface score to a Magna rating with the rule table. The result is a proposal; a human confirms it. | 6 | `mag_ratingconversionrule`, conversion flow | Boundary scores 0, 3, 4, 7, 8, 10 | Rules seeded; flow deployed; test pending |
+| `SRM-COF-010` | If no valid Coface score exists (no match, no DUNS, stale data), route to full review. | 6-7 | Retrieval flow, BPF | Smoke test | Deployed; test pending |
 | `SRM-COF-011` | Email the buyer the supplier name, DUNS, converted rating and Coface source. Archive the Coface response as evidence. | 6 | Communication & Closure agent | Communication log row | Planned |
-| `SRM-COF-012` | Log every query, conversion and upload to the review ledger. | 6 | `mag_ReviewAuditTrail` | Ledger row per action | Planned |
+| `SRM-COF-012` | Log every query, conversion and upload to the review ledger. | 6 | `mag_ReviewAuditTrail` | Ledger row per action | Deployed; test pending |
 | `SRM-COL-001` | Track document requests, reminders, files, OCR status and classification. | 7-8, 13-14 | Document tables | Data-model verification | Built |
-| `SRM-COL-002` | Send the supplier a request for audited statements for the latest 3 fiscal years plus the interim period, and a non-financial questionnaire. | 7 | Document request flow | Communication log row | Planned |
-| `SRM-COL-003` | Reminder cadence: day 3 follow-up, day 7 escalation to the buyer when there is no response. | 7 | Environment variables, scheduled flow | Seeded day-3 and day-7 requests | Planned |
-| `SRM-COL-004` | Record supplier replies and file their attachments against the request. | 7 | Reply-filing flow | Document rows | Planned |
-| `SRM-COL-005` | Move the BPF to Stage 3 once the required documents are received. | 7 | BPF | Smoke test | Planned |
+| `SRM-COL-002` | Send the supplier a request for audited statements for the latest 3 fiscal years plus the interim period, and a non-financial questionnaire. | 7 | Document request flow | Communication log row | Deployed; test pending |
+| `SRM-COL-003` | Reminder cadence: day 3 follow-up, day 7 escalation to the buyer when there is no response. | 7 | Environment variables, scheduled flow | Seeded day-3 and day-7 requests | Deployed and active; test pending |
+| `SRM-COL-004` | Record supplier replies and file their attachments against the request. | 7 | Reply-filing flow | Document row with readable file bytes | Deployed and active; byte-readback test pending |
+| `SRM-COL-005` | Move the BPF to Stage 3 once the required documents are received. | 7 | Reply-filing flow, BPF | Smoke test with all 12 annual/interim statements | Deployed; end-to-end test pending |
+| `SRM-COL-012` | Audit document requests, reminders, received attachments and collection-completion stage changes in the review ledger. | 7 | Document collection flows, `mag_ReviewAuditTrail` | Verify an audit row for each event | Deployed; test pending |
 
 ## Rule values (demo placeholders)
 
@@ -88,14 +91,21 @@ confirms the final rating (`SRM-GOV-004`).
 4. Conversion proposal flow and Shortcut B stage move.
 5. Document request, reminder and reply-filing flows.
 
-### Build status
+### DemoPRE deployment status
 
 | Step | Status |
 |---|---|
-| 1. Environment variables | Built and deployed |
-| 2. Retrieval flow (`coface-retrieve-and-check`) | Deployed; not yet run end to end |
-| 3. Form tab, banners, cards | Built and deployed (Coface tab, stale and fast-track banners, Coface and Preliminary rating cards, coface tier colors) |
-| 4. Conversion flow (`coface-propose-rating`) | Deployed; not yet run end to end. Shortcut B stage move not built |
-| 5. Document request, reminder, reply filing | Not built |
+| 1. Environment variables | Deployed |
+| 2. Retrieval flow (`coface-retrieve-and-check`) | Active; not yet run end to end |
+| 3. Form tab, banners, cards | Built and deployed (Coface tab, stale and fast-track banners, Coface and Preliminary rating cards, Coface tier colors) |
+| 4. Conversion flow (`coface-propose-rating`) | Active; includes Shortcut B BPF movement; not yet run end to end |
+| 5. Document request and reminder | Active; not yet smoke-tested |
+| 6. Reply filing and automatic Stage 3 movement | Active; uses the documented `UpdateEntityFileImageFieldContent` Dataverse connector action; byte-readback and completeness tests pending |
 
 Agent-callable flows cannot be invoked outside an agent, so test them from the Power Automate designer (Test) with a seeded request, or from Copilot Studio after adding them as tools.
+
+The reply-file content operation and flow activation are validated in DemoPRE, and the solution
+was exported and unpacked to `solutions/SRMAgentDemo/`. The attachment byte round-trip and automatic
+Stage 3 movement still require an end-to-end run before those behaviors can be considered verified.
+The upload action follows Microsoft's
+[Dataverse file/image upload guidance](https://learn.microsoft.com/en-us/power-automate/dataverse/upload-download-file).

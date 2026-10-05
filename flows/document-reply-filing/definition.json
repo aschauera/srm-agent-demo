@@ -1,0 +1,703 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "description": "Review request reference",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "filename": {
+                "title": "File name",
+                "type": "string",
+                "description": "Name including extension",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "filecontent": {
+                "title": "File content (base64)",
+                "type": "string",
+                "description": "Base64-encoded attachment bytes",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true,
+                "format": "byte",
+                "maxLength": 5592408
+              },
+              "documenttype": {
+                "title": "Document type",
+                "type": "integer",
+                "description": "Dataverse document_type option value",
+                "x-ms-content-hint": "NUMBER",
+                "x-ms-dynamically-added": true
+              },
+              "fiscalyear": {
+                "title": "Fiscal year",
+                "type": "integer",
+                "description": "Fiscal year on the attachment",
+                "x-ms-content-hint": "NUMBER",
+                "x-ms-dynamically-added": true
+              },
+              "period": {
+                "title": "Period",
+                "type": "string",
+                "description": "Use Annual for completed fiscal years or Interim for the current interim period",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "latestcompletedfiscalyear": {
+                "title": "Latest completed fiscal year",
+                "type": "integer",
+                "description": "Fiscal year used to evaluate the three annual statement sets",
+                "x-ms-content-hint": "NUMBER",
+                "x-ms-dynamically-added": true
+              },
+              "archivefolder": {
+                "title": "Archive subfolder",
+                "type": "integer",
+                "description": "Dataverse archive_subfolder option value",
+                "x-ms-content-hint": "NUMBER",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "requestref",
+              "filename",
+              "filecontent",
+              "documenttype",
+              "fiscalyear",
+              "period",
+              "latestcompletedfiscalyear",
+              "archivefolder"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Requested_ref": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@trim(coalesce(triggerBody()?['requestref'], ''))"
+      },
+      "List_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Requested_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_reviewpath,mag_noduns,mag_docsreceived,mag_currentstage",
+            "$filter": "@{concat('mag_requestref eq ''', replace(outputs('Requested_ref'), '''', ''''''), ''' or mag_name eq ''', replace(outputs('Requested_ref'), '''', ''''''), '''')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request": {
+        "type": "Compose",
+        "runAfter": {
+          "List_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_request')?['body/value'])"
+      },
+      "Request_id": {
+        "type": "Compose",
+        "runAfter": {
+          "Request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_financialreviewrequestid'], '')"
+      },
+      "Request_ref": {
+        "type": "Compose",
+        "runAfter": {
+          "Request_id": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_requestref'], outputs('Requested_ref'))"
+      },
+      "List_supplier": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_suppliers",
+            "$select": "mag_name,mag_contactname,mag_contactemail,mag_duns",
+            "$filter": "mag_supplierid eq @{coalesce(outputs('Request')?['_mag_supplierid_value'], '00000000-0000-0000-0000-000000000000')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Supplier": {
+        "type": "Compose",
+        "runAfter": {
+          "List_supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_supplier')?['body/value'])"
+      },
+      "Create_document": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_supplierdocuments",
+            "item/mag_name": "@triggerBody()?['filename']",
+            "item/mag_demokey": "@{concat(outputs('Request_ref'), '|', triggerBody()?['filename'], '|', string(ticks(utcNow())))}",
+            "item/mag_documenttype": "@triggerBody()?['documenttype']",
+            "item/mag_fiscalyear": "@triggerBody()?['fiscalyear']",
+            "item/mag_period": "@triggerBody()?['period']",
+            "item/mag_ocrstatus": 100000000,
+            "item/mag_filename": "@triggerBody()?['filename']",
+            "item/mag_archivesubfolder": "@triggerBody()?['archivefolder']",
+            "item/mag_duplicate": false,
+            "item/mag_metadatatags": "@{concat('reply;request=', outputs('Request_ref'))}",
+            "item/mag_sourcesystem": "Supplier reply (simulated)",
+            "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+            "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "CreateRecord",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Upload_file_content": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Create_document": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_supplierdocuments",
+            "recordId": "@outputs('Create_document')?['body/mag_supplierdocumentid']",
+            "fileImageFieldName": "mag_file",
+            "item": "@base64ToBinary(triggerBody()?['filecontent'])",
+            "x-ms-file-name": "@triggerBody()?['filename']"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "UpdateEntityFileImageFieldContent",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Log_reply": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Upload_file_content": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_communicationlogs",
+            "item/mag_name": "[SRM demo, inbound supplier reply] @{triggerBody()?['filename']} - @{outputs('Request_ref')}",
+            "item/mag_subject": "[SRM demo, inbound supplier reply] @{triggerBody()?['filename']} - @{outputs('Request_ref')}",
+            "item/mag_body": "<p>Attachment recorded from the simulated supplier reply: @{triggerBody()?['filename']}.</p><p>Fiscal year: @{triggerBody()?['fiscalyear']}; period: @{triggerBody()?['period']}.</p><p>Fictional demo content; attachment stored in Dataverse.</p>",
+            "item/mag_direction": 100000000,
+            "item/mag_channel": 100000000,
+            "item/mag_language": 100000000,
+            "item/mag_occurredon": "@utcNow()",
+            "item/mag_actorname": "Data Collection (agent flow)",
+            "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+            "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "CreateRecord",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Audit_file_received": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Log_reply": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_reviewaudittrails",
+            "item/mag_name": "Supplier Reply Attachment Filed",
+            "item/mag_action": "Supplier Reply Attachment Filed",
+            "item/mag_actor": "Data Collection (agent flow)",
+            "item/mag_actortype": 100000001,
+            "item/mag_occurredon": "@utcNow()",
+            "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+            "item/mag_details": "@{concat('Stored attachment ', triggerBody()?['filename'], ' as a Dataverse supplier document for ', outputs('Request_ref'), '; fiscal year ', string(triggerBody()?['fiscalyear']), ', period ', triggerBody()?['period'], '.')}",
+            "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+            "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "CreateRecord",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "List_request_documents": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Audit_file_received": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_supplierdocuments",
+            "$select": "mag_documenttype,mag_fiscalyear,mag_period",
+            "$filter": "_mag_reviewrequestid_value eq @{outputs('Request_id')}",
+            "$top": 5000
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Document_keys": {
+        "type": "Select",
+        "runAfter": {
+          "List_request_documents": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "from": "@outputs('List_request_documents')?['body/value']",
+          "select": "@concat(string(item()?['mag_documenttype']), '|', string(item()?['mag_fiscalyear']), '|', toLower(item()?['mag_period']))"
+        }
+      },
+      "Documents_complete": {
+        "type": "Compose",
+        "runAfter": {
+          "Document_keys": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@and(contains(body('Document_keys'), concat('100000000|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 0)), '|annual')), contains(body('Document_keys'), concat('100000001|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 0)), '|annual')), contains(body('Document_keys'), concat('100000002|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 0)), '|annual')), contains(body('Document_keys'), concat('100000000|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 1)), '|annual')), contains(body('Document_keys'), concat('100000001|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 1)), '|annual')), contains(body('Document_keys'), concat('100000002|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 1)), '|annual')), contains(body('Document_keys'), concat('100000000|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 2)), '|annual')), contains(body('Document_keys'), concat('100000001|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 2)), '|annual')), contains(body('Document_keys'), concat('100000002|', string(sub(triggerBody()?['latestcompletedfiscalyear'], 2)), '|annual')), contains(body('Document_keys'), concat('100000000|', string(add(triggerBody()?['latestcompletedfiscalyear'], 1)), '|interim')), contains(body('Document_keys'), concat('100000001|', string(add(triggerBody()?['latestcompletedfiscalyear'], 1)), '|interim')), contains(body('Document_keys'), concat('100000002|', string(add(triggerBody()?['latestcompletedfiscalyear'], 1)), '|interim')))"
+      },
+      "Mark_documents_received": {
+        "type": "If",
+        "runAfter": {
+          "List_collection_requests": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Documents_complete')",
+            true
+          ]
+        },
+        "actions": {
+          "Update_request": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_docsreceived": true
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Mark_collection_requests_received": {
+            "type": "Foreach",
+            "runAfter": {
+              "Update_request": [
+                "Succeeded"
+              ]
+            },
+            "foreach": "@outputs('List_collection_requests')?['body/value']",
+            "actions": {
+              "Update_collection_request": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "parameters": {
+                    "entityName": "mag_documentrequests",
+                    "recordId": "@items('Mark_collection_requests_received')?['mag_documentrequestid']",
+                    "item/mag_responsereceived": true,
+                    "item/mag_requeststatus": 100000004
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              }
+            }
+          },
+          "Audit_complete": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Mark_collection_requests_received": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Required Financial Statements Filed",
+                "item/mag_action": "Required Financial Statements Filed",
+                "item/mag_actor": "Data Collection (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                "item/mag_details": "@{concat('All 12 required annual and interim balance sheet, income statement, and cash flow statement files are present for fiscal years ', string(sub(triggerBody()?['latestcompletedfiscalyear'], 2)), '-', string(triggerBody()?['latestcompletedfiscalyear']), ' and interim ', string(add(triggerBody()?['latestcompletedfiscalyear'], 1)), '. Non-financial questionnaire and audit verification remain manual.')}",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Move_BPF_to_analysis": {
+            "type": "Scope",
+            "runAfter": {
+              "Audit_complete": [
+                "Succeeded"
+              ]
+            },
+            "actions": {
+              "Get_BPF_instance": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "parameters": {
+                    "entityName": "new_supplierfinancialreviews",
+                    "$select": "businessprocessflowinstanceid,traversedpath,activestageid,bpf_name",
+                    "$filter": "_bpf_mag_financialreviewrequestid_value eq @{outputs('Request_id')} and statecode eq 0",
+                    "$top": 1
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "ListRecords",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "BPF_instance": {
+                "type": "Compose",
+                "runAfter": {
+                  "Get_BPF_instance": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": "@first(outputs('Get_BPF_instance')?['body/value'])"
+              },
+              "List_BPF_stages": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "BPF_instance": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "parameters": {
+                    "entityName": "processstages",
+                    "$select": "processstageid,stagename",
+                    "$filter": "stagename eq 'Request & Pre-Check' or stagename eq 'Information Collection' or stagename eq 'Analysis & Rating'",
+                    "$top": 20
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "ListRecords",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Stage1": {
+                "type": "Query",
+                "runAfter": {
+                  "List_BPF_stages": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "from": "@outputs('List_BPF_stages')?['body/value']",
+                  "where": "@equals(item()?['stagename'], 'Request & Pre-Check')"
+                }
+              },
+              "Stage2": {
+                "type": "Query",
+                "runAfter": {
+                  "Stage1": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "from": "@outputs('List_BPF_stages')?['body/value']",
+                  "where": "@equals(item()?['stagename'], 'Information Collection')"
+                }
+              },
+              "Stage3": {
+                "type": "Query",
+                "runAfter": {
+                  "Stage2": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "from": "@outputs('List_BPF_stages')?['body/value']",
+                  "where": "@equals(item()?['stagename'], 'Analysis & Rating')"
+                }
+              },
+              "Stage1_id": {
+                "type": "Compose",
+                "runAfter": {
+                  "Stage3": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": "@first(body('Stage1'))?['processstageid']"
+              },
+              "Stage2_id": {
+                "type": "Compose",
+                "runAfter": {
+                  "Stage1_id": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": "@first(body('Stage2'))?['processstageid']"
+              },
+              "Stage3_id": {
+                "type": "Compose",
+                "runAfter": {
+                  "Stage2_id": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": "@first(body('Stage3'))?['processstageid']"
+              },
+              "Update_BPF": {
+                "type": "If",
+                "runAfter": {
+                  "Stage3_id": [
+                    "Succeeded"
+                  ]
+                },
+                "expression": {
+                  "not": {
+                    "equals": [
+                      "@outputs('BPF_instance')",
+                      null
+                    ]
+                  }
+                },
+                "actions": {
+                  "Advance_to_analysis": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {},
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "new_supplierfinancialreviews",
+                        "recordId": "@outputs('BPF_instance')?['businessprocessflowinstanceid']",
+                        "item/activestageid@odata.bind": "/processstages(@{outputs('Stage3_id')})",
+                        "item/traversedpath": "@{concat(outputs('Stage1_id'), ',', outputs('Stage2_id'), ',', outputs('Stage3_id'))}"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  },
+                  "Update_request_stage": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Advance_to_analysis": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "mag_financialreviewrequests",
+                        "recordId": "@outputs('Request_id')",
+                        "item/mag_currentstage": 3
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "UpdateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  },
+                  "Audit_stage3_movement": {
+                    "type": "OpenApiConnection",
+                    "runAfter": {
+                      "Update_request_stage": [
+                        "Succeeded"
+                      ]
+                    },
+                    "inputs": {
+                      "parameters": {
+                        "entityName": "mag_reviewaudittrails",
+                        "item/mag_name": "Documents Received - Stage 3 Movement",
+                        "item/mag_action": "Documents Received - Stage 3 Movement",
+                        "item/mag_actor": "Data Collection (agent flow)",
+                        "item/mag_actortype": 100000001,
+                        "item/mag_occurredon": "@utcNow()",
+                        "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                        "item/mag_details": "@{concat('Advanced ', outputs('Request_ref'), ' to Analysis & Rating after all 12 required annual and interim statements were filed. Questionnaire and audit verification remain manual.')}",
+                        "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                        "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                      },
+                      "host": {
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                        "operationId": "CreateRecord",
+                        "connectionName": "shared_commondataserviceforapps"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {}
+                }
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "List_collection_requests": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Documents_complete": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_documentrequests",
+            "$select": "mag_documentrequestid,mag_requeststatus,mag_responsereceived",
+            "$filter": "_mag_reviewrequestid_value eq @{outputs('Request_id')} and (mag_requeststatus eq 100000001 or mag_requeststatus eq 100000002 or mag_requeststatus eq 100000003)",
+            "$top": 100
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Respond_to_the_agent": {
+        "type": "Response",
+        "kind": "Skills",
+        "runAfter": {
+          "Mark_documents_received": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "Status",
+                "type": "string",
+                "description": "",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "message": {
+                "title": "Message",
+                "type": "string",
+                "description": "",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "documentid": {
+                "title": "Supplier document ID",
+                "type": "string",
+                "description": "",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "@if(outputs('Documents_complete'), 'complete', 'filed')",
+            "message": "@if(outputs('Documents_complete'), 'The 12 required statement files are present. The BPF moved to Analysis & Rating; questionnaire and audit verification remain manual.', 'Attachment filed. The required 12 statement files are not yet complete.')",
+            "documentid": "@{outputs('Create_document')?['body/mag_supplierdocumentid']}"
+          }
+        }
+      }
+    }
+  }
+}

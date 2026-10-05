@@ -357,6 +357,11 @@
               <displayname description="Dimension" languagecode="1033" />
             </displaynames>
             <options>
+              <option value="100000005" IsHidden="0">
+                <labels>
+                  <label description="Overall" languagecode="1033" />
+                </labels>
+              </option>
               <option value="100000000" ExternalValue="" IsHidden="0">
                 <labels>
                   <label description="Liquidity" languagecode="1033" />

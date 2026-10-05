@@ -1,0 +1,18 @@
+{
+  "displayName": "SRM Data Collection - File supplier reply attachment",
+  "description": "Creates a supplier document row and uploads one attachment through the Dataverse connector's Upload a file or an image action. Marks collection complete and advances the BPF when all 12 annual/interim statements are present; questionnaire and audit verification remain manual.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e09",
+  "owningAgent": "data-collection",
+  "processStep": "Stage 2 - Information Collection",
+  "requirements": [
+    "SRM-COL-004",
+    "SRM-COL-005",
+    "SRM-COL-012",
+    "SRM-GOV-001"
+  ],
+  "trigger": "When an agent calls the flow (requestref and one base64 attachment up to 4 MiB per call).",
+  "connectionReferences": [
+    "mag_SRMDataverse"
+  ],
+  "environmentVariables": []
+}

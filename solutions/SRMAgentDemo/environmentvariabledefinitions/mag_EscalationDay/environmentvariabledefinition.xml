@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_EscalationDay">
+  <description default="Days without a supplier response before escalation to the buyer (SRM-COL-003). Source: day 7.">
+    <label description="Days without a supplier response before escalation to the buyer (SRM-COL-003). Source: day 7." languagecode="1033" />
+  </description>
+  <displayname default="SRM buyer escalation day">
+    <label description="SRM buyer escalation day" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

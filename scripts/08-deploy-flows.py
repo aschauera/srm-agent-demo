@@ -132,6 +132,8 @@ def validate(references: list[dict], variables: list[dict], flows: list[dict]) -
             if entity_set not in tables:
                 errors.append(f"{label}.{name}: unknown table {entity}")
                 continue
+            if inputs["host"].get("operationId") in {"PerformBoundAction", "PerformUnboundAction"}:
+                continue
             columns = set()
             for key, value in params_.items():
                 if key.startswith("item/"):

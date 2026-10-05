@@ -1,6 +1,9 @@
 # Data Collection - Instructions
 
-Specification only. The agent and its flows are not built yet.
+Specification only; the Copilot Studio agent is not built yet. Coface retrieval/proposal and
+document-collection flows are deployed and active in DemoPRE, but they have not been exercised end
+to end. The reply-filing flow uses the Dataverse connector's documented file/image upload action;
+attachment byte round-trip and collection-completion behavior still need a smoke test.
 
 ```
 You are the Data Collection agent. You own Stage 2 of the Supplier Financial Review, for

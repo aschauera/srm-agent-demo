@@ -362,7 +362,7 @@
         "type": "Response",
         "kind": "Skills",
         "runAfter": {
-          "Apply_full_review": [
+          "Advance_fast_track_BPF": [
             "Succeeded"
           ]
         },
@@ -448,6 +448,220 @@
             "needsconfirmation": "@equals(outputs('Outcome'), 'proposed')",
             "recordurl": "@{if(empty(outputs('Request_id')), '', concat(parameters('SRM app record URL (mag_SRMAppRecordUrl)'), outputs('Request_id')))}"
           }
+        }
+      },
+      "Advance_fast_track_BPF": {
+        "type": "If",
+        "runAfter": {
+          "Apply_full_review": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Outcome')",
+            "proposed"
+          ]
+        },
+        "actions": {
+          "Get_BPF_instance": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "new_supplierfinancialreviews",
+                "$select": "businessprocessflowinstanceid,traversedpath,activestageid,bpf_name",
+                "$filter": "_bpf_mag_financialreviewrequestid_value eq @{outputs('Request_id')}",
+                "$top": 1
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "ListRecords",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "BPF_instance": {
+            "type": "Compose",
+            "runAfter": {
+              "Get_BPF_instance": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@first(outputs('Get_BPF_instance')?['body/value'])"
+          },
+          "List_BPF_stages": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "BPF_instance": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "processstages",
+                "$select": "processstageid,stagename",
+                "$filter": "stagename eq 'Request & Pre-Check' or stagename eq 'Information Collection' or stagename eq 'Communication & Decision'",
+                "$top": 20
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "ListRecords",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Stage1": {
+            "type": "Query",
+            "runAfter": {
+              "List_BPF_stages": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@outputs('List_BPF_stages')?['body/value']",
+              "where": "@equals(item()?['stagename'], 'Request & Pre-Check')"
+            }
+          },
+          "Stage2": {
+            "type": "Query",
+            "runAfter": {
+              "Stage1": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@outputs('List_BPF_stages')?['body/value']",
+              "where": "@equals(item()?['stagename'], 'Information Collection')"
+            }
+          },
+          "Stage4": {
+            "type": "Query",
+            "runAfter": {
+              "Stage2": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "from": "@outputs('List_BPF_stages')?['body/value']",
+              "where": "@equals(item()?['stagename'], 'Communication & Decision')"
+            }
+          },
+          "Stage1_id": {
+            "type": "Compose",
+            "runAfter": {
+              "Stage4": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@first(body('Stage1'))?['processstageid']"
+          },
+          "Stage2_id": {
+            "type": "Compose",
+            "runAfter": {
+              "Stage1_id": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@first(body('Stage2'))?['processstageid']"
+          },
+          "Stage4_id": {
+            "type": "Compose",
+            "runAfter": {
+              "Stage2_id": [
+                "Succeeded"
+              ]
+            },
+            "inputs": "@first(body('Stage4'))?['processstageid']"
+          },
+          "Advance_if_instance_exists": {
+            "type": "If",
+            "runAfter": {
+              "Stage4_id": [
+                "Succeeded"
+              ]
+            },
+            "expression": {
+              "not": {
+                "equals": [
+                  "@outputs('BPF_instance')",
+                  null
+                ]
+              }
+            },
+            "actions": {
+              "Update_BPF": {
+                "type": "OpenApiConnection",
+                "runAfter": {},
+                "inputs": {
+                  "parameters": {
+                    "entityName": "new_supplierfinancialreviews",
+                    "recordId": "@outputs('BPF_instance')?['businessprocessflowinstanceid']",
+                    "item/activestageid@odata.bind": "/processstages(@{outputs('Stage4_id')})",
+                    "item/traversedpath": "@{concat(outputs('Stage1_id'), ',', outputs('Stage2_id'), ',', outputs('Stage4_id'))}"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Update_request_stage": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Update_BPF": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "parameters": {
+                    "entityName": "mag_financialreviewrequests",
+                    "recordId": "@outputs('Request_id')",
+                    "item/mag_currentstage": 4
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "UpdateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              },
+              "Audit_stage_move": {
+                "type": "OpenApiConnection",
+                "runAfter": {
+                  "Update_request_stage": [
+                    "Succeeded"
+                  ]
+                },
+                "inputs": {
+                  "parameters": {
+                    "entityName": "mag_reviewaudittrails",
+                    "item/mag_name": "Coface Fast-Track Stage Movement",
+                    "item/mag_action": "Coface Fast-Track Stage Movement",
+                    "item/mag_actor": "Data Collection (agent flow)",
+                    "item/mag_actortype": 100000001,
+                    "item/mag_occurredon": "@utcNow()",
+                    "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                    "item/mag_details": "@{concat('Advanced ', outputs('Request_ref'), ' from Information Collection to Communication & Decision through the Coface Fast-Track shortcut. The reviewer remains responsible for the final financial rating.')}",
+                    "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                    "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+                  },
+                  "host": {
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                    "operationId": "CreateRecord",
+                    "connectionName": "shared_commondataserviceforapps"
+                  }
+                }
+              }
+            },
+            "else": {
+              "actions": {}
+            }
+          }
+        },
+        "else": {
+          "actions": {}
         }
       }
     }

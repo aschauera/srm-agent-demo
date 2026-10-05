@@ -1,0 +1,22 @@
+{
+  "displayName": "SRM Data Collection - Supplier reminder cadence",
+  "description": "Runs daily and prepares one day-3 supplier reminder and one day-7 buyer escalation for unanswered document requests; all demo notices go only to the SRM demo mailbox.",
+  "workflowId": "5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e08",
+  "owningAgent": "data-collection",
+  "processStep": "Stage 2 - Information Collection",
+  "requirements": [
+    "SRM-COL-003",
+    "SRM-COL-012",
+    "SRM-GOV-001"
+  ],
+  "trigger": "Daily recurrence (one run per day).",
+  "connectionReferences": [
+    "mag_SRMDataverse",
+    "mag_SRMOutlook"
+  ],
+  "environmentVariables": [
+    "mag_SRMDemoMailbox",
+    "mag_ReminderDay",
+    "mag_EscalationDay"
+  ]
+}

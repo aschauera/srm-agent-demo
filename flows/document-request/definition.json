@@ -1,0 +1,365 @@
+{
+  "connectionReferences": {
+    "shared_commondataserviceforapps": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMDataverse"
+      },
+      "api": {
+        "name": "shared_commondataserviceforapps"
+      }
+    },
+    "shared_office365": {
+      "runtimeSource": "embedded",
+      "connection": {
+        "connectionReferenceLogicalName": "mag_SRMOutlook"
+      },
+      "api": {
+        "name": "shared_office365"
+      }
+    }
+  },
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "$connections": {
+        "defaultValue": {},
+        "type": "Object"
+      },
+      "$authentication": {
+        "defaultValue": {},
+        "type": "SecureObject"
+      },
+      "SRM demo notification mailbox (mag_SRMDemoMailbox)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMDemoMailbox",
+          "description": "Mailbox for simulated SRM supplier and buyer messages"
+        }
+      },
+      "SRM app record URL (mag_SRMAppRecordUrl)": {
+        "defaultValue": "",
+        "type": "String",
+        "metadata": {
+          "schemaName": "mag_SRMAppRecordUrl",
+          "description": "Review request URL prefix; the record ID is appended"
+        }
+      }
+    },
+    "triggers": {
+      "manual": {
+        "type": "Request",
+        "kind": "Skills",
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "description": "Review request reference, for example REQ-2026-008",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "required": [
+              "requestref"
+            ]
+          }
+        }
+      }
+    },
+    "actions": {
+      "Requested_ref": {
+        "type": "Compose",
+        "runAfter": {},
+        "inputs": "@trim(coalesce(triggerBody()?['requestref'], ''))"
+      },
+      "List_request": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Requested_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_financialreviewrequests",
+            "$select": "mag_financialreviewrequestid,mag_name,mag_requestref,_mag_supplierid_value,mag_reviewpath,mag_docrequestsent,mag_noduns,mag_division,mag_buyername,mag_buyeremail",
+            "$filter": "@{concat('mag_requestref eq ''', replace(outputs('Requested_ref'), '''', ''''''), ''' or mag_name eq ''', replace(outputs('Requested_ref'), '''', ''''''), '''')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Request": {
+        "type": "Compose",
+        "runAfter": {
+          "List_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_request')?['body/value'])"
+      },
+      "Request_id": {
+        "type": "Compose",
+        "runAfter": {
+          "Request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_financialreviewrequestid'], '')"
+      },
+      "Request_ref": {
+        "type": "Compose",
+        "runAfter": {
+          "Request_id": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@coalesce(outputs('Request')?['mag_requestref'], outputs('Requested_ref'))"
+      },
+      "List_supplier": {
+        "type": "OpenApiConnection",
+        "runAfter": {
+          "Request_ref": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "parameters": {
+            "entityName": "mag_suppliers",
+            "$select": "mag_name,mag_contactname,mag_contactemail,mag_duns",
+            "$filter": "mag_supplierid eq @{coalesce(outputs('Request')?['_mag_supplierid_value'], '00000000-0000-0000-0000-000000000000')}",
+            "$top": 1
+          },
+          "host": {
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+            "operationId": "ListRecords",
+            "connectionName": "shared_commondataserviceforapps"
+          }
+        }
+      },
+      "Supplier": {
+        "type": "Compose",
+        "runAfter": {
+          "List_supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@first(outputs('List_supplier')?['body/value'])"
+      },
+      "Eligible": {
+        "type": "Compose",
+        "runAfter": {
+          "Supplier": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@and(not(equals(outputs('Request'), null)), equals(outputs('Request')?['mag_reviewpath'], 100000002), not(equals(outputs('Request')?['mag_docrequestsent'], true)), not(empty(outputs('Supplier')?['mag_contactemail'])))"
+      },
+      "Checklist": {
+        "type": "Compose",
+        "runAfter": {
+          "Eligible": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@concat('Audited balance sheet, income statement, and cash flow statement for each of the latest three completed fiscal years; the latest interim balance sheet, income statement, and cash flow statement; and a non-financial questionnaire covering litigation, arbitration, off-balance-sheet guarantees, customer concentration, owned or leased assets, and key management changes.', if(equals(outputs('Request')?['mag_noduns'], true), ' Additional supplier credentials are requested because no DUNS number was provided.', ''))"
+      },
+      "Send_request": {
+        "type": "If",
+        "runAfter": {
+          "Checklist": [
+            "Succeeded"
+          ]
+        },
+        "expression": {
+          "equals": [
+            "@outputs('Eligible')",
+            true
+          ]
+        },
+        "actions": {
+          "Create_document_request": {
+            "type": "OpenApiConnection",
+            "runAfter": {},
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_documentrequests",
+                "item/mag_name": "@{concat(outputs('Request_ref'), ' - Financial document collection')}",
+                "item/mag_requesttype": 100000000,
+                "item/mag_senton": "@utcNow()",
+                "item/mag_responsereceived": false,
+                "item/mag_requeststatus": 100000001,
+                "item/mag_recipientemail": "@outputs('Supplier')?['mag_contactemail']",
+                "item/mag_checklistsummary": "@outputs('Checklist')",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Log_notice": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Create_document_request": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_communicationlogs",
+                "item/mag_name": "[SRM demo, intended for supplier] Financial review documents - @{outputs('Request_ref')}",
+                "item/mag_subject": "[SRM demo, intended for supplier] Financial review documents - @{outputs('Request_ref')}",
+                "item/mag_body": "<p>To: @{outputs('Supplier')?['mag_contactname']} (@{outputs('Supplier')?['mag_contactemail']})</p><p>Supplier: @{outputs('Supplier')?['mag_name']} | Division: @{outputs('Request')?['mag_division']}</p><p>Please provide: @{outputs('Checklist')}</p><p>This is a simulated message. It was sent only to the configured SRM demo mailbox; no email was sent to the supplier.</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the review request</a></p>",
+                "item/mag_direction": 100000001,
+                "item/mag_channel": 100000000,
+                "item/mag_language": 100000000,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_actorname": "Data Collection (agent flow)",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Email_demo_mailbox": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Log_notice": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "emailMessage/To": "@parameters('SRM demo notification mailbox (mag_SRMDemoMailbox)')",
+                "emailMessage/Subject": "[SRM demo, intended for supplier] Financial review documents - @{outputs('Request_ref')}",
+                "emailMessage/Body": "<p>To: @{outputs('Supplier')?['mag_contactname']} (@{outputs('Supplier')?['mag_contactemail']})</p><p>Supplier: @{outputs('Supplier')?['mag_name']} | Division: @{outputs('Request')?['mag_division']}</p><p>Please provide: @{outputs('Checklist')}</p><p>This is a simulated message. It was sent only to the configured SRM demo mailbox; no email was sent to the supplier.</p><p><a href=\"@{parameters('SRM app record URL (mag_SRMAppRecordUrl)')}@{outputs('Request_id')}\">Open the review request</a></p>",
+                "emailMessage/Importance": "Normal"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+                "operationId": "SendEmailV2",
+                "connectionName": "shared_office365"
+              }
+            }
+          },
+          "Write_sent_flag": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Email_demo_mailbox": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_financialreviewrequests",
+                "recordId": "@outputs('Request_id')",
+                "item/mag_docrequestsent": true
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "UpdateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          },
+          "Audit_request": {
+            "type": "OpenApiConnection",
+            "runAfter": {
+              "Write_sent_flag": [
+                "Succeeded"
+              ]
+            },
+            "inputs": {
+              "parameters": {
+                "entityName": "mag_reviewaudittrails",
+                "item/mag_name": "Supplier Document Request Sent",
+                "item/mag_action": "Supplier Document Request Sent",
+                "item/mag_actor": "Data Collection (agent flow)",
+                "item/mag_actortype": 100000001,
+                "item/mag_occurredon": "@utcNow()",
+                "item/mag_systemtouched": "Dataverse; SRM demo mailbox",
+                "item/mag_details": "@{concat('Created one financial statement request with questionnaire', if(equals(outputs('Request')?['mag_noduns'], true), ' and supplemental credential', ''), ' for ', outputs('Request_ref'), '. Message addressed to the supplier contact in the body but delivered only to the configured SRM demo mailbox.')}",
+                "item/mag_ReviewRequestId@odata.bind": "mag_financialreviewrequests(@{outputs('Request_id')})",
+                "item/mag_SupplierId@odata.bind": "mag_suppliers(@{outputs('Request')?['_mag_supplierid_value']})"
+              },
+              "host": {
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                "operationId": "CreateRecord",
+                "connectionName": "shared_commondataserviceforapps"
+              }
+            }
+          }
+        },
+        "else": {
+          "actions": {}
+        }
+      },
+      "Status": {
+        "type": "Compose",
+        "runAfter": {
+          "Send_request": [
+            "Succeeded"
+          ]
+        },
+        "inputs": "@if(equals(outputs('Request'), null), 'notfound', if(not(outputs('Eligible')), 'ineligible', 'sent'))"
+      },
+      "Respond_to_the_agent": {
+        "type": "Response",
+        "kind": "Skills",
+        "runAfter": {
+          "Status": [
+            "Succeeded"
+          ]
+        },
+        "inputs": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "title": "Status",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "message": {
+                "title": "Message",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              },
+              "requestref": {
+                "title": "Request reference",
+                "type": "string",
+                "x-ms-content-hint": "TEXT",
+                "x-ms-dynamically-added": true
+              }
+            },
+            "additionalProperties": {}
+          },
+          "statusCode": 200,
+          "body": {
+            "status": "@{outputs('Status')}",
+            "message": "@if(equals(outputs('Status'), 'sent'), 'Checklist request prepared and logged; notification delivered to the SRM demo mailbox only.', if(equals(outputs('Status'), 'notfound'), 'Request not found.', 'Request is not eligible for document collection or has already been requested.'))",
+            "requestref": "@{outputs('Request_ref')}"
+          }
+        }
+      }
+    }
+  }
+}
