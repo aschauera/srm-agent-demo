@@ -321,6 +321,194 @@ formulas from the presenter checks.
 
 Do not add the attachment-flow technical test or a second supplier story to this 30-minute run.
 
+## Optional demo extension: flows and SRM Intake
+
+**Status:** Proposed add-on, 2026-11-02; documentation only, not a record of execution.
+Run this separate segment **after step 8**, with a new 10-minute timer. The eight main steps
+and their 30-minute schedule stay unchanged. These extensions revisit the main story; they
+do not replace its request submission, PDF analysis, or draft save.
+
+| Extension | Extra time | Value | Readiness gate |
+|---|---:|---|---|
+| A. Show the automation receipt | 2 min | Connect conversational status to app and audit evidence | Status tool is bound to the Orchestrator; rehearse its invocation |
+| B. Conversational Intake | 4 min | Confirm a supplier profile and submit one request through Intake | Intake tool bindings, mock-only grounding, routing, and conversational execution need verification |
+| C. Explain why this case needs PDFs | 4 min | Connect stale Coface evidence to a document checklist | Collection flows are documented as active; tool bindings and end-to-end execution need verification |
+
+### Shared preparation and boundaries
+
+- Adding this segment does not authorize live writes, agent changes, activation, or publishing.
+  Obtain explicit authorization before rehearsing or running the write actions in B and C in
+  **DemoPRE**. Use only fictional identities and keep the configured demo notification mailbox.
+- Keep [REQ-2026-001][req001] and [REQ-2026-012][req012] read-only. B creates a separate,
+  clearly labelled extension request; C uses that request, not the main demo's saved analysis.
+  If B is unavailable, C needs its own authorized, prepared isolated request.
+- Exported **On** metadata is not run evidence. Rehearse the tool calls and confirm bound
+  connections beforehand. The Dataverse-triggered pre-check also needs the designer save
+  described in the [Stage 1 guide](./06-agent-flows-and-actions.md); do not repair or redeploy
+  it during the presentation.
+- Allow at most 90 seconds per response. On an error, timeout, or missing binding, state what
+  did not run and use the extension's labelled fallback. Do not retry a timed-out submission
+  without checking for an already-created request, or force fields to manufacture a result.
+- New final ratings remain human-owned. No extension records authenticated approval. External
+  systems remain seeded Dataverse mocks; Preview attachments still are not stored against a
+  request by these extensions.
+
+### Extension A. Show the automation receipt | 2 minutes
+
+**Revisits:** main steps 2 and 7. **Mode:** read-only; do not repeat the draft save.
+
+The Orchestrator has a [Get review request status tool binding](../agents/srm-orchestrator/copilot/srm-orchestrator/capabilities/tools/SRM-Getreviewrequeststatus_Mhf.mcs.yml).
+Its presence is not proof of a successful conversational invocation. Rehearse it first.
+
+1. In a separate [Orchestrator Preview][preview] conversation, paste:
+
+   ```text
+   For REQ-2026-001, show the current review status, path, GSA pre-check result,
+   process stage, final-rating confirmation state, and record link.
+   Read only. Do not submit a request or change anything.
+   ```
+
+2. Compare the response with [REQ-2026-001][req001] in the app: **GSA Reuse**, **Completed**,
+   and the existing Green rating. Label this a seeded example, not a workflow run just performed.
+   Open the related audit and communication records to explain the reuse provenance; a status
+   response alone does not prove that a notification was delivered.
+3. Repeat the status question with the **actual isolated reference used in main step 7**.
+   The status tool returns routing and rating state, not the draft revision or saved row counts.
+4. Open that request's **Agent Analysis Draft** tab. Identify the revision key and the
+   "Analysis draft started"/"Analysis draft saved" audit entries from the main run. Compare
+   saved periods and separate unverified claims with the successful save response, if available.
+   Do not issue another save merely to populate this segment.
+5. Say: "The agent can explain the process state; the record and ledger show what actually
+   persisted. Neither is a new human rating decision."
+
+**Acceptance evidence:** status fields agree with the app; any claimed new draft has a matching
+revision and audit evidence. The [save contract][contract] still caps serialized `analysisjson`
+at 3,000 characters; this extension does not alter its revision/retry contract.
+
+**Fallback:** if the status call fails, show the app directly and say the conversational lookup
+did not complete. If main step 7 did not save, use [REQ-2026-012][req012] only as a **seeded**
+surface example; do not claim a new revision or successful persistence.
+
+### Extension B. Conversational Intake | 4 minutes
+
+**Revisits:** main step 2 as a separate interaction, not a second submission of the main request.
+
+**Not yet presenter-ready:** the [exported Intake configuration](../solutions/SRMAgentDemo/bots/mag_srmintakeprecheck_yrOw9c/configuration.json)
+has generic instructions and enabled web search. The [intended Intake instructions](../agents/intake-and-pre-check/instructions.md)
+describe mock-profile lookup and submission, but the repository does not establish working tool
+bindings or an Orchestrator-to-Intake connection. Verify those prerequisites before a live run;
+do not imply a connected handoff merely by switching Preview windows.
+
+1. Open the existing **SRM Intake & Pre-Check** agent in a separate Draft Preview. Use a
+   rehearsed direct interaction unless the connected route has also been verified. Paste:
+
+   ```text
+   Look up fictional supplier DUNS 900000012 in the seeded D&B data.
+   Show the supplier profile for confirmation. Do not submit a request yet.
+   Do not use web search or claim a live D&B lookup.
+   ```
+
+2. Show the **Look up D&B profile** result for Lumen Forge. Confirm the legal name and DUNS
+   against [SUP-012][sup012]. The [lookup flow](../flows/intake-lookup-dnb-profile/)
+   returns a seeded profile; it does not demonstrate a real third-party integration.
+3. Try to submit a new request - the agent should stop and flag the fact that **requests already exist**
+   ```text
+   Create a new review request for for the supplier - I am the buyer
+   ```
+
+
+### Extension C. Explain why this case needs PDFs | 4 minutes
+
+**Purpose in the SRM use case:** the
+[Prepare document request flow](../flows/document-request/definition.json) turns
+**"this supplier needs a full review" into a concrete, trackable request for evidence**.
+It initiates evidence collection; it does not perform the financial analysis.
+
+For Lumen Forge, there is no reusable GSA rating and the Coface evidence is stale. The reviewer
+therefore needs financial statements and supporting disclosures before assessing the supplier.
+The flow acts on that Full Review routing decision; it does not decide whether a full review
+is required.
+
+| Action | Business purpose |
+|---|---|
+| Check that the request is on Full Review, has a supplier contact email, and has not already requested documents | Avoid unnecessary or repeated outreach |
+| Build a standard checklist | Request consistent evidence without manually composing every email |
+| Request balance sheets, income statements, and cash-flow statements for the latest three completed years plus interim statements | Obtain the financial evidence needed for analysis |
+| Include a non-financial questionnaire covering litigation, arbitration, guarantees, concentration, leased assets, and management changes; add credential requests when no DUNS exists | Capture the supporting disclosures needed for a full review |
+| Create a collection-tracking record, log the communication, and mark documents as requested | Track outstanding responses and support later reminders |
+| Write an audit entry | Make the action traceable |
+
+**Where it fits:** Intake/pre-check -> Coface assessment -> document request -> supplier
+response -> PDF analysis -> human rating decision.
+
+**Demo distinction:** despite the word "Prepare," this flow **writes records and sends an
+email**; it is not merely an email-drafting tool. Delivery goes **only to the configured SRM
+demo mailbox**, not to the supplier. It does not create financial statements, collect uploaded
+PDF bytes, perform OCR, or assign a rating. Those are separate activities.
+
+
+1. Explain the side effects before asking to proceed: **Retrieve Coface data** updates request
+   fields, writes audit evidence, and emails the reviewer through the demo mailbox.
+   **Prepare document request** creates collection records, logs the checklist, and emails the
+   same demo mailbox. Those records can enter the later scheduled reminder lifecycle.
+2. After explicit authorization, invoke [Retrieve Coface data](../flows/coface-retrieve-and-check/)
+   with `requestref = <EXT-REQ>`. A suggested prompt for the rehearsed tool-owning agent is:
+
+   ```text
+   Retrieve the seeded Coface evidence for request <EXT-REQ> and check its data age.
+   This is the authorized isolated extension request. Show the outcome and record link.
+   Do not propose or confirm a financial rating, or prepare a document request yet.
+   ```
+
+3. Compare the response and app fields: supplier match, assessment date, configured age
+   window, and `withinwindow: false`. Show **Full Review** only if returned and persisted.
+   If the record is missing, retrieval is skipped, or the evidence is unexpectedly eligible
+   for fast-track, explain the actual result and stop this stale-evidence branch.
+4. Show the reviewer communication log and retrieval audit entry. Say: "No reusable GSA
+   rating and stale Coface evidence together explain why this case needs financial documents."
+5. After separately confirming the outreach side effects, invoke
+   [Prepare document request](../flows/document-request/) once with the same `requestref`.
+
+   Suggested prompt for the rehearsed tool-owning agent:
+
+   ```text
+   Prepare the document request for isolated extension request <EXT-REQ>.
+   I authorize one call that creates the collection-tracking record, logs the
+   communication and audit evidence, marks documents as requested, and sends
+   the checklist only to the configured SRM demo mailbox, not to the supplier.
+   Include the standard financial and non-financial checklist, plus no-DUNS
+   credentials if applicable. Return the actual requestref, status, and message.
+   If the request is not found, ineligible, or already requested, explain and stop.
+   Do not retry or force fields. Do not create another financial review request,
+   retrieve Coface again, file or analyze attachments, or set or confirm a rating.
+   ```
+
+   Inspect the actual outcome; an ineligible or already-requested result is not a new dispatch.
+   Show the message in the office@ mailbox.
+6. Point back to the main demo's PDF package: the checklist explains why the latest three
+   fiscal years, interim statements, and non-financial disclosures were requested. Do not
+   claim this segment collected, filed, or extracted those attachments. Day-3/day-7 reminders
+   are later scheduled behavior, not events that elapsed during this presentation.
+
+**Acceptance evidence:** the stale result agrees with the request; collection records and audit
+entries belong to the same isolated reference. No new final rating or human approval is recorded.
+
+**Fallback:** show the flow sources and prepared, clearly labelled evidence from an authorized
+rehearsal. If no such evidence exists, explain the proposed transition without invoking tools.
+Do not present exported active metadata or a seeded grid as proof of this run.
+
+### Extension traceability
+
+| Extension | Source / requirements | Implementing artifacts and verification |
+|---|---|---|
+| A. Automation receipt | Plan: status Q&A, `SRM-PLT-002`; slides 1-3, 8-9: `SRM-GOV-004`, `SRM-FIN-001`, `SRM-NFR-001` | [Status flow](../flows/srm-get-request-status/), [draft-save contract][contract]; compare tool responses, record revision, and audit entries |
+| B. Conversational Intake | slide2-slide3: `SRM-INT-011`, `SRM-INT-012`, `SRM-GOV-004` | [Intake instructions](../agents/intake-and-pre-check/instructions.md), [Stage 1 flows and evidence](./06-agent-flows-and-actions.md); verify profile confirmation, one submission, automatic pre-check, and actual reference |
+| C. Coface-to-collection bridge | slide4-slide7: `SRM-COF-002`, `SRM-COF-005`, `SRM-COF-008`, `SRM-COF-010`, `SRM-COF-012`, `SRM-COL-002`, `SRM-COL-012` | [Stage 2 guide](./07-stage-2-coface-and-collection.md) and linked flow sources; verify stale routing, checklist, notification, and ledger evidence |
+
+All three are proposed demo extensions with the readiness gates above, not newly verified
+agent capabilities. The separate attachment-filing rehearsal below remains outside both the
+main demo and this extension segment.
+
 ## Presenter-only checks: never upload to the agent
 
 | FY2025 fact | Expected value (USD whole dollars) | Digital page | Scan page |

@@ -13,6 +13,7 @@ live LLM extraction, tool integration, human approvals, or working-paper persist
 |---|---|---|
 | [Digital financial package](./sup012-financial-package-digital.pdf) | 12 pages: balance sheet, income statement, and operating cash flow excerpts for 2023-2025 annual and 2026 interim periods | Compare extracted signs, USD whole-dollar units, and fiscal periods with the source |
 | [Image-only FY2025 package](./sup012-fy2025-image-only.pdf) | Three raster-only pages, with no PDF text layer; FY2025 counterpart of digital pages 7-9 | Demonstrate recognition from page images, not knowledge search or text-layer parsing |
+| [Poor-quality scanned FY2025 package](./sup012-fy2025-poor-quality-scan.pdf) | Separate three-page image-only variant with skewed A4 paper edges, gray scanner-bed background, shadows, uneven lighting, blur, and scan noise; original unchanged | Exercise recognition from degraded scans; flag uncertain values rather than infer them |
 | [Unreadable income statement](./sup012-fy2025-unreadable-income.pdf) | One raster-only page with net income deliberately unavailable | Keep the value missing; request readable evidence or explicitly cite a separate source |
 | [Supplier questionnaire](./sup012-supplier-questionnaire.pdf) | Assertions about customer concentration, leased sites, arbitration, and guarantees | Distinguish disclosures from independently verified facts |
 | [Reviewer collateral note](./sup012-reviewer-collateral-note.pdf) | Conflicting concentration percentage and missing guarantee evidence | Surface 62% versus 68%; request clarification rather than choose one silently |
@@ -39,6 +40,11 @@ python .\scripts\11-generate-pdf-demo-materials.py --validate-only
 The generator reads the existing fictional `SUP-012` working-paper rows. Validation checks hashes,
 file sizes, PDF readability, twelve digital pages, image-only scans with no text layer, and the
 manually specified critical values. This is fixture validation, not model evaluation.
+
+The poor-quality scanned variant is a separately created visual derivative for `SRM-FIN-001`
+(slide 8); the generator and manifest cover the five original PDFs only. The derivative was checked
+for three raster-only A4 pages, visible paper margins, uneven lighting, and the 4 MiB limit, with
+the original image-only PDF's SHA-256 unchanged. These checks do not verify OCR accuracy.
 
 ## Proposed proof interaction
 
