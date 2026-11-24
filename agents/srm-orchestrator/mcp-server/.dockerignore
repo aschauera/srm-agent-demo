@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!requirements.txt
+!server.py
+!dashboard.py
+!ui/
+!ui/package.json
+!ui/package-lock.json
+!ui/index.html
+!ui/app.ts
+!ui/build.mjs
+!ui/tsconfig.json
+ui/node_modules/
+dist/
+__pycache__/

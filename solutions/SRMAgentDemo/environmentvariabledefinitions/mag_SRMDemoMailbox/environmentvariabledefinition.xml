@@ -1,4 +1,5 @@
 <environmentvariabledefinition schemaname="mag_SRMDemoMailbox">
+  <defaultvalue>office@M365x04582162.onmicrosoft.com</defaultvalue>
   <description default="Mailbox that receives every SRM demo notification; the intended recipient is named in the subject.">
     <label description="Mailbox that receives every SRM demo notification; the intended recipient is named in the subject." languagecode="1033" />
   </description>

@@ -8,4 +8,5 @@
   <name>SRM Orchestrator</name>
   <runtimeprovider>0</runtimeprovider>
   <template>cliagent-1.0.0</template>
+  <timezoneruleversionnumber>4</timezoneruleversionnumber>
 </bot>

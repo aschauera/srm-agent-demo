@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Role id="{d2f22bfa-1ead-409e-a2ba-91e26ced893a}" name="SRM MCP Dashboard Reader" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <IsCustomizable>1</IsCustomizable>
+  <IsAutoAssigned>0</IsAutoAssigned>
+  <RolePrivileges>
+    <RolePrivilege name="prvReadmag_AdverseNewsEvent" level="Global" />
+    <RolePrivilege name="prvReadmag_CofaceCreditRecord" level="Global" />
+    <RolePrivilege name="prvReadmag_FinancialReviewRequest" level="Global" />
+    <RolePrivilege name="prvReadmag_FinancialWorkingPaper" level="Global" />
+    <RolePrivilege name="prvReadmag_NonFinancialRiskItem" level="Global" />
+    <RolePrivilege name="prvReadmag_Supplier" level="Global" />
+    <RolePrivilege name="prvReadmag_SupplierOnePageSummary" level="Global" />
+  </RolePrivileges>
+</Role>

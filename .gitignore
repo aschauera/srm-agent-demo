@@ -5,3 +5,5 @@ __pycache__/
 solutions/*.zip
 .maker-workspace/
 apps/**/workflow-log.md
+agents/srm-orchestrator/mcp-server/dist/
+agents/srm-orchestrator/mcp-server/ui/node_modules/

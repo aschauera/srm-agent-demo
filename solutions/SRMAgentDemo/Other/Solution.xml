@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26094.133" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26094.133" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26094.00133">
+<ImportExportXml version="9.2.26113.135" SolutionPackageVersion="9.2" languagecode="1033" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26113.135" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26113.00135">
   <SolutionManifest>
     <UniqueName>SRMAgentDemo</UniqueName>
     <LocalizedNames>
@@ -100,6 +100,7 @@
       <RootComponent type="1" schemaName="mag_supplierdocument" behavior="1" />
       <RootComponent type="1" schemaName="mag_supplieronepagesummary" behavior="1" />
       <RootComponent type="1" schemaName="new_supplierfinancialreview" behavior="0" />
+      <RootComponent type="20" id="{d2f22bfa-1ead-409e-a2ba-91e26ced893a}" behavior="0" />
       <RootComponent type="29" id="{33953086-244a-47da-943c-35a7b2bf1613}" behavior="0" />
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e01}" behavior="0" />
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e02}" behavior="0" />
@@ -391,32 +392,32 @@
         <Dependent type="80" schemaName="mag_supplierfinancialriskreview" displayName="Supplier Financial Risk Review" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2609.4004)">
-          <package appName="Base Custom Controls" version="9.0.2609.4004">BaseCustomControlsCore (9.0.2609.4004)</package>
+        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2611.3005)">
+          <package appName="Base Custom Controls" version="9.0.2611.3005">BaseCustomControlsCore (9.0.2611.3005)</package>
         </Required>
         <Dependent type="60" displayName="Financial Review Request Quick Create" parentDisplayName="Financial Review Request" id="{61ec32ed-56a9-478b-84f1-a01d4d235214}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2609.4004)">
-          <package appName="Base Custom Controls" version="9.0.2609.4004">BaseCustomControlsCore (9.0.2609.4004)</package>
+        <Required type="66" schemaName="MscrmControls.FieldControls.ToggleControl" displayName="MscrmControls.FieldControls.ToggleControl" solution="BaseCustomControlsCore (9.0.2611.3005)">
+          <package appName="Base Custom Controls" version="9.0.2611.3005">BaseCustomControlsCore (9.0.2611.3005)</package>
         </Required>
         <Dependent type="60" displayName="Financial Review Request" parentDisplayName="Financial Review Request" id="{dca725c5-6378-4ad7-9446-68e4bbd8af69}" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="AppChannel">
-          <package appName="PowerAppsAppFramework Package" version="1.0.0.27">PowerAppsAppFramework_Anchor (1.0.0.27)</package>
+        <Required type="SettingDefinition" displayName="AppChannel" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.28)" id.uniquename="AppChannel">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.30">PowerAppsAppFramework_Anchor (1.0.0.30)</package>
         </Required>
         <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=AppChannel" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="AppChannel" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="SettingDefinition" displayName="HeaderAndNavigationRefresh" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="HeaderAndNavigationRefresh">
-          <package appName="PowerAppsAppFramework Package" version="1.0.0.27">PowerAppsAppFramework_Anchor (1.0.0.27)</package>
+        <Required type="SettingDefinition" displayName="HeaderAndNavigationRefresh" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.28)" id.uniquename="HeaderAndNavigationRefresh">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.30">PowerAppsAppFramework_Anchor (1.0.0.30)</package>
         </Required>
         <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=HeaderAndNavigationRefresh" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="HeaderAndNavigationRefresh" />
       </MissingDependency>
       <MissingDependency>
-        <Required type="SettingDefinition" displayName="NewLookAlwaysOn" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.27)" id.uniquename="NewLookAlwaysOn">
-          <package appName="PowerAppsAppFramework Package" version="1.0.0.27">PowerAppsAppFramework_Anchor (1.0.0.27)</package>
+        <Required type="SettingDefinition" displayName="NewLookAlwaysOn" solution="msdyn_AppFrameworkInfraExtensions (1.0.0.28)" id.uniquename="NewLookAlwaysOn">
+          <package appName="PowerAppsAppFramework Package" version="1.0.0.30">PowerAppsAppFramework_Anchor (1.0.0.30)</package>
         </Required>
         <Dependent type="AppSetting" displayName="parentappmoduleid.uniquename=mag_supplierfinancialriskreview,settingdefinitionid.uniquename=NewLookAlwaysOn" id.parentappmoduleid.uniquename="mag_supplierfinancialriskreview" id.settingdefinitionid.uniquename="NewLookAlwaysOn" />
       </MissingDependency>
