@@ -1,0 +1,20 @@
+{
+  "name": "srm-risk-mcp-app",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "npm run check && node build.mjs",
+    "test": "npm run build && node --test app.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "2.0.4",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "happy-dom": "21.0.4",
+    "typescript": "^5.9.0"
+  }
+}

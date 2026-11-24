@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_SRMMcpHost">
+  <description default="Approved SRM MCP hostname without scheme or path; configure as an environment-specific current value.">
+    <label description="Approved SRM MCP hostname without scheme or path; configure as an environment-specific current value." languagecode="1033" />
+  </description>
+  <displayname default="SRM MCP host">
+    <label description="SRM MCP host" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

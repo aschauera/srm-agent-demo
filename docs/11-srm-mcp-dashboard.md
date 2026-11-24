@@ -1,0 +1,261 @@
+# SRM MCP supplier dashboard
+
+## Scope and traceability
+
+This user-approved extension adds a read-only MCP server and MCP App to the SRM
+Orchestrator, without replacing the model-driven app or changing the seven-agent topology.
+Only fictional seeded suppliers `SUP-001` through `SUP-012` are supported.
+
+| Requirement | Source | Implementation and verification |
+|---|---|---|
+| `SRM-OPS-001` | Slides 17-19 | [Dashboard loader](../agents/srm-orchestrator/mcp-server/dashboard.py): spend gating, company profile, stored indicators, annual revenue trend, confirmed review history, adverse-event evidence. [Hosted smoke test](../scripts/17-smoke-test-srm-mcp.py) verifies SUP-012 / REQ-2026-012. |
+| `SRM-FIN-001` | Slides 8, 11 | Existing working-paper metrics are displayed, not rescored. [Focused tests](../agents/srm-orchestrator/mcp-server/test_dashboard.py) validate column and choice alignment with `schema/`. |
+| `SRM-GOV-001`, `SRM-GOV-002` | Slide 1; slide 19; approved plan | Final request rating requires the stored human-confirmation flag. AI preliminary and supplier-master ratings remain separate. Entra role gating withholds sensitive data at the server, not merely in CSS. |
+
+This slice does **not** implement monthly generation, external monitoring, PDF export/archival,
+new rating calculations, or approval/synchronization writes. It reads existing Dataverse records.
+Stored final remarks are labelled as such; their equality with a closing email is not inferred.
+
+## Architecture
+
+```text
+SRM Orchestrator / MCP Apps host
+  -> authenticated Streamable HTTP /mcp
+  -> Entra signature, issuer, audience, expiry and role validation
+  -> user-assigned managed identity
+  -> GET-only Dataverse Web API, DemoPRE, seven allowlisted SRM tables
+  -> structured tool result + ui://srm/supplier-risk-dashboard.html
+```
+
+- [Server](../agents/srm-orchestrator/mcp-server/server.py):
+  `get_supplier_risk_dashboard(supplier_code, request_ref?)`.
+- Tool metadata declares `_meta.ui.resourceUri`; the HTML resource uses
+  `text/html;profile=mcp-app`, with empty external-network/resource CSP allowlists.
+- [UI](../agents/srm-orchestrator/mcp-server/ui/) uses the official MCP Apps SDK.
+  Refresh calls the same MCP tool through the host. The iframe receives no Dataverse
+  credentials and does not fetch Dataverse directly.
+- Clawpilot light/dark variables are used throughout. Host theme takes precedence,
+  then an explicit `scoutTheme=light|dark`, then OS preference. Theme changes are observed.
+- Traffic lights include text labels. Missing/unconfirmed ratings are neutral, never Green.
+  Stale Coface assessments are explicitly historical; the 18-month window comes from slide 6.
+  No invented metric thresholds or composite ratings are used.
+
+The user approved GET-only Web API reads instead of SDK metadata discovery. This removes the
+need for schema-metadata privileges and keeps the application's Dataverse role limited to
+seven table-read privileges. Authentication still uses `azure-identity`, not a bespoke token flow.
+Tables, columns, entity sets, and choices were checked against source and live DemoPRE reads.
+Unexpected redirects, partial pages, invalid choices, missing suppliers, and failed reads
+produce explicit errors rather than a successful-looking fallback dashboard.
+
+## Deployment
+
+The new `srm-risk-mcp` Container App uses the existing `mcp` environment and registry in
+resource group `mcpservers`. `aschi-weather-mcp` is unchanged.
+
+[16-deploy-srm-mcp.ps1](../scripts/16-deploy-srm-mcp.ps1) has separate `Security` and `Deploy`
+phases. Supply the previously approved subscription and registry independently through the
+`SRM_APPROVED_SUBSCRIPTION_ID` and `SRM_APPROVED_REGISTRY_NAME` environment variables and
+matching parameters; the script also restricts the resource group, app, and environment names.
+This configuration is not itself authorization for a new deployment.
+Keep deployment state and identifier values outside tracked source. The security phase requires
+the existing owned Dataverse role ID, API reader and legal-reader app-role IDs, OAuth scope ID,
+and Microsoft Azure CLI client application ID. For an existing deployment, retrieve the IDs from
+the corresponding role and Entra registrations; for a new approved deployment, generate and
+retain distinct GUIDs for the owned role, app roles, and scope. Reuse them on every security run
+to preserve role ownership and existing grants. The Azure CLI client ID identifies Microsoft's
+public client, not the dashboard's OAuth client. Example, after approval:
+Set `SRM_APPROVED_AZURE_CLI_CLIENT_ID` independently to Microsoft's verified public client ID;
+the security phase refuses a nonmatching client ID.
+
+```powershell
+.\scripts\16-deploy-srm-mcp.ps1 -Phase Security -StatePath C:\temp\srm-mcp-deployment.json `
+  -Subscription $env:SRM_APPROVED_SUBSCRIPTION_ID -RegistryName $env:SRM_APPROVED_REGISTRY_NAME `
+  -OwnedRoleId $ownedRoleId -ReaderRoleId $readerRoleId -LegalRoleId $legalRoleId `
+  -ScopeId $scopeId -AzureCliClientId $env:SRM_APPROVED_AZURE_CLI_CLIENT_ID
+.\scripts\16-deploy-srm-mcp.ps1 -Phase Deploy -StatePath C:\temp\srm-mcp-deployment.json `
+  -Subscription $env:SRM_APPROVED_SUBSCRIPTION_ID -RegistryName $env:SRM_APPROVED_REGISTRY_NAME
+python .\scripts\17-smoke-test-srm-mcp.py --deployment-state C:\temp\srm-mcp-deployment.json --expected-endpoint $approvedEndpoint
+```
+
+Independently confirm `$approvedEndpoint` from the approved Container App before testing; the
+smoke test refuses to send a token unless it matches the state file and is an HTTPS `/mcp` URL.
+Builds use a source-only staging directory: Windows `node_modules`, caches, tokens and
+local credentials are never copied into the Linux image. A successful existing timestamp
+image can be resumed with `-ExistingImageTag` if local build-log streaming was interrupted.
+The public `/healthz` route contains no business data. `/mcp` requires Entra authorization.
+The container runs as a non-root user with one replica for this demo.
+
+### Security
+
+The managed identity's application user has exactly one Dataverse role,
+**SRM MCP Dashboard Reader**, with Global Read on:
+
+`mag_supplier`, `mag_financialreviewrequest`, `mag_financialworkingpaper`,
+`mag_cofacecreditrecord`, `mag_supplieronepagesummary`, `mag_adversenewsevent`,
+`mag_nonfinancialriskitem`.
+
+No create/write/delete/approval privileges are granted. The deployment verifies the full
+privilege set, removing only identified defaults on the role owned by this deployment.
+Unexpected pre-existing privileges cause a failure, not silent removal.
+
+The separate Entra API registration exposes `SRM.Read` and requires `SRM.Reader`.
+Sensitive narratives, aggregate free-text summaries, adverse events, and qualitative risk
+details additionally require `SRM.LegalReader`. A caller cannot request that role through
+tool arguments. Restricted callers never select those columns/tables. The initial approved
+operator has both roles; other users must be explicitly assigned appropriate roles.
+
+The server uses a service identity, **not** delegated Dataverse row-level access. Entra
+roles gate the fictional demo dataset; do not use this deployment for real supplier data
+without designing per-user/record authorization.
+
+### Copilot Studio connection
+
+Use the existing SRM Orchestrator in DemoPRE. In **Build -> Tools -> Add tool -> MCP**,
+add the independently confirmed endpoint as **SRM Supplier Risk Dashboard**.
+
+Use manually configured Entra OAuth:
+
+| Setting | Value |
+|---|---|
+| Client | `SRM MCP Copilot Client` registration created by the security phase |
+| Authorization URL | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token / refresh URL | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| Scope | `api://<api-app-id>/SRM.Read` (plus `offline_access` if requested by the host) |
+| Client secret | Create for the client registration and enter only in the protected connection; never in source |
+| Redirect URI | Copy the actual URI shown by Copilot Studio and register it on the client app; do not guess it |
+
+Use the protected deployment state to obtain the tenant and application IDs. Client secrets
+belong in the OAuth connection's vault. Entra does not support dynamic client registration.
+Save the cloud draft, then test in preview before publishing. UI labels can vary.
+
+#### Portable connector configuration
+
+The solution's SRM UI connector uses
+[`@environmentVariables("schemaName")` references](https://learn.microsoft.com/en-us/connectors/custom-connectors/environment-variables)
+for the host and OAuth settings, not literal tenant or application IDs:
+
+| Environment variable | Connector field |
+|---|---|
+| `mag_SRMMcpHost` | Hostname, without scheme or path |
+| `mag_SRMMcpOAuthClientId` | OAuth client application ID |
+| `mag_SRMMcpOAuthAuthorizeUrl` | Authorization endpoint |
+| `mag_SRMMcpOAuthTokenUrl` | Token endpoint |
+| `mag_SRMMcpOAuthRefreshUrl` | Refresh endpoint |
+| `mag_SRMMcpOAuthScope` | Fully qualified API scope, including security requirements |
+
+[Definitions](../agents/srm-orchestrator/mcp-server/connector-environment-variables.json)
+belong to `SRMAgentDemo` with no populated defaults. Their environment-specific **current
+values stay outside the solution**. Keep those values in protected deployment configuration,
+not in this guide. Connection credentials belong in the protected OAuth configuration;
+these String variables must never hold a client secret or token. Updating connector
+metadata can invalidate the saved secret even when the export/API omits it. Arrange
+private credential re-entry before changing connector metadata; do not assume that
+matching non-secret settings proves the OAuth credential was retained.
+
+After explicit approval, [18-parameterize-srm-connector.py](../scripts/18-parameterize-srm-connector.py)
+reads the existing connector, configures the six current values, and replaces the portable
+settings. It refuses conflicting OAuth fields, missing values, unexpected authentication
+schemes, and any change to the fully resolved configuration:
+
+```powershell
+python scripts\18-parameterize-srm-connector.py --dry-run
+python scripts\18-parameterize-srm-connector.py --acknowledge-oauth-reconfiguration
+```
+
+The script verifies definition/current-value solution membership and connector readback.
+It requires acknowledgement before changing connector metadata, but never accepts,
+prints, or stores a client secret. Re-enter a valid secret **Value** (not its ID)
+privately in the protected connector security field if needed. Test a new OAuth
+sign-in and the dashboard in Copilot Studio Preview, then export/unpack the solution.
+Microsoft resolves these variables when the connector is saved; after intentionally
+changing a current value, resave the connector and test again. For a new environment,
+provide all current values during import and configure its protected OAuth connection.
+
+Suggested routing instruction:
+
+> For a supplier risk dashboard, use `get_supplier_risk_dashboard`. For Lumen Forge
+> Industrial Systems Ltd, pass `supplier_code="SUP-012"` and
+> `request_ref="REQ-2026-012"`. Keep supplier-master, AI-preliminary, and human-final
+> ratings separate. Never use the dashboard to approve or change a rating.
+
+Microsoft currently documents MCP Apps support in **Copilot Studio preview chat** and
+**Microsoft 365 Copilot**, not Teams or web chat:
+[Copilot Studio MCP Apps](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/mcp-apps).
+
+## Validation evidence
+
+Verified against the hosted endpoint on 2026-11-23:
+
+- unauthenticated and invalid-token requests rejected with HTTP 401;
+- official MCP client initialization, tool listing/call, and HTML resource read succeeded;
+- Lumen Forge Industrial Systems Ltd (`SUP-012`), `REQ-2026-012`, four working-paper periods;
+- supplier master **Red**, AI preliminary **Green**, **no confirmed final rating**;
+- Coface **2/10 / High**, assessment 2024-08-19, explicitly **not current**;
+- sensitive data returned only to the approved LegalReader caller.
+
+Local validation: TypeScript typecheck/bundle, eight focused Python tests, and five
+UI tests passed. UI tests verify the actual production HTML's script syntax, real SDK
+initialization and host-delivered tool results, traffic light and human-rating distinction,
+light/dark host-theme changes, safe text rendering, exact refresh arguments, and stale-data
+hiding on errors. The hosted smoke test's `--expected-ui` option compares the served HTML
+byte-for-byte with that tested production artifact.
+The MCP resource includes the required MIME type, UI metadata, and empty network CSP.
+Do not treat this server-level verification as proof that the Orchestrator connection
+or its light/dark preview has been completed; those need separate host-side verification.
+
+The user configured the Orchestrator OAuth connection and confirmed successful tool
+calls in Copilot Studio preview. After the startup fix below was deployed, the user
+also confirmed that the graphical dashboard renders in Preview (2026-11-23).
+No client secret was generated by repository scripts.
+
+### Rendering startup regression
+
+The initial widget displayed **Couldn't start the app** although the data tool succeeded.
+The HTML bundler passed the JavaScript bundle directly as a string-replacement argument.
+JavaScript `$&`, dollar-backtick, and dollar-apostrophe sequences were interpreted as
+replacement patterns, injecting copies of the HTML template and breaking script syntax.
+The original artifact contained 19 script blocks and could not initialize.
+
+The bundler now inserts the JavaScript through a replacement callback, preserving those
+characters literally. The corrected artifact has two executable script blocks (theme
+detection and the MCP App bundle). Regression tests parse the final HTML and complete an
+initialization/tool-result exchange using the real bundled SDK, rather than only testing
+the application against a mocked SDK. For a cached failed widget, reload Preview and
+invoke the dashboard again; no OAuth or redirect-URI changes are needed for this fix.
+
+The hosted MCP smoke test verified that the deployed HTML exactly matches the tested
+686,115-byte artifact, while authenticated SUP-012 reads and unauthenticated-request
+rejection continue to work. Only the external Container App was redeployed for this fix;
+no Dataverse metadata, agent settings, permissions, or ratings were changed.
+
+After a successful DemoPRE metadata change, export/unpack `SRMAgentDemo` as required by
+[AGENTS.md](../AGENTS.md#solution-source-synchronization). Asynchronous PAC export is a
+supported alternative when synchronous export fails; never unpack a failed export.
+
+The verified role deployment was exported and unpacked on 2026-11-23. The export contains
+all 17 `mag_` tables with DemoKey keys, publisher prefix `mag`, and the exact seven-read
+dashboard role. It also captures pre-existing cloud drift: newer platform dependency
+versions, additional Orchestrator configuration (including its Dataverse query instruction
+and conversation starters), and an environment-specific demo mailbox default. These were
+not changed by the MCP deployment and were not silently removed from generated source.
+
+The mailbox default was subsequently cleared through the approved DemoPRE provisioning
+cleanup, preserving its effective recipient as a current value outside the solution.
+Provisioning now clears environment-specific defaults only after establishing the current
+value; deployment-independent constants are preserved. No generated solution file is
+manually sanitized.
+
+On 2026-11-24, six connector settings were parameterized and verified against their
+original resolved values. Dataverse added its standard Microsoft redirect URL and
+default OAuth metadata during save. New connection creation required private
+client-secret reconfiguration; after that step, the user confirmed the dashboard
+worked. Protected credentials cannot be verified or preserved by comparing exported
+connector metadata alone.
+
+The final export/unpack was checked for literal tenant/client/API/subscription IDs,
+populated credential fields, environment-variable defaults/current values, all 17
+table keys, and publisher prefix `mag`. The six connector variables export only their
+definitions; the mailbox recipient and connector values remain environment-specific.
+Twelve focused cleanup/parameterization tests and offline validation of all ten flow
+definitions passed. Earlier PR commits may still contain previously committed non-secret
+IDs or mailbox defaults; working-tree cleanup does not rewrite that history.

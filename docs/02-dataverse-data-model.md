@@ -11,6 +11,10 @@ and the Supplier One-Page Summary. The BPF and model-driven app are specified in
 [03-model-driven-app.md](03-model-driven-app.md). Agent actions, security roles, and external
 connections are not created here.
 
+The subsequent [SRM MCP dashboard slice](11-srm-mcp-dashboard.md) realizes read-only
+`SRM-OPS-001` presentation and human-rating/access gates over these existing tables.
+It introduces no data-model columns and does not calculate or approve ratings.
+
 | Requirement ID | Requirement | Source |
 |---|---|---|
 | `SRM-PLT-001` | Use Dataverse as the self-contained system of record and represent external systems with fictional mock data. | Implementation plan, Proposed approach |

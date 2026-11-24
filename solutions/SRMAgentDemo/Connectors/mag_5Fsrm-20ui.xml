@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connectorid>9d19cbb9-dba2-4508-a1c8-b124651ef746</connectorid>
+  <description>This MCP fetches supplier risk data and presents an interactive dashboard via MCP apps</description>
+  <displayname>SRM UI</displayname>
+  <iconbrandcolor>#007ee5</iconbrandcolor>
+  <name>mag_5Fsrm-20ui</name>
+  <connectortype>1</connectortype>
+  <openapidefinition>/Connector/mag_5Fsrm-20ui_openapidefinition.json</openapidefinition>
+  <connectionparameters>/Connector/mag_5Fsrm-20ui_connectionparameters.json</connectionparameters>
+  <policytemplateinstances>/Connector/mag_5Fsrm-20ui_policytemplateinstances.json</policytemplateinstances>
+  <iconblob>/Connector/mag_5Fsrm-20ui_iconblob.Png</iconblob>
+</Connector>

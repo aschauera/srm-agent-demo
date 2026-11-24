@@ -1,0 +1,38 @@
+[
+  {
+    "schemaName": "mag_SRMMcpHost",
+    "displayName": "SRM MCP host",
+    "type": "String",
+    "description": "Approved SRM MCP hostname without scheme or path; configure as an environment-specific current value."
+  },
+  {
+    "schemaName": "mag_SRMMcpOAuthClientId",
+    "displayName": "SRM MCP OAuth client ID",
+    "type": "String",
+    "description": "OAuth client application ID for the SRM connector; configure as an environment-specific current value."
+  },
+  {
+    "schemaName": "mag_SRMMcpOAuthAuthorizeUrl",
+    "displayName": "SRM MCP OAuth authorization URL",
+    "type": "String",
+    "description": "Tenant-specific Entra authorization endpoint; configure as an environment-specific current value."
+  },
+  {
+    "schemaName": "mag_SRMMcpOAuthTokenUrl",
+    "displayName": "SRM MCP OAuth token URL",
+    "type": "String",
+    "description": "Tenant-specific Entra token endpoint; configure as an environment-specific current value."
+  },
+  {
+    "schemaName": "mag_SRMMcpOAuthRefreshUrl",
+    "displayName": "SRM MCP OAuth refresh URL",
+    "type": "String",
+    "description": "Tenant-specific Entra refresh endpoint; configure as an environment-specific current value."
+  },
+  {
+    "schemaName": "mag_SRMMcpOAuthScope",
+    "displayName": "SRM MCP OAuth scope",
+    "type": "String",
+    "description": "Fully qualified SRM API delegated scope; configure as an environment-specific current value."
+  }
+]

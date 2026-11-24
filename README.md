@@ -17,3 +17,8 @@ test, use the [live demo guide](docs/09-demo-script.md).
 The next proposed demo slice is described in the
 [agent-led PDF analysis plan](docs/planning/agent-led-pdf-demo-plan.md): document-input LLM
 extraction, evidence-backed analysis, and human review gates. This is a plan, not deployed behavior.
+
+The [SRM MCP dashboard](docs/11-srm-mcp-dashboard.md) adds a read-only, Entra-authenticated
+supplier traffic-light widget hosted in a separate Azure Container App. Its hosted MCP contract
+and live `SUP-012` data reads are verified; the user confirmed graphical rendering in
+Copilot Studio Preview after configuring OAuth.

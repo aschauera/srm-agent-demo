@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26094.133" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26094.00133">
+<ImportExportXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26113.135" OrganizationSchemaType="Standard" CRMServerServiceabilityVersion="9.2.26113.00135">
   <Entities />
   <Roles />
   <Workflows />
@@ -14,11 +14,24 @@
   <AppModuleSiteMaps />
   <AppModules />
   <EntityDataProviders />
+  <Connectors />
   <connectionreferences>
     <connectionreference connectionreferencelogicalname="mag_SRMDataverse">
       <connectionreferencedisplayname>SRM Dataverse</connectionreferencedisplayname>
       <connectorid>/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps</connectorid>
       <description>Dataverse connection used by every SRM agent flow.</description>
+      <iscustomizable>1</iscustomizable>
+      <promptingbehavior>0</promptingbehavior>
+      <statecode>0</statecode>
+      <statuscode>1</statuscode>
+    </connectionreference>
+    <connectionreference connectionreferencelogicalname="mag_SRMOchestratorMCPRIskUI">
+      <connectionreferencedisplayname>SRM Ochestrator MCP RIsk UI</connectionreferencedisplayname>
+      <connectorid>/providers/Microsoft.PowerApps/apis/shared_mag-5fsrm-20ui-5fec1e2090c7572e9c</connectorid>
+      <customconnectorid>
+        <connectorid>9d19cbb9-dba2-4508-a1c8-b124651ef746</connectorid>
+      </customconnectorid>
+      <description>The MCP risk ui</description>
       <iscustomizable>1</iscustomizable>
       <promptingbehavior>0</promptingbehavior>
       <statecode>0</statecode>
