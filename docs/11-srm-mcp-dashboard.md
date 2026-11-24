@@ -128,6 +128,49 @@ Use the protected deployment state to obtain the tenant and application IDs. Cli
 belong in the OAuth connection's vault. Entra does not support dynamic client registration.
 Save the cloud draft, then test in preview before publishing. UI labels can vary.
 
+#### Portable connector configuration
+
+The solution's SRM UI connector uses
+[`@environmentVariables("schemaName")` references](https://learn.microsoft.com/en-us/connectors/custom-connectors/environment-variables)
+for the host and OAuth settings, not literal tenant or application IDs:
+
+| Environment variable | Connector field |
+|---|---|
+| `mag_SRMMcpHost` | Hostname, without scheme or path |
+| `mag_SRMMcpOAuthClientId` | OAuth client application ID |
+| `mag_SRMMcpOAuthAuthorizeUrl` | Authorization endpoint |
+| `mag_SRMMcpOAuthTokenUrl` | Token endpoint |
+| `mag_SRMMcpOAuthRefreshUrl` | Refresh endpoint |
+| `mag_SRMMcpOAuthScope` | Fully qualified API scope, including security requirements |
+
+[Definitions](../agents/srm-orchestrator/mcp-server/connector-environment-variables.json)
+belong to `SRMAgentDemo` with no populated defaults. Their environment-specific **current
+values stay outside the solution**. Keep those values in protected deployment configuration,
+not in this guide. Connection credentials belong in the protected OAuth configuration;
+these String variables must never hold a client secret or token. Updating connector
+metadata can invalidate the saved secret even when the export/API omits it. Arrange
+private credential re-entry before changing connector metadata; do not assume that
+matching non-secret settings proves the OAuth credential was retained.
+
+After explicit approval, [18-parameterize-srm-connector.py](../scripts/18-parameterize-srm-connector.py)
+reads the existing connector, configures the six current values, and replaces the portable
+settings. It refuses conflicting OAuth fields, missing values, unexpected authentication
+schemes, and any change to the fully resolved configuration:
+
+```powershell
+python scripts\18-parameterize-srm-connector.py --dry-run
+python scripts\18-parameterize-srm-connector.py --acknowledge-oauth-reconfiguration
+```
+
+The script verifies definition/current-value solution membership and connector readback.
+It requires acknowledgement before changing connector metadata, but never accepts,
+prints, or stores a client secret. Re-enter a valid secret **Value** (not its ID)
+privately in the protected connector security field if needed. Test a new OAuth
+sign-in and the dashboard in Copilot Studio Preview, then export/unpack the solution.
+Microsoft resolves these variables when the connector is saved; after intentionally
+changing a current value, resave the connector and test again. For a new environment,
+provide all current values during import and configure its protected OAuth connection.
+
 Suggested routing instruction:
 
 > For a supplier risk dashboard, use `get_supplier_risk_dashboard`. For Lumen Forge
@@ -195,3 +238,24 @@ dashboard role. It also captures pre-existing cloud drift: newer platform depend
 versions, additional Orchestrator configuration (including its Dataverse query instruction
 and conversation starters), and an environment-specific demo mailbox default. These were
 not changed by the MCP deployment and were not silently removed from generated source.
+
+The mailbox default was subsequently cleared through the approved DemoPRE provisioning
+cleanup, preserving its effective recipient as a current value outside the solution.
+Provisioning now clears environment-specific defaults only after establishing the current
+value; deployment-independent constants are preserved. No generated solution file is
+manually sanitized.
+
+On 2026-11-24, six connector settings were parameterized and verified against their
+original resolved values. Dataverse added its standard Microsoft redirect URL and
+default OAuth metadata during save. New connection creation required private
+client-secret reconfiguration; after that step, the user confirmed the dashboard
+worked. Protected credentials cannot be verified or preserved by comparing exported
+connector metadata alone.
+
+The final export/unpack was checked for literal tenant/client/API/subscription IDs,
+populated credential fields, environment-variable defaults/current values, all 17
+table keys, and publisher prefix `mag`. The six connector variables export only their
+definitions; the mailbox recipient and connector values remain environment-specific.
+Twelve focused cleanup/parameterization tests and offline validation of all ten flow
+definitions passed. Earlier PR commits may still contain previously committed non-secret
+IDs or mailbox defaults; working-tree cleanup does not rewrite that history.

@@ -15,6 +15,7 @@ Follows AGENTS.md, Cloud Flow Generation. Idempotently:
 
 Usage:
     python scripts/08-deploy-flows.py --validate-only
+    python scripts/08-deploy-flows.py --clear-mailbox-default [--dry-run]
     python scripts/08-deploy-flows.py [--demo-mailbox you@contoso.com] [--activate] [--only <flow>]
 
 Requirements: SRM-INT-008..012, SRM-PLT-002, SRM-GOV-004 (docs/06-agent-flows-and-actions.md).
@@ -79,13 +80,13 @@ def _load_web_api():
         text=True,
     )
     if pac.returncode or not any(
-        re.search(r"\*\s+UNIVERSAL\s+DemoPRE\b", line) and ENVIRONMENT in line
+        re.search(r"\*\s+UNIVERSAL\b", line) and line.split()[-1].rstrip("/") == ENVIRONMENT
         for line in pac.stdout.splitlines()
     ):
         raise RuntimeError(f"Select the approved PAC DemoPRE profile for {ENVIRONMENT} before deploying flows.")
     dataverse_profiles = run_cli(["auth", "list"])
     if dataverse_profiles.returncode or not any(
-        re.search(r"\*\s+UNIVERSAL\b", line) and ENVIRONMENT in line
+        re.search(r"\*\s+UNIVERSAL\b", line) and line.split()[-1].rstrip("/") == ENVIRONMENT
         for line in dataverse_profiles.stdout.splitlines()
     ):
         raise RuntimeError(f"Select the approved Dataverse CLI profile for {ENVIRONMENT} before deploying flows.")
@@ -320,19 +321,27 @@ def add_to_solution(web_api, component_id: str, component_type: int) -> None:
     })
 
 
+def environment_variable_rows(web_api, schema: str) -> list[dict]:
+    rows = web_api("GET", "environmentvariabledefinitions?$select=environmentvariabledefinitionid,displayname,defaultvalue"
+                         f"&$filter=schemaname eq '{schema}'"
+                         "&$expand=environmentvariabledefinition_environmentvariablevalue($select=value,environmentvariablevalueid)")["value"]
+    if len(rows) > 1 or (rows and len(rows[0]["environmentvariabledefinition_environmentvariablevalue"]) > 1):
+        raise RuntimeError(f"Ambiguous definition or current values for {schema}; refusing to change it.")
+    return rows
+
+
 def ensure_environment_variables(web_api, variables: list[dict], values: dict[str, str], dry_run: bool) -> None:
     for variable in variables:
         schema = variable["schemaName"]
-        rows = web_api("GET", "environmentvariabledefinitions?$select=environmentvariabledefinitionid,displayname"
-                              f"&$filter=schemaname eq '{schema}'"
-                              "&$expand=environmentvariabledefinition_environmentvariablevalue($select=value,environmentvariablevalueid)")["value"]
+        rows = environment_variable_rows(web_api, schema)
         body = {"displayname": variable["displayName"], "description": variable["description"], "type": 100000000}
+        if "defaultValue" not in variable:
+            body["defaultvalue"] = None
         if dry_run:
-            print(f"{'Update' if rows else 'Create'} environment variable {schema} = {values[schema]!r}")
+            print(f"{'Update' if rows else 'Create'} environment variable {schema}; current value withheld.")
             continue
         if rows:
             definition_id = rows[0]["environmentvariabledefinitionid"]
-            web_api("PATCH", f"environmentvariabledefinitions({definition_id})", body, SOLUTION_HEADER)
         else:
             created = web_api("POST", "environmentvariabledefinitions", {**body, "schemaname": schema},
                               {**SOLUTION_HEADER, "Prefer": "return=representation"})
@@ -352,6 +361,32 @@ def ensure_environment_variables(web_api, variables: list[dict], values: dict[st
                 "EnvironmentVariableDefinitionId@odata.bind": f"/environmentvariabledefinitions({definition_id})",
             })
             print(f"Set value of {schema}")
+        if rows:
+            web_api("PATCH", f"environmentvariabledefinitions({definition_id})", body, SOLUTION_HEADER)
+
+
+def clear_mailbox_default(web_api, variables: list[dict], dry_run: bool) -> None:
+    schema = "mag_SRMDemoMailbox"
+    rows = environment_variable_rows(web_api, schema)
+    if len(rows) != 1:
+        raise RuntimeError(f"Expected one existing {schema} definition.")
+    definition = rows[0]
+    current = definition["environmentvariabledefinition_environmentvariablevalue"]
+    effective = current[0].get("value") if current else definition.get("defaultvalue")
+    if not effective or not effective.strip():
+        raise RuntimeError("The demo mailbox has no effective recipient; refusing to clear its default.")
+    if definition["environmentvariabledefinitionid"].lower() not in solution_component_ids(web_api, ENV_VAR_COMPONENT):
+        raise RuntimeError("The demo mailbox definition is not in SRMAgentDemo.")
+    variable = next(v for v in variables if v["schemaName"] == schema)
+    ensure_environment_variables(web_api, [variable], {schema: effective}, dry_run)
+    if dry_run:
+        print("Would preserve the effective mailbox as a current value and clear its portable default. No flows changed.")
+        return
+    verified = environment_variable_rows(web_api, schema)[0]
+    currents = verified["environmentvariabledefinition_environmentvariablevalue"]
+    if verified.get("defaultvalue") is not None or len(currents) != 1 or currents[0].get("value") != effective:
+        raise RuntimeError("Mailbox cleanup readback failed; do not export the solution.")
+    print("Verified: mailbox default cleared, effective recipient unchanged, no flows changed.")
 
 
 def ensure_connection_references(web_api, references: list[dict], dry_run: bool) -> dict[str, bool]:
@@ -475,8 +510,12 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="Show planned changes without writing.")
     parser.add_argument("--activate", action="store_true", help="Turn flows on when their connections are bound.")
     parser.add_argument("--demo-mailbox", help="Mailbox for demo notifications (default: the deploying user).")
+    parser.add_argument("--clear-mailbox-default", action="store_true",
+                        help="Preserve the effective mailbox in a current value and clear its portable default; do not deploy flows.")
     parser.add_argument("--only", action="append", help="Deploy only the named flow folder (repeatable).")
     args = parser.parse_args()
+    if args.clear_mailbox_default and (args.activate or args.demo_mailbox is not None or args.only or args.validate_only):
+        parser.error("--clear-mailbox-default supports only --dry-run.")
 
     references, variables, flows = load_sources()
     errors = validate(references, variables, flows)
@@ -484,6 +523,10 @@ def main() -> None:
         raise SystemExit("Flow validation failed:\n  " + "\n  ".join(errors))
     print(f"Validated {len(flows)} flows, {len(references)} connection references, {len(variables)} environment variables.")
     if args.validate_only:
+        return
+    if args.clear_mailbox_default:
+        web_api, _ = _load_web_api()
+        clear_mailbox_default(web_api, variables, args.dry_run)
         return
     if args.only:
         flows = [f for f in flows if f["folder"] in args.only]

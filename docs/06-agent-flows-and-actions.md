@@ -29,6 +29,13 @@ As decided by the user, each notification is sent to the single demo mailbox in 
 `mag_SRMDemoMailbox` environment variable. The intended recipient is named in the
 subject. Each notification is also logged in `mag_communicationlog`.
 
+Keep the recipient in the environment variable's **current value**, outside the portable
+solution; the definition must not contain a tenant-specific mailbox default. After approval,
+`python scripts/08-deploy-flows.py --clear-mailbox-default` preserves the effective recipient,
+migrates it to a current value if necessary, clears the default, and verifies readback without
+deploying or activating flows. Add `--dry-run` to preview without displaying the address.
+Export/unpack the solution only after that verification succeeds.
+
 | Path | Notices |
 |---|---|
 | GSA reuse | Buyer: "Financial review not required", with the GSA rating. Reviewer: "Filing only, no action needed". |

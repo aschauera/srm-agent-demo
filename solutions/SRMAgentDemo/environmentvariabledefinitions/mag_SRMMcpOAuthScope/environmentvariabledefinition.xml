@@ -1,0 +1,13 @@
+<environmentvariabledefinition schemaname="mag_SRMMcpOAuthScope">
+  <description default="Fully qualified SRM API delegated scope; configure as an environment-specific current value.">
+    <label description="Fully qualified SRM API delegated scope; configure as an environment-specific current value." languagecode="1033" />
+  </description>
+  <displayname default="SRM MCP OAuth scope">
+    <label description="SRM MCP OAuth scope" languagecode="1033" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

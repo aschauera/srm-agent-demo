@@ -112,6 +112,7 @@
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e08}" behavior="0" />
       <RootComponent type="29" id="{5a7e1c02-3f41-4d8b-9c6e-0b2f8d4a1e09}" behavior="0" />
       <RootComponent type="29" id="{f9150906-1e0e-4bd0-9213-0f8bb53646fb}" behavior="0" />
+      <RootComponent type="372" id="{9d19cbb9-dba2-4508-a1c8-b124651ef746}" schemaName="mag_5Fsrm-20ui" behavior="0" />
       <RootComponent type="61" schemaName="mag_/srm/reviewrequest.js" behavior="0" />
       <RootComponent type="61" schemaName="mag_/srm/reviewrequest-status.html" behavior="0" />
       <RootComponent type="61" schemaName="mag_supplierfinancialriskreview_icon" behavior="0" />
