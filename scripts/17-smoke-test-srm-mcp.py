@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import httpx2
 from azure.identity import AzureCliCredential
@@ -13,10 +14,18 @@ from mcp.client.streamable_http import streamable_http_client
 UI_URI = "ui://srm/supplier-risk-dashboard.html"
 
 
-async def verify(state: dict, result_path: Path | None, expected_ui: Path | None = None) -> None:
-    url = state["endpoint"]
-    if url != "https://srm-risk-mcp.wittyglacier-6d770dc4.westeurope.azurecontainerapps.io/mcp":
+def validate_endpoint(url: str, expected: str) -> None:
+    parts = urlsplit(expected)
+    if (url != expected or parts.scheme != "https" or not parts.hostname or
+            parts.username is not None or parts.password is not None or
+            parts.query or parts.fragment or parts.path != "/mcp"):
         raise ValueError("Refusing an endpoint outside the approved SRM deployment.")
+
+
+async def verify(state: dict, result_path: Path | None, expected_endpoint: str,
+                 expected_ui: Path | None = None) -> None:
+    url = state["endpoint"]
+    validate_endpoint(url, expected_endpoint)
     with AzureCliCredential(tenant_id=state["tenantId"]) as credential:
         token = credential.get_token(f"api://{state['apiAppId']}/.default").token
     async with httpx2.AsyncClient(timeout=120) as anonymous:
@@ -74,8 +83,10 @@ async def verify(state: dict, result_path: Path | None, expected_ui: Path | None
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--deployment-state", type=Path, required=True)
+    parser.add_argument("--expected-endpoint", required=True,
+                        help="Independently confirmed HTTPS MCP endpoint for the approved deployment.")
     parser.add_argument("--result-path", type=Path)
     parser.add_argument("--expected-ui", type=Path, help="Require the hosted HTML to match the tested local artifact.")
     args = parser.parse_args()
     asyncio.run(verify(json.loads(args.deployment_state.read_text(encoding="utf-8-sig")),
-                      args.result_path, args.expected_ui))
+                      args.result_path, args.expected_endpoint, args.expected_ui))

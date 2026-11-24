@@ -49,22 +49,36 @@ produce explicit errors rather than a successful-looking fallback dashboard.
 
 ## Deployment
 
-Endpoint:
-`https://srm-risk-mcp.wittyglacier-6d770dc4.westeurope.azurecontainerapps.io/mcp`
-
 The new `srm-risk-mcp` Container App uses the existing `mcp` environment and registry in
 resource group `mcpservers`. `aschi-weather-mcp` is unchanged.
 
 [16-deploy-srm-mcp.ps1](../scripts/16-deploy-srm-mcp.ps1) has separate `Security` and `Deploy`
-phases. It is deliberately restricted to the user-approved subscription/resource group.
-Deployment state must be kept outside tracked source. Example, after approval:
+phases. Supply the previously approved subscription and registry independently through the
+`SRM_APPROVED_SUBSCRIPTION_ID` and `SRM_APPROVED_REGISTRY_NAME` environment variables and
+matching parameters; the script also restricts the resource group, app, and environment names.
+This configuration is not itself authorization for a new deployment.
+Keep deployment state and identifier values outside tracked source. The security phase requires
+the existing owned Dataverse role ID, API reader and legal-reader app-role IDs, OAuth scope ID,
+and Microsoft Azure CLI client application ID. For an existing deployment, retrieve the IDs from
+the corresponding role and Entra registrations; for a new approved deployment, generate and
+retain distinct GUIDs for the owned role, app roles, and scope. Reuse them on every security run
+to preserve role ownership and existing grants. The Azure CLI client ID identifies Microsoft's
+public client, not the dashboard's OAuth client. Example, after approval:
+Set `SRM_APPROVED_AZURE_CLI_CLIENT_ID` independently to Microsoft's verified public client ID;
+the security phase refuses a nonmatching client ID.
 
 ```powershell
-.\scripts\16-deploy-srm-mcp.ps1 -Phase Security -StatePath C:\temp\srm-mcp-deployment.json
-.\scripts\16-deploy-srm-mcp.ps1 -Phase Deploy -StatePath C:\temp\srm-mcp-deployment.json
-python .\scripts\17-smoke-test-srm-mcp.py --deployment-state C:\temp\srm-mcp-deployment.json
+.\scripts\16-deploy-srm-mcp.ps1 -Phase Security -StatePath C:\temp\srm-mcp-deployment.json `
+  -Subscription $env:SRM_APPROVED_SUBSCRIPTION_ID -RegistryName $env:SRM_APPROVED_REGISTRY_NAME `
+  -OwnedRoleId $ownedRoleId -ReaderRoleId $readerRoleId -LegalRoleId $legalRoleId `
+  -ScopeId $scopeId -AzureCliClientId $env:SRM_APPROVED_AZURE_CLI_CLIENT_ID
+.\scripts\16-deploy-srm-mcp.ps1 -Phase Deploy -StatePath C:\temp\srm-mcp-deployment.json `
+  -Subscription $env:SRM_APPROVED_SUBSCRIPTION_ID -RegistryName $env:SRM_APPROVED_REGISTRY_NAME
+python .\scripts\17-smoke-test-srm-mcp.py --deployment-state C:\temp\srm-mcp-deployment.json --expected-endpoint $approvedEndpoint
 ```
 
+Independently confirm `$approvedEndpoint` from the approved Container App before testing; the
+smoke test refuses to send a token unless it matches the state file and is an HTTPS `/mcp` URL.
 Builds use a source-only staging directory: Windows `node_modules`, caches, tokens and
 local credentials are never copied into the Linux image. A successful existing timestamp
 image can be resumed with `-ExistingImageTag` if local build-log streaming was interrupted.
@@ -97,7 +111,7 @@ without designing per-user/record authorization.
 ### Copilot Studio connection
 
 Use the existing SRM Orchestrator in DemoPRE. In **Build -> Tools -> Add tool -> MCP**,
-add the endpoint above as **SRM Supplier Risk Dashboard**.
+add the independently confirmed endpoint as **SRM Supplier Risk Dashboard**.
 
 Use manually configured Entra OAuth:
 
@@ -110,15 +124,8 @@ Use manually configured Entra OAuth:
 | Client secret | Create for the client registration and enter only in the protected connection; never in source |
 | Redirect URI | Copy the actual URI shown by Copilot Studio and register it on the client app; do not guess it |
 
-The deployment state contains non-secret tenant/application IDs. For the verified deployment:
-
-- Tenant: `bfc167e5-797b-4253-af74-4a32b0533996`
-- OAuth client ID: `02c513a9-5ab7-41f3-8ebe-637392bf9d4f`
-- API ID: `8a785013-4dc8-4ec3-ae20-cf1c892d2d0a`
-- Scope: `api://8a785013-4dc8-4ec3-ae20-cf1c892d2d0a/SRM.Read`
-
-Client secrets belong in
-the OAuth connection's vault. Entra does not support dynamic client registration.
+Use the protected deployment state to obtain the tenant and application IDs. Client secrets
+belong in the OAuth connection's vault. Entra does not support dynamic client registration.
 Save the cloud draft, then test in preview before publishing. UI labels can vary.
 
 Suggested routing instruction:

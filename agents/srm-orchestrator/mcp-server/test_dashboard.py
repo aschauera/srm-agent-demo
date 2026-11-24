@@ -1,4 +1,5 @@
 import copy
+import importlib.util
 import json
 import unittest
 from datetime import datetime, timezone
@@ -15,6 +16,26 @@ ROOT = Path(__file__).resolve().parents[3]
 SID = "11111111-1111-1111-1111-111111111111"
 RID = "22222222-2222-2222-2222-222222222222"
 NOW = datetime(2026, 11, 23, tzinfo=timezone.utc)
+
+smoke_spec = importlib.util.spec_from_file_location("smoke_test", ROOT / "scripts/17-smoke-test-srm-mcp.py")
+smoke_test = importlib.util.module_from_spec(smoke_spec)
+smoke_spec.loader.exec_module(smoke_test)
+
+
+class SmokeEndpointTests(unittest.TestCase):
+    def test_requires_matching_safe_endpoint(self):
+        endpoint = "https://dashboard.example.test/mcp"
+        smoke_test.validate_endpoint(endpoint, endpoint)
+        for state_url, approved in [
+            ("https://other.example.test/mcp", endpoint),
+            ("http://dashboard.example.test/mcp", "http://dashboard.example.test/mcp"),
+            ("https://user@dashboard.example.test/mcp", "https://user@dashboard.example.test/mcp"),
+            (endpoint + "?x=1", endpoint + "?x=1"),
+            (endpoint + "#fragment", endpoint + "#fragment"),
+            ("https://dashboard.example.test/other", "https://dashboard.example.test/other"),
+        ]:
+            with self.subTest(state_url=state_url), self.assertRaises(ValueError):
+                smoke_test.validate_endpoint(state_url, approved)
 
 
 class FakeRecords:

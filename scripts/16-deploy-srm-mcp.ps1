@@ -8,11 +8,16 @@ after successful changes; never hand-author generated solution source.
 param(
     [Parameter(Mandatory)][ValidateSet('Security', 'Deploy')][string]$Phase,
     [Parameter(Mandatory)][string]$StatePath,
-    [string]$Subscription = '63fa8a8e-d1fd-47ed-99f1-ec16d2d25d22',
+    [Parameter(Mandatory)][string]$Subscription,
     [string]$ResourceGroup = 'mcpservers',
     [string]$AppName = 'srm-risk-mcp',
     [string]$EnvironmentName = 'mcp',
-    [string]$RegistryName = 'ca87684bab02acr',
+    [Parameter(Mandatory)][string]$RegistryName,
+    [string]$OwnedRoleId,
+    [string]$ReaderRoleId,
+    [string]$LegalRoleId,
+    [string]$ScopeId,
+    [string]$AzureCliClientId,
     [string]$ExistingImageTag
 )
 $ErrorActionPreference = 'Stop'
@@ -20,13 +25,9 @@ $Root = Split-Path $PSScriptRoot -Parent
 $Source = Join-Path $Root 'agents\srm-orchestrator\mcp-server'
 $Environment = 'https://org5b55c88b.crm.dynamics.com'
 $RoleName = 'SRM MCP Dashboard Reader'
-$OwnedRoleId = 'd2f22bfa-1ead-409e-a2ba-91e26ced893a'
 $AzPython = Join-Path (Split-Path (Split-Path (Get-Command az).Source)) 'python.exe'
 $Tables = @('Supplier', 'FinancialReviewRequest', 'FinancialWorkingPaper', 'CofaceCreditRecord',
     'SupplierOnePageSummary', 'AdverseNewsEvent', 'NonFinancialRiskItem')
-$ReaderRoleId = 'bde6b30e-2489-445e-8d28-7f948279d641'
-$LegalRoleId = 'fc606f9b-7718-4e6a-a613-52f0391b59af'
-$ScopeId = 'b9b518b2-a351-4f1f-89b7-b1d18df7c9c5'
 
 function Invoke-Azure([string[]]$Arguments) {
     $text = & $AzPython -X utf8 -IBm azure.cli @Arguments --output json
@@ -86,8 +87,9 @@ function Get-OrCreateServicePrincipal([string]$ApplicationId) {
     Invoke-Graph 'servicePrincipals' 'POST' @{appId = $ApplicationId}
 }
 
-if ($Subscription -ne '63fa8a8e-d1fd-47ed-99f1-ec16d2d25d22' -or $ResourceGroup -ne 'mcpservers' -or
-    $AppName -ne 'srm-risk-mcp' -or $EnvironmentName -ne 'mcp' -or $RegistryName -ne 'ca87684bab02acr') {
+if (-not $env:SRM_APPROVED_SUBSCRIPTION_ID -or $Subscription -ne $env:SRM_APPROVED_SUBSCRIPTION_ID -or
+    -not $env:SRM_APPROVED_REGISTRY_NAME -or $RegistryName -ne $env:SRM_APPROVED_REGISTRY_NAME -or
+    $ResourceGroup -ne 'mcpservers' -or $AppName -ne 'srm-risk-mcp' -or $EnvironmentName -ne 'mcp') {
     throw 'Refusing a target outside the explicitly approved demo scope.'
 }
 $StatePath = [IO.Path]::GetFullPath($StatePath)
@@ -99,6 +101,19 @@ $profile = & pac org who 2>&1 | Out-String
 if ($profile -notmatch [regex]::Escape($Environment)) { throw 'Active PAC connection is not DemoPRE.' }
 
 if ($Phase -eq 'Security') {
+    foreach ($value in @($OwnedRoleId, $ReaderRoleId, $LegalRoleId, $ScopeId, $AzureCliClientId)) {
+        $parsed = [guid]::Empty
+        if (-not [guid]::TryParse($value, [ref]$parsed) -or $parsed -eq [guid]::Empty) {
+            throw 'Security requires non-empty GUIDs for the owned role, API roles, scope, and Azure CLI client.'
+        }
+    }
+    if (@($ReaderRoleId, $LegalRoleId, $ScopeId | Select-Object -Unique).Count -ne 3) {
+        throw 'API role and scope IDs must be distinct.'
+    }
+    if (-not $env:SRM_APPROVED_AZURE_CLI_CLIENT_ID -or
+        $AzureCliClientId -ne $env:SRM_APPROVED_AZURE_CLI_CLIENT_ID) {
+        throw 'Azure CLI client ID does not match the independently approved ID.'
+    }
     if (git --no-pager status --porcelain -- (Join-Path $Root 'solutions\SRMAgentDemo')) {
         throw 'Uncommitted solution source would prevent safe post-deployment synchronization.'
     }
@@ -118,7 +133,10 @@ if ($Phase -eq 'Security') {
         Invoke-Dataverse '/api/data/v9.2/roles' 'POST' @{
             roleid = $roleId; name = $RoleName; 'businessunitid@odata.bind' = "/businessunits($unitId)"
         } | Out-Null
-    } else { $roleId = $roles.value[0].roleid }
+    } else {
+        $roleId = $roles.value[0].roleid
+        if ($roleId -ne $OwnedRoleId) { throw 'Existing role does not match the supplied owned role ID.' }
+    }
     $privileges = Invoke-Dataverse '/api/data/v9.2/privileges?%24select=privilegeid,name&%24filter=startswith(name,%27prvReadmag_%27)'
     $expected = @($Tables | ForEach-Object { "prvReadmag_$_" })
     $selected = @($privileges.value | Where-Object name -in $expected)
@@ -182,6 +200,16 @@ if ($Phase -eq 'Security') {
     }
     $api = Get-OrCreateApp 'SRM MCP Risk Dashboard API'
     $client = Get-OrCreateApp 'SRM MCP Copilot Client'
+    foreach ($expected in @(
+        @{value = 'SRM.Reader'; id = $ReaderRoleId; entries = @($api.appRoles)}
+        @{value = 'SRM.LegalReader'; id = $LegalRoleId; entries = @($api.appRoles)}
+        @{value = 'SRM.Read'; id = $ScopeId; entries = @($api.api.oauth2PermissionScopes)}
+    )) {
+        $existing = @($expected.entries | Where-Object value -eq $expected.value)
+        if ($existing.Count -gt 1 -or ($existing.Count -eq 1 -and $existing[0].id -ne $expected.id)) {
+            throw "Existing $($expected.value) ID does not match the supplied ID."
+        }
+    }
     Invoke-Graph "applications/$($api.id)" 'PATCH' @{
         identifierUris = @("api://$($api.appId)")
         api = @{
@@ -204,7 +232,7 @@ if ($Phase -eq 'Security') {
     Invoke-Graph "applications/$($api.id)" 'PATCH' @{
         api = @{ preAuthorizedApplications = @(
             @{appId = $client.appId; delegatedPermissionIds = @($ScopeId)}
-            @{appId = '04b07795-8ddb-461a-bbee-02f9e1bf7b46'; delegatedPermissionIds = @($ScopeId)}
+            @{appId = $AzureCliClientId; delegatedPermissionIds = @($ScopeId)}
         ) }
     } | Out-Null
     $apiSp = Get-OrCreateServicePrincipal $api.appId
